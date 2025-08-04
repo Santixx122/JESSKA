@@ -1,0 +1,660 @@
+
+
+/*Nav Bar*/
+.nav-admin {
+    color: #fff;
+    width: 100%;
+    height: 80px;
+    background-color: #212121;
+}
+
+.content-nav-admin {
+    width: 100%;
+    height: 100%;
+    display: inline-flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/*button cerrar sesion admin*/
+.Btn {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 45px;
+    height: 45px;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition-duration: .3s;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.199);
+    background-color: rgb(255, 65, 65);
+}
+
+
+.sign {
+    width: 100%;
+    transition-duration: .3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sign svg {
+    width: 17px;
+}
+
+.sign svg path {
+    fill: white;
+}
+
+
+.text {
+    position: absolute;
+    right: 0%;
+    width: 0%;
+    opacity: 0;
+    color: white;
+    font-size: 1.2em;
+    font-weight: 600;
+    transition-duration: .3s;
+}
+
+.Btn:hover {
+    width: 125px;
+    border-radius: 40px;
+    transition-duration: .3s;
+}
+
+.Btn:hover .sign {
+    width: 30%;
+    transition-duration: .3s;
+    padding-left: 20px;
+}
+
+.Btn:hover .text {
+    opacity: 1;
+    width: 70%;
+    transition-duration: .3s;
+    padding-right: 10px;
+}
+
+.Btn:active {
+    transform: translate(2px, 2px);
+}
+
+.tittle-nav-admin,
+.btn-admin-close-session {
+    margin: 2em 2em;
+}
+
+.global-content-admin {
+    display: inline-flex;
+    width: 100%;
+    height: 100%;
+}
+
+/*Contenido lateral*/
+.lateral-content-admin {
+    width: 275px;
+    height: 100vh;
+    background-color: #292929;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.lateral-content-admin h4{
+    margin-top: 0.5em;
+}
+.lateral-content-list{
+    margin-top: 1em;
+}
+/*button menu lateral*/
+.cta {
+    position: relative;
+    margin: auto;
+    padding: 12px 18px;
+    transition: all 0.2s ease;
+    border: none;
+    background: none;
+    cursor: pointer;
+  }
+  
+  .cta:before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
+    border-radius: 50px;
+    background: #292929;
+    width: 45px;
+    height: 45px;
+    transition: all 0.3s ease;
+  }
+  
+  .cta span {
+    position: relative;
+    font-family: "Ubuntu", sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: #ffffff;
+  }
+  
+  .cta svg {
+    position: relative;
+    top: 0;
+    margin-left: 10px;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke: #ffffff;
+    stroke-width: 2;
+    transform: translateX(-5px);
+    transition: all 0.3s ease;
+  }
+  
+  .cta:hover:before {
+    width: 100%;
+    background: #1d1d1d;
+  }
+  
+  .cta:hover svg {
+    transform: translateX(0);
+  }
+  
+  .cta:active {
+    transform: scale(0.95);
+  }
+/*contenido Principal admin*/
+.content {
+    width: 100%;
+}
+
+.headerContent {
+    display: flex;
+    justify-content: left;
+    margin: 2em;
+}
+
+.bodyContent {
+    display: inline-flex;
+    width: 100%;
+    justify-content: space-evenly;
+}
+
+.dataInfo {
+    background-color: white;
+    border-radius: 10px;
+    width: 15em;
+    height: 6em;
+    margin: 4px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+
+}
+
+.contenidoTargets {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    padding: 2px;
+}
+
+.contenidoTargets p {
+    color: rgb(83, 83, 83);
+}
+
+.contenidoTargets h4 {
+    color: black;
+}
+/*graficos*/
+.general-content-graficas {
+    display: flex;
+    flex-wrap: nowrap; 
+    justify-content: space-between; 
+    gap: 20px;
+    width: 100%; 
+    margin-top: 5em;
+}
+.general-grafico {
+    flex: 1; 
+    max-width: 48%; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.grafico{
+    width: 500px;
+    height: 300px;
+    background-color: #ffffff;    
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+
+}
+.header-grafico{
+    background-color: #292929;
+    color: #fff;
+    font-weight: 600;
+    border-radius: 12px 12px 0 0;
+    height: 2em;
+    text-align: center;
+}
+.lateral-content-admin h4{
+    text-align: center;
+}
+.section {
+    display: none;
+    transform: translateY(10px);
+    transition: all 0.3s ease-in-out;
+}
+
+.section.active {
+    display: flex;
+    flex-direction: column;
+    opacity: 1;
+    transform: translateY(0);
+}
+.products-clients{
+    margin:3em 1em 1em 8em;
+}
+.list-style{
+    border-collapse: separate;
+    border-spacing: 0 10px;
+    width: 100%;
+    
+}
+.list-style th,
+.list-style td {
+  background-color: #ffffff;
+  padding: 12px 16px;
+    text-align: center;
+}
+.list-style tr{
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+}
+.content-buttons{
+    display: inline-flex; 
+    align-items: center;
+}
+.button-edit,.button-borrar{
+    margin-left: 10px;
+}
+/*button borrar*/
+.bin-button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    background-color: rgb(255, 95, 95);
+    cursor: pointer;
+    border: 2px solid rgb(255, 201, 201);
+    transition-duration: 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .bin-bottom {
+    width: 15px;
+    z-index: 2;
+  }
+  .bin-top {
+    width: 17px;
+    transform-origin: right;
+    transition-duration: 0.3s;
+    z-index: 2;
+  }
+  .bin-button:hover .bin-top {
+    transform: rotate(45deg);
+  }
+  .bin-button:hover {
+    background-color: rgb(255, 0, 0);
+  }
+  .bin-button:active {
+    transform: scale(0.9);
+  }
+  .garbage {
+    position: absolute;
+    width: 14px;
+    height: auto;
+    z-index: 1;
+    opacity: 0;
+    transition: all 0.3s;
+  }
+  .bin-button:hover .garbage {
+    animation: throw 0.4s linear;
+  }
+  @keyframes throw {
+    from {
+      transform: translate(-400%, -700%);
+      opacity: 0;
+    }
+    to {
+      transform: translate(0%, 0%);
+      opacity: 1;
+    }
+  }
+/*edit button*/
+.Btn-edit {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100px;
+    height: 40px;
+    border: none;
+    padding: 0px 20px;
+    background-color: rgb(168, 38, 255);
+    color: white;
+    font-weight: 500;
+    cursor: pointer;
+    border-radius: 10px;
+    box-shadow: 5px 5px 0px rgb(140, 32, 212);
+    transition-duration: .3s;
+  }
+  
+  .svg {
+    width: 13px;
+    position: absolute;
+    right: 0;
+    margin-right: 20px;
+    fill: white;
+    transition-duration: .3s;
+  }
+  
+  .Btn-edit:hover {
+    color: transparent;
+  }
+  
+  .Btn-edit:hover svg {
+    right: 43%;
+    margin: 0;
+    padding: 0;
+    border: none;
+    transition-duration: .3s;
+  }
+  
+  .Btn-edit:active {
+    transform: translate(3px , 3px);
+    transition-duration: .3s;
+    box-shadow: 2px 2px 0px rgb(140, 32, 212);
+  }
+  /*button guardar cambios*/
+  .btn-guardar {
+    position: relative;
+    outline: 0;
+    border: 1px solid transparent;
+    background-color: #488aec;
+    color: #ffffff;
+    font-size: 0.75rem;
+    line-height: 1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    vertical-align: middle;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px #488aec31, 0 2px 4px -1px #488aec17;
+  }
+  
+  .btn-guardar span {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    transition: all .4s ease;
+  }
+  
+  
+  .btn-guardar span:nth-child(2),.btn-guardar span:nth-child(3) {
+    position: absolute;
+    top: 40px;
+    color: #fff;
+  }
+  
+  .btn-guardar span:nth-child(2) {
+    background-color: #488aec;
+  }
+  
+  .btn-guardar span:nth-child(3) {
+    background-color: #488aec;
+  }
+  
+  .btn-guardar:hover {
+    box-shadow: 0 10px 15px -3px #488aec4f, 0 4px 6px -2px #488aec17;
+  }
+  
+  .btn-guardar:hover span:nth-child(2), .btn-guardar:focus span:nth-child(3) {
+    top: 0;
+  }
+  
+  .btn-guardar:focus {
+    box-shadow: none;
+  }
+  /*button agregar*/
+  .agregar-btn {
+    margin-top: 2em;
+    padding: 1.3em 3em;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 2.5px;
+    font-weight: 500;
+    color: #000;
+    background-color: #fff;
+    border: none;
+    border-radius: 2px;
+    box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease 0s;
+    cursor: pointer;
+    outline: none;
+  }
+  
+  .agregar-btn:hover {
+    background-color: #23c483;
+    box-shadow: 0px 15px 20px rgba(46, 229, 157, 0.4);
+    color: #fff;
+    transform: translateY(-7px);
+  }
+  
+  .agregar-btn:active {
+    transform: translateY(-1px);
+  }
+  .editar-inputs{
+    padding: 8px;
+    margin-top: 1em;
+  }
+
+  /* Mejorar el scroll horizontal y el ajuste de la barra lateral */
+.products-clients {
+  overflow-x: auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.lateral-content-admin {
+  position: fixed;
+  left: 0;
+  top: 80px;
+  height: calc(100vh - 80px);
+  min-height: 300px;
+  z-index: 10;
+}
+
+.global-content-admin {
+  margin-left: 275px;
+  width: calc(100% - 275px);
+  min-width: 0;
+}
+
+@media (max-width: 992px) {
+  .lateral-content-admin {
+    position: static;
+    width: 100%;
+    height: auto;
+    min-height: unset;
+  }
+  .global-content-admin {
+    margin-left: 0;
+    width: 100%;
+    }
+}
+
+@media (max-width: 600px) {
+  .lateral-content-admin {
+    position: static;
+    width: 100%;
+    height: auto;
+    min-height: unset;
+  }
+  .global-content-admin {
+    margin-left: 0;
+    width: 100%;
+    }
+}
+@media (max-width: 1200px) {
+  .general-content-graficas {
+    flex-direction: column;
+    gap: 40px;
+  }
+  .general-grafico {
+    max-width: 100%;
+  }
+  .grafico {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 992px) {
+  .global-content-admin {
+    flex-direction: column;
+  }
+  .lateral-content-admin {
+    width: 100%;
+    height: auto;
+    flex-direction: row;
+    justify-content: space-around;
+    padding: 1em 0;
+  }
+  .products-clients {
+    margin: 2em 0.5em 1em 0.5em;
+  }
+}
+
+@media (max-width: 768px) {
+  .content-nav-admin {
+    flex-direction: column;
+    height: auto;
+    padding: 1em 0;
+  }
+  .tittle-nav-admin,.btn-admin-close-session {
+    margin: 1em 0.5em;
+  }
+  .bodyContent {
+    flex-direction: column;
+    align-items: center;
+  }
+  .dataInfo {
+    width: 90vw;
+    min-width: 200px;
+    margin: 1em 0;
+  }
+  .general-content-graficas {
+    flex-direction: column;
+    gap: 30px;
+  }
+  .grafico {
+    width: 95vw;
+    min-width: 200px;
+    height: 250px;
+  }
+  .products-clients {
+    margin: 1em 0.2em;
+  }
+  .list-style th,.list-style td {
+    padding: 8px 6px;
+    font-size: 0.95em;
+  }
+}
+
+@media (max-width: 600px) {
+  .nav-admin {
+    height: auto;
+    min-height: 60px;
+  }
+  .lateral-content-admin {
+    flex-direction: column;
+    width: 100%;
+    padding: 0.5em 0;
+  }
+  .lateral-content-admin h4 {
+    margin-top: 0.2em;
+    font-size: 1em;
+  }
+  .lateral-content-list {
+    margin-top: 0.5em;
+  }
+  .content {
+    width: 100vw;
+    padding: 0 0.5em;
+  }
+  .headerContent {
+    margin: 1em 0.2em;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .products-clients {
+    margin: 0.5em 0.1em;
+  }
+  .list-style th,.list-style td {
+    padding: 6px 2px;
+    font-size: 0.85em;
+  }
+  .Btn,.bin-button {
+    width: 38px;
+    height: 38px;
+  }
+  .Btn-edit {
+    width: 80px;
+    height: 32px;
+    font-size: 0.9em;
+    padding: 0 10px;
+  }
+  .btn-guardar {
+    padding: 0.5rem 1rem;
+    font-size: 0.7rem;
+  }
+  .agregar-btn {
+    padding: 1em 2em;
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 400px) {
+  .grafico {
+    height: 180px;
+  }
+  .Btn-edit {
+    width: 60px;
+    font-size: 0.8em;
+  }
+  .btn-guardar {
+    font-size: 0.6rem;
+    padding: 0.4rem 0.7rem;
+  }
+}

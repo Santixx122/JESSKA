@@ -1,6 +1,6 @@
 const express = require('express')
 require('dotenv').config()
-require('./config/connectrion')
+require('./config/connection')
 const app = express();
 const PORT = process.env.PORT || 4040
 const routerProducts = require('./router/router.productos')
@@ -14,5 +14,5 @@ app.use(morgan('dev'))
 app.use('/',routerProducts)
 
 app.listen(PORT,()=>{
-    console.log(`🚀 El servidor está funcionando en el puerto ${PORT}`)
+    console.log(`Servidor Backend funcionando en el puerto ${PORT}`)
 })

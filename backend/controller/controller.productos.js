@@ -85,7 +85,7 @@ const deleteProduct = async (req,res)=>{
             data: productDelete
         })  
     } catch (error) {
-        controllError(res,'El producto no se pudo eliminar',error)
+        controlError(res,'El producto no se pudo eliminar',error)
     }
 }
 module.exports={
