@@ -36,5 +36,8 @@ const schemaUsuario = new mongoose.Schema({
             required: true,
             default: "Colombia"
         }
+    },
+    rol:{
+        enum:['Cliente','Administrador','Usuario']
     }
 })
