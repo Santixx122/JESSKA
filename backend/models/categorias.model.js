@@ -22,4 +22,3 @@ const SchemaCategoria = new mongoose.Schema({
 });
 
 module.exports = mongoose.model('categorias', SchemaCategoria);
-

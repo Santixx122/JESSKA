@@ -5,6 +5,9 @@ const schemaUsuario = new mongoose.Schema({
     nombre:{
         type : String , required: true
     },
+    apellidos:{
+        type: String , required: true
+    },
     cedula:{
         type: String , required: true
     },
@@ -37,7 +40,12 @@ const schemaUsuario = new mongoose.Schema({
             default: "Colombia"
         }
     },
+    telefono:{
+        type: String , required: true
+    },
     rol:{
-        enum:['Cliente','Administrador','Usuario']
+        type: String,
+        enum:['Cliente','Administrador','Usuario'],
+        default: 'Usuario'
     }
 })
