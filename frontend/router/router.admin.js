@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const axios = require('axios');
-require('dotenv').config()
+const config = require('../config/config')
 
-const URL_BACKEND = process.env.URL_BACKEND || 'http://localhost:4040'
+const URL_BACKEND = config.URL_BACKEND || 'http://localhost:4040'
 
 router.get('/admin',async(req,res)=>{
     try {
@@ -23,7 +23,6 @@ router.get('/admin',async(req,res)=>{
             message:'Se presento un error al mostrar los elementos'
         })
     }
-
 })
 
 module.exports = router;

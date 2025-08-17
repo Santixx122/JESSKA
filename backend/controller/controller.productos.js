@@ -1,4 +1,9 @@
+
+// FALTA ACTUALIZARLO
+
+
 const Producto = require('../models/productos.model')
+
 
 
 function controlError(res,message,error){
@@ -37,7 +42,7 @@ const createProducts = async (req,res)=>{
         const insertarProducto = await Producto.create(producto);
         res.status(200).json({
             success:true,
-            message:'El producto se cre exitosamente',
+            message:'El producto se creo exitosamente',
             data:insertarProducto
         })
     } catch (error) {
