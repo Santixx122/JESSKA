@@ -12,7 +12,7 @@ const getCategoria = async (req,res)=>{
     try {
         const categorias = await Categoria.find()
 
-        res.status(200).json({
+        return res.status(200).json({
             success:true,
             message:'Las Categorias se encontraron con exito.',
             data:categorias

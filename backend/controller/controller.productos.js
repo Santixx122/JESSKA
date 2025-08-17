@@ -31,13 +31,18 @@ const getProducts = async (req,res)=>{
 
 const createProducts = async (req,res)=>{
     try {
+
         const producto={
-            referencia:req.body.referencia,
-            marca:req.body.marca,
-            nombre:req.body.nombre,
-            descripcion:req.body.descripcion,
-            precio:req.body.precio,
-            cantidad:req.body.cantidad
+            nombre: req.body.nombre,
+            descripcion: req.body.descripcion,
+            variante: {
+                color: req.body.color,
+                talla: req.body.talla,
+                precio: req.body.precio,
+                stock: req.body.stock
+            },
+            fechaRegistro: req.body.fechaRegistro,
+            
         }
         const insertarProducto = await Producto.create(producto);
         res.status(200).json({
