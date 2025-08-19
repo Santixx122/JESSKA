@@ -1,7 +1,9 @@
+require('dotenv').config()
+
 const validadorApiKey = (req,res,next)=>{
     const apiKey = req.headers['api-key-441']
     console.log(apiKey)
-    const validApiKey = 'contrasena-super-secreta'
+    const validApiKey = process.env.APIKEY_PASS
 
 
     if(!apiKey)
