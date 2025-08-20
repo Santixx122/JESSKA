@@ -13,9 +13,10 @@ const routerMarcas = require('./router/router.marcas')
 const routerfacturas = require('./router/router.factura')
 const routerPedido = require('./router/router.pedidos')
 const routerEnvios = require('./router/router.envios')
-const routerDetalle = require('./router/router.detalleProducto')
+const routerDetalle = require('./router/router.detallePedidos')
 const routerClientes = require('./router/router.clientes')
 const routerAdmin = require('./router/router.admin')
+const routerUsuarios = require('./router/router.usuarios');
 
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
@@ -33,6 +34,7 @@ app.use('/detalle',routerDetalle)
 app.use('/clientes',routerClientes)
 app.use('/categorias', routerCategorias)
 app.use('/admin',routerAdmin)
+app.use('/usuarios',routerUsuarios)
 
 app.listen(PORT,()=>{
     console.log(`Servidor Backend funcionando en el puerto ${PORT}`)

@@ -1,8 +1,7 @@
 require('dotenv').config()
 
 const validadorApiKey = (req,res,next)=>{
-    const apiKey = req.headers[process.env.APIKEY_NAME]
-    console.log(apiKey)
+    const apiKey = req.headers['api-key-441']
     const validApiKey = process.env.APIKEY_PASS
 
 
