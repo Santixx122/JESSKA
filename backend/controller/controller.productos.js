@@ -44,10 +44,17 @@ const getOneProduct = async (req,res)=>{
 
 const createProducts = async (req,res)=>{
     try {
+        const variante = {
+            color: req.body.color,
+            talla: req.body.talla,
+            precio: req.body.precio,
+            stock: req.body.stock
+        };
+        
         const producto={
             nombre: req.body.nombre,
             descripcion: req.body.descripcion,
-            variante: req.body.variante, // Ahora espera un array de variantes
+            variante: [variante],
             categoriaId: req.body.categoriaId,
             marcaId: req.body.marcaId,
             estado: req.body.estado || 'activo'

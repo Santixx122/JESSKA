@@ -18,6 +18,6 @@ const schemaClientes = new mongoose.Schema({
     title:'Schema de clientes'
 });
 
-module.exports  = mongoose.model('pedidos',schemaClientes)
+module.exports  = mongoose.model('clientes',schemaClientes)
 
 

@@ -6,6 +6,7 @@ const validatorApiKey = require('../apiKey/apikey')
 router.use(validatorApiKey)
 
 router.get('/',controllerMarcas.getMarcas)
+router.get('/',controllerMarcas.getMarcasById)
 router.post('/',controllerMarcas.insertMarca)
 router.put('/:id',controllerMarcas.updateMarca)
 router.delete('/:id',controllerMarcas.deleteMarca)
