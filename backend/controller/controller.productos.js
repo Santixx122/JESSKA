@@ -1,10 +1,4 @@
-
-// FALTA ACTUALIZARLO
-
-
 const Producto = require('../models/productos.model')
-
-
 
 function controlError(res,message,error){
     res.status(500).json({
@@ -37,7 +31,7 @@ const getOneProduct = async (req,res)=>{
                 message:'No se encontró ningún producto con ese id.'
             })
         }else{
-            res.status(201).json({
+            res.status(200).json({
                 success: true,
                 message:'Producto encontrado.',
                 data: producto
@@ -50,21 +44,16 @@ const getOneProduct = async (req,res)=>{
 
 const createProducts = async (req,res)=>{
     try {
-
         const producto={
             nombre: req.body.nombre,
             descripcion: req.body.descripcion,
-            variante: {
-                color: req.body.color,
-                talla: req.body.talla,
-                precio: req.body.precio,
-                stock: req.body.stock
-            },
-            fechaRegistro: req.body.fechaRegistro,
-            
+            variante: req.body.variante, // Ahora espera un array de variantes
+            categoriaId: req.body.categoriaId,
+            marcaId: req.body.marcaId,
+            estado: req.body.estado || 'activo'
         }
         const insertarProducto = await Producto.create(producto);
-        res.status(200).json({
+        res.status(201).json({
             success:true,
             message:'El producto se creo exitosamente',
             data:insertarProducto
@@ -73,7 +62,6 @@ const createProducts = async (req,res)=>{
         controlError(res,'El producto no pudo ser creado exitosamente',error)     
     }
 }
-
 
 const updateProduct = async (req,res)=>{
     try {
@@ -93,10 +81,9 @@ const updateProduct = async (req,res)=>{
                 data:productUpdate
             })
     } catch (error) {
-        controlError(res,'El prodcuto no se pudo actualizar',error)
+        controlError(res,'El producto no se pudo actualizar',error)
     }
 }
-
 
 const deleteProduct = async (req,res)=>{
     try {
@@ -117,6 +104,7 @@ const deleteProduct = async (req,res)=>{
         controlError(res,'El producto no se pudo eliminar',error)
     }
 }
+
 module.exports={
     getProducts,
     getOneProduct,
