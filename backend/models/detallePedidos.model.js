@@ -29,4 +29,4 @@ const schemaDetallePedido = new mongoose.Schema({
     }
 })
 
-module.exports = mongoose.model('detallePedido', schemaDetallePedido);
+module.exports = mongoose.model('detallePedidos', schemaDetallePedido);

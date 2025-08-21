@@ -11,7 +11,7 @@ function controlError(res,message,error){
 const getProducts = async (req,res)=>{
     try {
         const productos = await Producto.find()
-            res.status(201).json({
+            res.status(200).json({
                 success:true,
                 message:'Productos encontrados con exito.',
                 data:productos

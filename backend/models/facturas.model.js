@@ -16,4 +16,4 @@ const schemaFactura = new mongoose.Schema({
     }
 })
 
-module.exports = mongoose.model('factura', schemaFactura);
+module.exports = mongoose.model('factura', schemaFactura, 'factura');

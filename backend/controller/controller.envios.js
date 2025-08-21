@@ -11,7 +11,7 @@ function controlError(res,message,error){
 const getEnvios = async(req,res)=>{
     try {
         const envios = await Envio.find();
-        res.status(200),json({
+        res.status(200).json({
            success:true,
            message: 'Envios encontrados con exito',
            data: envios
