@@ -13,7 +13,7 @@ const routerMarcas = require('./router/router.marcas')
 const routerfacturas = require('./router/router.factura')
 const routerPedido = require('./router/router.pedidos')
 const routerEnvios = require('./router/router.envios')
-const routerDetalle = require('./router/router.detalleProducto')
+const routerDetalle = require('./router/router.detallePedido')
 const routerClientes = require('./router/router.clientes')
 const routerAdmin = require('./router/router.admin')
 

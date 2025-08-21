@@ -5,11 +5,11 @@ const validatorApiKey = require('../apiKey/apikey')
 
 router.use(validatorApiKey)
 
-router.get('/categorias',controllerCategorias.getCategoria)
+router.get('/',controllerCategorias.getCategoria)
 router.get('/:id',controllerCategorias.getCategoriaById)
-router.post('/categorias',controllerCategorias.insertCategoria)
-router.put('/categorias/:id',controllerCategorias.updateCategoria)
-router.delete('/categorias/:id',controllerCategorias.deleteCategoria)
+router.post('/',controllerCategorias.insertCategoria)
+router.put('/:id',controllerCategorias.updateCategoria)
+router.delete('/:id',controllerCategorias.deleteCategoria)
 
 module.exports=router
 
