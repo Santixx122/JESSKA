@@ -43,7 +43,7 @@ const createEnvio = async (req, res) => {
     try {
         const envio = {
             pedidoId: req.body.pedidoId,
-            direccionId: req.body.direccionId,
+            
             empresaTransporte: req.body.empresaTransporte,
             estado: req.body.estado
         };

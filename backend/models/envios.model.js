@@ -9,12 +9,7 @@ const schemaEnvios = new mongoose.Schema({
         required: true,
         description: 'ID del pedido asociado al envío'
     },
-    direccionId:{
-        type: mongoose.Schema.Types.ObjectId,
-        ref:'direccion',
-        required: true,
-        description: 'ID de la dirección de destino'
-    },
+    
     empresaTransporte:{
         type: String,
         required: [true,'El nombre de la empresa es obligatorio'],
