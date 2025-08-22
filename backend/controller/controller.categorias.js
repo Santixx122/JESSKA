@@ -12,13 +12,34 @@ const getCategoria = async (req,res)=>{
     try {
         const categorias = await Categoria.find()
 
-        res.status(200).json({
+        return res.status(200).json({
             success:true,
             message:'Las Categorias se encontraron con exito.',
             data:categorias
         })
     } catch (error) {
         controlError(res,'Hubo un error al listar las Categorías.',error)
+    }
+}
+
+const getCategoriaById = async (req,res)=>{
+    try {
+        const categoriaId = Categoria.findById(req.params.id)
+        if(!categoriaId){
+            return res.status(404).json({
+                success:false,
+                message:'No se encontró ninguna categoria con ese id'
+            })
+        }else{
+            res.status(200).json({
+                success:true,
+                message:'Categoria encontrada con exito',
+                data:categoriaId
+            })
+        }
+
+    } catch (error) {
+        controlError(res,'Ocurrió un error al ejecutar la busqueda',error)
     }
 }
 
@@ -88,6 +109,7 @@ const deleteCategoria = async (req,res)=>{
 
 module.exports = {
     getCategoria,
+    getCategoriaById,
     insertCategoria,
     updateCategoria,
     deleteCategoria

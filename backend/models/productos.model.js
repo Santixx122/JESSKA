@@ -1,6 +1,5 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 
-// Schema para las variantes del producto
 const VarianteSchema = new mongoose.Schema({
     color: {
         type: String,
@@ -93,5 +92,6 @@ const SchemaProducto = new mongoose.Schema({
     collection: 'productos' // Nombre de la colección en MongoDB
 });
 
-
-module.exports = mongoose.model('productos', SchemaProducto);
+// Crear y exportar el modelo
+const Producto = mongoose.model('productos', SchemaProducto);
+module.exports = Producto;

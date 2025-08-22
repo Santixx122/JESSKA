@@ -23,6 +23,27 @@ const getMarcas = async (req,res)=>{
     }
 }
 
+const getMarcasById = async (req,res)=>{
+    try {
+        const marcaId = Marca.findById(req.params.id)
+
+        if(!marcaId){
+            return res.status(404).json({
+                success:false,
+                message:'No se encontró ninguna marca por ese id'
+            })
+        }else{
+            res.status(200).json({
+                success:true,
+                message:'Marca encontrada con exito',
+                data:marcaId
+            })
+        }
+    } catch (error) {
+        controlError(res,'Ocurrió un error al ejecutar la busqueda',error)
+    }
+}
+
 const insertMarca = async (req,res)=>{
     try {
         const marca ={
@@ -91,6 +112,7 @@ const deleteMarca = async (req,res)=>{
 
 module.exports={
     getMarcas,
+    getMarcasById,
     insertMarca,
     updateMarca,
     deleteMarca
