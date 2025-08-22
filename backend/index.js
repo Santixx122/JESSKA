@@ -1,4 +1,5 @@
 const express = require('express')
+const morgan = require('morgan')
 
 require('dotenv').config()
 require('./config/connection')
@@ -13,7 +14,7 @@ const routerMarcas = require('./router/router.marcas')
 const routerfacturas = require('./router/router.factura')
 const routerPedido = require('./router/router.pedidos')
 const routerEnvios = require('./router/router.envios')
-const routerDetalle = require('./router/router.detalleProducto')
+const routerDetalle = require('./router/router.detallePedidos')
 const routerClientes = require('./router/router.clientes')
 const routerAdmin = require('./router/router.admin')
 const routerUsuarios = require('./router/router.usuarios');
@@ -21,7 +22,6 @@ const routerUsuarios = require('./router/router.usuarios');
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 
-const morgan = require('morgan')
 app.use(morgan('dev'))
 
 // Registrar las rutas

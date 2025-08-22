@@ -14,7 +14,7 @@ const getAdmins = async(req,res)=>{
         res.status(200).json({
             success: true,
             massage:'Administradores encontrados con exito',
-            error: admins
+            data: admins
         })
     } catch (error) {
         controlError(res, 'Ocurrio un eror al encontrar los administradores', error);
