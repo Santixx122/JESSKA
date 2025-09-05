@@ -1,4 +1,6 @@
 const Usuario = require('../models/usuarios.model');
+const generateLog  = require('../services/log');
+const crearEmail = require('../services/email.service')
 
 function controlError(res, message, error) {
     res.status(500).json({
@@ -8,21 +10,27 @@ function controlError(res, message, error) {
     });
 }
 
-
 const getUsuarios = async (req, res) => {
     try {
         const usuarios = await Usuario.find();
-        res.status(200).json({
+        generateLog.generateLog('usuarios.txt',`fecha: ${new Date()} metodo: ${req.method} `)
+        crearEmail(
+                process.env.EMAIL_USER,           
+                'estebantoro.p.7@gmail.com',     
+                'Backup de Usuarios',            
+                'Adjunto el backup de la base de datos de usuarios' 
+            );
+            res.status(200).json({
             success: true,
             message: 'Usuarios encontrados con éxito.',
             data: usuarios
         });
+
     } catch (error) {
+        console.error(error)
         controlError(res, 'Ocurrió un error al encontrar los usuarios', error);
     }
 };
-
-
 const getUsuarioById = async (req, res) => {
     try {
         const id = req.params.id;
@@ -45,7 +53,7 @@ const getUsuarioById = async (req, res) => {
 
 
 const createUsuario = async (req, res) => {
-    const { nombre, email, password, telefono, rol, estado } = req.body;
+    const { nombre, email, password, telefono} = req.body;
     if (!nombre || !email || !password) {
         return res.status(400).json({
             success: false,

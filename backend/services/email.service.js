@@ -1,6 +1,6 @@
 const nodemailer = require('nodemailer')
 require('dotenv').config()
-
+const path = require('path')
 const transportador = nodemailer.createTransport({
     service:'gmail',
     auth:{
@@ -13,7 +13,11 @@ const configEmail = (remitente,destinatario,encabezado,contenido)=>{
         from:remitente,
         to:destinatario,
         subject:encabezado,
-        text:contenido
+        text:contenido,
+        attachments:[{
+            filename: 'usuarios.metadata.json.gz',
+            path: path.join(__dirname,'../backup/JESSKA_DB/usuarios.metadata.json.gz')
+        }]
     }
 transportador.sendMail(options,(error,options)=>{
     if(error){

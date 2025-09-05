@@ -1,5 +1,7 @@
 const express = require('express')
 const morgan = require('morgan')
+const cron = require('node-cron');
+const backup = require('./config/backup');
 
 require('dotenv').config()
 require('./config/connection')
@@ -24,6 +26,7 @@ app.use(express.urlencoded({extended:true}));
 
 app.use(morgan('dev'))
 
+
 // Registrar las rutas
 app.use('/productos', routerProducts)
 app.use('/pedidos',routerPedido)
@@ -39,3 +42,10 @@ app.use('/usuarios',routerUsuarios)
 app.listen(PORT,()=>{
     console.log(`Servidor Backend funcionando en el puerto ${PORT}`)
 })
+/*
+cron.schedule('* * * * * *', async () => {
+    console.log('Realizando Backup de la Base de datos');
+    backup.backupDatabase();
+});
+
+*/

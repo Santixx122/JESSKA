@@ -21,14 +21,17 @@ const schemaUsuarios = new mongoose.Schema({
     },
     rol: {
         type: String,
-        enum: ['cliente', 'admin']
+        enum: ['cliente', 'admin'],
+        default:'cliente'
     },
     estado: {
         type: String,
-        enum: ['activo', 'inactivo']
+        enum: ['activo', 'inactivo'],
+        default: 'activo'
     }
 }, {
     title: 'esquema de usuario'
 });
 
 module.exports = mongoose.model('usuarios', schemaUsuarios);
+

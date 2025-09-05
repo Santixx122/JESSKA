@@ -1,13 +1,14 @@
 const Admin = require('../models/admin.model');
+require('dotenv').config()
+
 
 function controlError(res,message,error){
     res.status(500).json({
-        success: false,
+        success: false, 
         message:message,
         error: error.message
     });
 }
-
 const getAdmins = async(req,res)=>{
     try {
         const admins = await Admin.find();

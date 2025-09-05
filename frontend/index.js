@@ -15,8 +15,8 @@ app.use(express.json());
 
 app.use(express.urlencoded({extended:true}))
 
-app.use('/',routerAdmin)
 app.use('/',routerLanding);
+app.use('/',routerAdmin)
 
 app.listen(PORT,()=>{
     console.log('servidor Frontend corriendo en el puerto: ',PORT)
