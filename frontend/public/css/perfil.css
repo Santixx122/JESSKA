@@ -1,0 +1,49 @@
+/* Layout base para que el footer siempre quede al final */
+html, body {
+  height: 100%;
+}
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+.perfil-wrapper {
+  flex: 1 0 auto; /* ocupa el alto restante entre header y footer */
+  min-height: 70vh;
+}
+
+footer {
+  flex-shrink: 0;
+}
+
+/* Sidebar y contenido */
+.perfil-sidebar {
+  width: 260px;
+  background-color: #fff;
+}
+
+.perfil-sidebar .nav-link {
+  border-radius: .375rem;
+  color: #333;
+}
+.perfil-sidebar .nav-link:hover {
+  background: #f1f3f5;
+}
+.perfil-sidebar .nav-link.active {
+  background: #0d6efd;
+  color: #fff;
+}
+
+.perfil-content .section.d-none {
+  display: none !important;
+}
+
+/* Listados */
+.card-list-item {
+  border: 1px solid #e9ecef;
+  border-radius: .5rem;
+  padding: .75rem 1rem;
+}
+.card-list-item .muted {
+  color: #6c757d;
+}

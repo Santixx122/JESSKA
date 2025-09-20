@@ -8,12 +8,12 @@ const schemaUsuarios = new mongoose.Schema({
     email: {
         type: String,
         required: [true, 'El email es obligatorio'],
-        match: [/^.+@.+\..+$/, 'El email debe ser válido']
+        match: [/^.+@.+\..+$/, 'El email debe ser válido'],
+        unique: true
     },
     password: {
         type: String,
-        required: [true, 'La contraseña es obligatoria'],
-        match: [/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/, 'La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula y un número']
+        required: [true, 'La contraseña es obligatoria']
     },
     telefono: {
         type: String,

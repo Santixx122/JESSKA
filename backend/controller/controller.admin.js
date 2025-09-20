@@ -14,7 +14,7 @@ const getAdmins = async(req,res)=>{
         const admins = await Admin.find();
         res.status(200).json({
             success: true,
-            massage:'Administradores encontrados con exito',
+            message:'Administradores encontrados con exito',
             data: admins
         })
     } catch (error) {

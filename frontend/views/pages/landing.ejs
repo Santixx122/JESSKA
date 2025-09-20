@@ -49,9 +49,18 @@
             </a>
           </div>
           <div>
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-              Iniciar Sesion
-            </button>
+            <% if (typeof usuario !== 'undefined' && usuario) { %>
+              <div class="d-flex align-items-center gap-2">
+                <a href="/perfil" class="text-decoration-none me-2">Hola, <strong><%= usuario.nombre || usuario.email %></strong></a>
+                <form method="post" action="/logout" class="m-0">
+                  <button type="submit" class="btn btn-outline-danger btn-sm">Cerrar sesión</button>
+                </form>
+              </div>
+            <% } else { %>
+              <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                Iniciar Sesion
+              </button>
+            <% } %>
           </div>
         </div>
       </div>
@@ -64,16 +73,57 @@
         <div class="form-container" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
           aria-hidden="true">
           <p class="title">Bienvenido</p>
-          <form class="form">
+          <% if (typeof success !== 'undefined' && success) { %>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+              <%= success %>
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          <% } %>
+          <% if (typeof error !== 'undefined' && error) { %>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+              <%= error %>
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          <% } %>
+          <form method="post" action="/login" class="form" id="loginForm" novalidate>
             <div class="mb-3">
-              <input id="email" type="email" class="input form-control" placeholder="Email">
-              <div class="invalid-feedback">Por favor, ingrese un correo válido.</div>
+              <input 
+                id="email" 
+                type="email" 
+                class="input form-control <%= (typeof errorField !== 'undefined' && errorField === 'email') ? 'is-invalid' : '' %>" 
+                placeholder="Email" 
+                name="email"
+                value="<%= (typeof formData !== 'undefined' && formData.email) ? formData.email : '' %>"
+                required>
+              <div class="invalid-feedback" id="email-error">
+                <% if (typeof errorField !== 'undefined' && errorField === 'email') { %>
+                  <%= error %>
+                <% } else { %>
+                  Por favor, ingrese un correo válido.
+                <% } %>
+              </div>
             </div>
             <div class="mb-3">
-              <input id="password" type="password" class="input form-control" placeholder="Contraseña">
-              <div class="invalid-feedback">Por favor, ingrese una contraseña válida.</div>
+              <input 
+                id="password" 
+                type="password" 
+                class="input form-control <%= (typeof errorField !== 'undefined' && errorField === 'password') ? 'is-invalid' : '' %>" 
+                placeholder="Contraseña" 
+                name="password"
+                required
+                minlength="6">
+              <div class="invalid-feedback" id="password-error">
+                <% if (typeof errorField !== 'undefined' && errorField === 'password') { %>
+                  <%= error %>
+                <% } else { %>
+                  La contraseña debe tener al menos 6 caracteres.
+                <% } %>
+              </div>
             </div>
-            <button id="iniciarsesion" class="btn btn-primary w-100">Iniciar Sesión</button>
+            <button type='submit' id="iniciarsesion" class="btn btn-primary w-100">
+              <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+              <span class="button-text">Iniciar Sesión</span>
+            </button>
           </form>
           <p class="sign-up-label">
             No tienes cuenta? <a href="" data-bs-toggle="modal" data-bs-target="#staticBackdrop"><span
@@ -109,28 +159,45 @@
         <div class="modal-header">
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <form class="form">
+        <form class="form" method="post" action="/register" id="registerForm" novalidate>
           <p class="title2">Registrarse </p>
+          <% if (typeof successRegister !== 'undefined' && successRegister) { %>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+              <%= successRegister %>
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          <% } %>
+          <% if (typeof errorRegister !== 'undefined' && errorRegister) { %>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+              <%= errorRegister %>
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          <% } %>
           <p class="message">Regístrese ahora y obtenga acceso completo a nuestra aplicación. </p>
           <div class="flex">
             <label>
-              <input required="" placeholder="" type="text" class="input">
-              <span>Primer Nombre</span>
+              <input required="true" placeholder="" type="text" class="input form-control <%= (typeof errorRegisterField !== 'undefined' && errorRegisterField === 'nombre') ? 'is-invalid' : '' %>" name="nombre" value="<%= (typeof regFormData !== 'undefined' && regFormData.nombre) ? regFormData.nombre : '' %>">
+              <span>Nombre</span>
+              <div class="invalid-feedback"> <%= (typeof errorRegisterField !== 'undefined' && errorRegisterField === 'nombre' && typeof errorRegister !== 'undefined' && errorRegister) ? errorRegister : 'El nombre es obligatorio (mínimo 3 caracteres).' %></div>
             </label>
 
             <label>
-              <input required="" placeholder="" type="text" class="input">
-              <span>Segundo Nombre</span>
+              <input required="true" placeholder="" type="email" class="input form-control <%= (typeof errorRegisterField !== 'undefined' && errorRegisterField === 'email') ? 'is-invalid' : '' %>" name="email" value="<%= (typeof regFormData !== 'undefined' && regFormData.email) ? regFormData.email : '' %>">
+              <span>Email</span>
+              <div class="invalid-feedback"> <%= (typeof errorRegisterField !== 'undefined' && errorRegisterField === 'email' && typeof errorRegister !== 'undefined' && errorRegister) ? errorRegister : 'Ingresa un email válido.' %></div>
             </label>
           </div>
+
           <label>
-            <input required="" placeholder="" type="email" class="input">
-            <span>Email</span>
+            <input required="true" placeholder="" type="text" class="input form-control <%= (typeof errorRegisterField !== 'undefined' && errorRegisterField === 'telefono') ? 'is-invalid' : '' %>" name="telefono" value="<%= (typeof regFormData !== 'undefined' && regFormData.telefono) ? regFormData.telefono : '' %>">
+            <span>Telefono</span>
+            <div class="invalid-feedback"> <%= (typeof errorRegisterField !== 'undefined' && errorRegisterField === 'telefono' && typeof errorRegister !== 'undefined' && errorRegister) ? errorRegister : 'Ingrese un teléfono válido.' %></div>
           </label>
 
           <label>
-            <input required="" placeholder="" type="password" class="input">
+            <input required="true" placeholder="" type="password" class="input form-control <%= (typeof errorRegisterField !== 'undefined' && errorRegisterField === 'password') ? 'is-invalid' : '' %>" name="password" minlength="8">
             <span>Contraseña</span>
+            <div class="invalid-feedback"> <%= (typeof errorRegisterField !== 'undefined' && errorRegisterField === 'password' && typeof errorRegister !== 'undefined' && errorRegister) ? errorRegister : 'La contraseña debe tener mínimo 8 caracteres.' %></div>
           </label>
           <label>
             <input required="" placeholder="" type="password" class="input">

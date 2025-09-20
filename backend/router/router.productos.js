@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router()
 const controllerProducts = require('../controller/controller.productos')
- const validatorApiKey = require('../apiKey/apikey')
+const validatorApiKey = require('../apiKey/apikey')
 
 router.use(validatorApiKey)
 

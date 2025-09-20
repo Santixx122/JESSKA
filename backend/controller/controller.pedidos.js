@@ -10,7 +10,9 @@ function controlError(res,message,error){
 
 const getPedidos = async (req,res) =>{
     try{
-        const pedidos = await Pedido.find();
+        const filtro = {};
+        if (req.query.clienteId) filtro.clienteId = req.query.clienteId;
+        const pedidos = await Pedido.find(filtro);
         res.status(200).json({
             success:true,
             message:'pedidos encontrados con exito.',
