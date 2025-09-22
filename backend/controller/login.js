@@ -83,7 +83,8 @@ const login = async (req,res)=>{
             .cookie('access_token',token,{
                 httpOnly: true,
                 sameSite: 'lax',
-                maxAge: 1000 * 60 * 60 * 24 
+                secure: process.env.NODE_ENV === 'production', // Solo HTTPS en producción
+                maxAge: 1000 * 60 * 60 * 24 // 24 horas
             })
             .status(200).json({
                 success: true,

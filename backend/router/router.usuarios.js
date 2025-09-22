@@ -12,7 +12,7 @@ router.use(validatorApiKey)
 router.post('/', usuariosController.createUsuario);
 
 // Rutas protegidas (requieren token)
-router.use(validacionToken)
+//router.use(validacionToken)
 
 router.get('/', usuariosController.getUsuarios);
 router.get('/:id', usuariosController.getUsuarioById);
