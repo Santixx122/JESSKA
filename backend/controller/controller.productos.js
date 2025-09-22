@@ -1,6 +1,5 @@
 const Producto = require('../models/productos.model')
 
-
 function controlError(res,message,error){
     res.status(500).json({
         success: false,
@@ -12,7 +11,7 @@ function controlError(res,message,error){
 const getProducts = async (req,res)=>{
     try {
         const productos = await Producto.find()
-            res.status(201).json({
+            res.status(200).json({
                 success:true,
                 message:'Productos encontrados con exito.',
                 data:productos
@@ -22,29 +21,54 @@ const getProducts = async (req,res)=>{
     }
 }
 
+const getOneProduct = async (req,res)=>{
+    try {
+        const producto = await Producto.findById(req.params.id)
 
+        if(!producto){
+            return res.status(404).json({
+                success:false,
+                message:'No se encontró ningún producto con ese id.'
+            })
+        }else{
+            res.status(200).json({
+                success: true,
+                message:'Producto encontrado.',
+                data: producto
+            })
+        }
+    } catch (error) {
+        controlError(res,'Se produjo un error al buscar el producto.',error)
+    }
+}
 
 const createProducts = async (req,res)=>{
     try {
+        const variante = {
+            color: req.body.color,
+            talla: req.body.talla,
+            precio: req.body.precio,
+            stock: req.body.stock
+        };
+        
         const producto={
-            referencia:req.body.referencia,
-            marca:req.body.marca,
-            nombre:req.body.nombre,
-            descripcion:req.body.descripcion,
-            precio:req.body.precio,
-            cantidad:req.body.cantidad
+            nombre: req.body.nombre,
+            descripcion: req.body.descripcion,
+            variante: [variante],
+            categoriaId: req.body.categoriaId,
+            marcaId: req.body.marcaId,
+            estado: req.body.estado || 'activo'
         }
         const insertarProducto = await Producto.create(producto);
-        res.status(200).json({
+        res.status(201).json({
             success:true,
-            message:'El producto se cre exitosamente',
+            message:'El producto se creo exitosamente',
             data:insertarProducto
         })
     } catch (error) {
         controlError(res,'El producto no pudo ser creado exitosamente',error)     
     }
 }
-
 
 const updateProduct = async (req,res)=>{
     try {
@@ -64,10 +88,9 @@ const updateProduct = async (req,res)=>{
                 data:productUpdate
             })
     } catch (error) {
-        controlError(res,'El prodcuto no se pudo actualizar',error)
+        controlError(res,'El producto no se pudo actualizar',error)
     }
 }
-
 
 const deleteProduct = async (req,res)=>{
     try {
@@ -88,8 +111,10 @@ const deleteProduct = async (req,res)=>{
         controlError(res,'El producto no se pudo eliminar',error)
     }
 }
+
 module.exports={
     getProducts,
+    getOneProduct,
     createProducts,
     updateProduct,
     deleteProduct

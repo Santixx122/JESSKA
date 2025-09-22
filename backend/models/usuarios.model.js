@@ -1,43 +1,37 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose'); 
 
-const schemaUsuario = new mongoose.Schema({
-
-    nombre:{
-        type : String , required: true
+const schemaUsuarios = new mongoose.Schema({
+    nombre: {
+        type: String,
+        required: [true, 'El campo del nombre es obligatorio']
     },
-    cedula:{
-        type: String , required: true
+    email: {
+        type: String,
+        required: [true, 'El email es obligatorio'],
+        match: [/^.+@.+\..+$/, 'El email debe ser válido'],
+        unique: true
     },
-    email:{
-        type: String , required: true
+    password: {
+        type: String,
+        required: [true, 'La contraseña es obligatoria']
     },
-    password:{
-        type: String , required:true
+    telefono: {
+        type: String,
+        match: [/^(3\d{9}|[1-9]\d{6,9})$/, 'El teléfono debe ser un número válido de 7 a 10 dígitos y debe comenzar por 3']
     },
-    direccion: {
-        calle: {
-            type: String,
-            required: true
-        },
-        numero: {
-            type: String,
-            required: true
-        },
-        ciudad: {
-            type: String,
-            required: true
-        },
-        codigoPostal: {
-            type: String,
-            required: true
-        },
-        pais: {
-            type: String,
-            required: true,
-            default: "Colombia"
-        }
+    rol: {
+        type: String,
+        enum: ['cliente', 'admin'],
+        default:'cliente'
     },
-    rol:{
-        enum:['Cliente','Administrador','Usuario']
+    estado: {
+        type: String,
+        enum: ['activo', 'inactivo'],
+        default: 'activo'
     }
-})
+}, {
+    title: 'esquema de usuario'
+});
+
+module.exports = mongoose.model('usuarios', schemaUsuarios);
+
