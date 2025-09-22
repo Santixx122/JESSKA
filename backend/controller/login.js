@@ -2,9 +2,8 @@ const Usuario=require('../models/usuarios.model')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 
-// Función para validar formato de email
 const isValidEmail = (email) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const emailRegex = /^[^\s@]+@(gmail\.com|hotmail\.com)$/;
     return emailRegex.test(email);
 };
 
@@ -67,7 +66,7 @@ const login = async (req,res)=>{
             });
         }
 
-        // Crear token JWT con más información
+        // Crear token JWT 
         const token = jwt.sign(
             {
                 email: user.email,
@@ -76,7 +75,7 @@ const login = async (req,res)=>{
                 nombre: user.nombre
             },
             process.env.SECRET_KEY,
-            { expiresIn: '24h' } // Extendido a 24 horas
+            { expiresIn: '24h' } 
         );
 
         // Configurar cookie con token
@@ -84,8 +83,7 @@ const login = async (req,res)=>{
             .cookie('access_token',token,{
                 httpOnly: true,
                 sameSite: 'lax',
-                secure: process.env.NODE_ENV === 'production', // Solo HTTPS en producción
-                maxAge: 1000 * 60 * 60 * 24 // 24 horas
+                maxAge: 1000 * 60 * 60 * 24 
             })
             .status(200).json({
                 success: true,

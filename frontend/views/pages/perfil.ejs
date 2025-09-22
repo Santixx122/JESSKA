@@ -42,9 +42,6 @@
         <a href="#" data-section="pedidos" class="nav-link">Tus pedidos</a>
         <a href="#" data-section="mensajes" class="nav-link">Mensajes</a>
         <a href="#" data-section="resenas" class="nav-link">Reseñas</a>
-        <form method="post" action="/logout" class="mt-3">
-          <button type="submit" class="btn btn-outline-danger w-100">Cerrar sesión</button>
-        </form>
       </nav>
     </aside>
 
@@ -96,7 +93,7 @@
                 <div class="invalid-feedback"><%= errorField==='password' ? error : 'La contraseña debe tener al menos 8 caracteres.' %></div>
               </div>
               <div class="d-grid">
-                <button type="submit" class="btn btn-primary">Guardar cambios</button>
+                <button type="submit" class="agregar-btn">Guardar cambios</button>
               </div>
             </form>
           </div>

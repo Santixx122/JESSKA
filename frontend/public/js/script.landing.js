@@ -1,158 +1,110 @@
-// script carrusel con splide js
-document.querySelectorAll('.splide').forEach((carrusel) => {
-  new Splide(carrusel, {
-    type: 'loop',
-    perPage: 4,
-    focus: "center",
-    breakpoints: {
-      640: {
-        perPage: 1,
-        focus: "center"
-      },
-      1024: {
-        perPage: 3,
-        focus: "center"
-      },
-    },
-  }).mount();
-});
-
-// Validaciones del formulario de login y feedback visual
+// Form validation and interactions for JESSKA Landing Page
 document.addEventListener('DOMContentLoaded', () => {
+  // Form validation for login
   const loginForm = document.getElementById('loginForm');
-  const emailInput = document.getElementById('email');
-  const passwordInput = document.getElementById('password');
-  const submitBtn = document.getElementById('iniciarsesion');
-  const spinner = submitBtn?.querySelector('.spinner-border');
-  const btnText = submitBtn?.querySelector('.button-text');
-
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-  const setLoading = (loading) => {
-    if (!submitBtn) return;
-    if (loading) {
-      submitBtn.setAttribute('disabled', 'true');
-      if (spinner) spinner.classList.remove('d-none');
-      if (btnText) btnText.textContent = 'Ingresando...';
-    } else {
-      submitBtn.removeAttribute('disabled');
-      if (spinner) spinner.classList.add('d-none');
-      if (btnText) btnText.textContent = 'Iniciar Sesión';
-    }
-  };
-
   if (loginForm) {
-    loginForm.addEventListener('submit', (e) => {
-      let valid = true;
+    loginForm.addEventListener('submit', function(e) {
+      const email = document.getElementById('email');
+      const password = document.getElementById('password');
+      let isValid = true;
 
-      // Validar email
-      if (!emailInput.value || !emailRegex.test(emailInput.value)) {
-        emailInput.classList.add('is-invalid');
-        valid = false;
-      } else {
-        emailInput.classList.remove('is-invalid');
+      // Reset previous validation states
+      email.classList.remove('is-invalid');
+      password.classList.remove('is-invalid');
+
+      // Email validation
+      if (!email.value || !email.value.includes('@')) {
+        email.classList.add('is-invalid');
+        isValid = false;
       }
 
-      // Validar password
-      if (!passwordInput.value || passwordInput.value.length < 6) {
-        passwordInput.classList.add('is-invalid');
-        valid = false;
-      } else {
-        passwordInput.classList.remove('is-invalid');
+      // Password validation
+      if (!password.value || password.value.length < 6) {
+        password.classList.add('is-invalid');
+        isValid = false;
       }
 
-      if (!valid) {
+      if (!isValid) {
         e.preventDefault();
-        return;
       }
-
-      // Mostrar loading
-      setLoading(true);
     });
   }
 
-  // Si hay un error renderizado por el servidor, abrir el modal de login automáticamente
+  // Form validation for register
+  const registerForm = document.getElementById('registerForm');
+  if (registerForm) {
+    registerForm.addEventListener('submit', function(e) {
+      const inputs = this.querySelectorAll('input[required]');
+      const password = this.querySelector('input[name="password"]');
+      const confirmPassword = this.querySelector('input[name="confirmPassword"]');
+      let isValid = true;
+
+      inputs.forEach(input => {
+        input.classList.remove('is-invalid');
+        
+        if (!input.value.trim()) {
+          input.classList.add('is-invalid');
+          isValid = false;
+        }
+        
+        // Email validation
+        if (input.type === 'email' && input.value && !input.value.includes('@')) {
+          input.classList.add('is-invalid');
+          isValid = false;
+        }
+        
+        // Password validation
+        if (input.name === 'password' && input.value && input.value.length < 8) {
+          input.classList.add('is-invalid');
+          isValid = false;
+        }
+      });
+
+      // Password confirmation validation
+      if (password && confirmPassword) {
+        if (password.value !== confirmPassword.value) {
+          confirmPassword.classList.add('is-invalid');
+          isValid = false;
+        }
+      }
+
+      if (!isValid) {
+        e.preventDefault();
+      }
+    });
+  }
+
+  // Smooth scrolling for anchor links
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        target.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
+    });
+  });
+
+  // Auto-open modals if there are server messages
   try {
-    const modalEl = document.getElementById('exampleModal');
-    const hasServerError = modalEl && modalEl.querySelector('.alert.alert-danger');
-    if (hasServerError && window.bootstrap) {
-      const modal = new window.bootstrap.Modal(modalEl);
+    const loginModal = document.getElementById('exampleModal');
+    const registerModal = document.getElementById('staticBackdrop');
+    
+    // Check for login errors
+    if (loginModal && loginModal.querySelector('.alert.alert-danger') && window.bootstrap) {
+      const modal = new window.bootstrap.Modal(loginModal);
+      modal.show();
+    }
+    
+    // Check for register messages
+    if (registerModal && registerModal.querySelector('.alert') && window.bootstrap) {
+      const modal = new window.bootstrap.Modal(registerModal);
       modal.show();
     }
   } catch (err) {
-    // noop
-  }
-
-  // Validaciones de registro y auto-abrir modal si hay mensajes
-  try {
-    const regModalEl = document.getElementById('staticBackdrop');
-    const regForm = document.getElementById('registerForm');
-    const nombreInput = regForm?.querySelector('input[name="nombre"]');
-    const emailRegInput = regForm?.querySelector('input[name="email"]');
-    const telInput = regForm?.querySelector('input[name="telefono"]');
-    const passRegInput = regForm?.querySelector('input[name="password"]');
-    const passConfInput = regForm?.querySelectorAll('input[type="password"]')[1];
-
-    const emailRegex2 = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const telRegex = /^(3\d{9}|[1-9]\d{6,9})$/;
-
-    // Auto-abrir si hay alertas (error o success) en el modal de registro
-    const hasRegAlert = regModalEl && regModalEl.querySelector('.alert');
-    if (hasRegAlert && window.bootstrap) {
-      const regModal = new window.bootstrap.Modal(regModalEl);
-      regModal.show();
-    }
-
-    if (regForm) {
-      regForm.addEventListener('submit', (e) => {
-        let valid = true;
-
-        // nombre
-        if (!nombreInput.value || nombreInput.value.trim().length < 3) {
-          nombreInput.classList.add('is-invalid');
-          valid = false;
-        } else {
-          nombreInput.classList.remove('is-invalid');
-        }
-
-        // email
-        if (!emailRegInput.value || !emailRegex2.test(emailRegInput.value)) {
-          emailRegInput.classList.add('is-invalid');
-          valid = false;
-        } else {
-          emailRegInput.classList.remove('is-invalid');
-        }
-
-        // telefono
-        if (!telInput.value || !telRegex.test(telInput.value)) {
-          telInput.classList.add('is-invalid');
-          valid = false;
-        } else {
-          telInput.classList.remove('is-invalid');
-        }
-
-        // password
-        if (!passRegInput.value || passRegInput.value.length < 8) {
-          passRegInput.classList.add('is-invalid');
-          valid = false;
-        } else {
-          passRegInput.classList.remove('is-invalid');
-        }
-
-        // confirm password
-        if (!passConfInput.value || passConfInput.value !== passRegInput.value) {
-          passConfInput.classList.add('is-invalid');
-          valid = false;
-        } else {
-          passConfInput.classList.remove('is-invalid');
-        }
-
-        if (!valid) {
-          e.preventDefault();
-        }
-      });
-    }
-  } catch (e) {
-    // noop
+    console.log('Bootstrap modal initialization error:', err);
   }
 });
