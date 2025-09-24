@@ -21,21 +21,47 @@ router.get('/', async (req, res) => {
 
         const usuario = respuesta.data.usuario;
 
-        // Try to get featured products (this will be managed by admin)
+        // Obtener productos destacados
         let productosDestacados = [];
         try {
             const productosResponse = await axios.get(`${URL_BACKEND}/productos/destacados`, {
                 headers: { 'api-key-441': process.env.APIKEY_PASS }
             });
-            productosDestacados = productosResponse.data;
-        } catch (productError) {
-            console.log('No featured products found or error fetching them:', productError.message);
+            productosDestacados = productosResponse.data.data || [];
+        } catch (productosError) {
+            console.log('No se pudieron cargar productos destacados');
         }
 
-        res.render('pages/landing', { usuario, productosDestacados });
+        // Manejar mensajes de error desde query parameters
+        let errorMessage = null;
+        if (req.query.error === 'acceso_denegado') {
+            errorMessage = 'Acceso denegado. No tienes permisos para acceder al panel de administrador.';
+        } else if (req.query.error === 'sesion_expirada') {
+            errorMessage = 'Tu sesión ha expirado. Por favor, inicia sesión nuevamente.';
+        }
+
+        res.render('pages/landing', { 
+            usuario, 
+            productosDestacados,
+            error: errorMessage,
+            errorField: errorMessage ? 'general' : null
+        });
 
     } catch (error) {
-        res.render('pages/landing', { usuario: null, productosDestacados: [] });
+        // Manejar mensajes de error desde query parameters
+        let errorMessage = null;
+        if (req.query.error === 'acceso_denegado') {
+            errorMessage = 'Acceso denegado. No tienes permisos para acceder al panel de administrador.';
+        } else if (req.query.error === 'sesion_expirada') {
+            errorMessage = 'Tu sesión ha expirado. Por favor, inicia sesión nuevamente.';
+        }
+
+        res.render('pages/landing', { 
+            usuario: null,
+            productosDestacados: [],
+            error: errorMessage,
+            errorField: errorMessage ? 'general' : null
+        });
     }
 });
 
@@ -63,19 +89,37 @@ router.get('/carrito', async (req, res) => {
 // Página del catálogo
 router.get('/catalogo', async (req, res) => {
     try {
-        const respuesta = await axios.get(`${URL_BACKEND}/login/me`, {
-            headers: { 
-                'api-key-441': process.env.APIKEY_PASS,
-                ...(req.headers.cookie ? { Cookie: req.headers.cookie } : {})
-            },
-            withCredentials: true
-        });
+        // Obtener sesión del usuario
+        let usuario = null;
+        try {
+            const respuesta = await axios.get(`${URL_BACKEND}/login/me`, {
+                headers: { 
+                    'api-key-441': process.env.APIKEY_PASS,
+                    ...(req.headers.cookie ? { Cookie: req.headers.cookie } : {})
+                },
+                withCredentials: true
+            });
+            usuario = respuesta.data.usuario;
+        } catch (userError) {
+            // Usuario no autenticado, continuar sin usuario
+        }
 
-        const usuario = respuesta.data.usuario;
-        res.render('pages/catalogo', { usuario });
+        // Obtener productos visibles
+        let productos = [];
+        try {
+            const productosResponse = await axios.get(`${URL_BACKEND}/productos/visibles`, {
+                headers: { 'api-key-441': process.env.APIKEY_PASS }
+            });
+            productos = productosResponse.data.data || [];
+        } catch (productosError) {
+            console.error('Error cargando productos:', productosError.message);
+        }
+
+        res.render('pages/catalogo', { usuario, productos });
 
     } catch (error) {
-        res.render('pages/catalogo', { usuario: null });
+        console.error('Error en catálogo:', error.message);
+        res.render('pages/catalogo', { usuario: null, productos: [] });
     }
 });
 
@@ -91,7 +135,7 @@ router.post('/register', async (req, res) => {
         );
 
         // Registro exitoso: mostrar mensaje en landing
-        res.render('pages/landing', { usuario: null, productosDestacados: [], successRegister: 'Registro exitoso. Ahora puedes iniciar sesión.' });
+        res.render('pages/landing', { usuario: null, successRegister: 'Registro exitoso. Ahora puedes iniciar sesión.' });
     } catch (error) {
         console.error('Error en registro:', error.message);
         let errorMessage = 'Error al registrar usuario';
@@ -102,7 +146,6 @@ router.post('/register', async (req, res) => {
         }
         res.render('pages/landing', { 
             usuario: null,
-            productosDestacados: [],
             errorRegister: errorMessage,
             errorRegisterField: errorField,
             regFormData: { nombre, email, telefono }
@@ -124,7 +167,15 @@ router.post('/login', async (req, res) => {
     }
 
     const usuario = loginResponse.data.usuario || null;
-    res.render('pages/landing', { usuario, productosDestacados: [], success: 'Inicio de sesión exitoso' });
+    const redirectToAdmin = loginResponse.data.redirectToAdmin || false;
+
+    // Si el usuario es administrador, redirigir al panel de administrador
+    if (redirectToAdmin) {
+      return res.redirect('/admin');
+    }
+
+    // Si es usuario normal, mostrar landing con mensaje de éxito
+    res.render('pages/landing', { usuario, success: 'Inicio de sesión exitoso' });
 
   } catch (error) {
     console.error('Error en login:', error.message);
@@ -139,7 +190,6 @@ router.post('/login', async (req, res) => {
     
     res.render('pages/landing', { 
       usuario: null,
-      productosDestacados: [],
       error: errorMessage,
       errorField: errorField,
       formData: { email, password: '' } // Mantener email pero limpiar password

@@ -72,10 +72,15 @@ const SchemaProducto = new mongoose.Schema({
     estado: {
         type: String,
         enum: {
-            values: ['activo', 'agotado'],
-            message: 'El estado debe ser "activo" o "agotado"'
+            values: ['activo', 'agotado', 'inactivo'],
+            message: 'El estado debe ser "activo", "agotado" o "inactivo"'
         },
         default: 'activo'
+    },
+    visible: {
+        type: Boolean,
+        default: true,
+        required: [true, 'La visibilidad es obligatoria']
     },
     categoriaId: {
         type: mongoose.Schema.Types.ObjectId,

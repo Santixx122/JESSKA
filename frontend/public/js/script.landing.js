@@ -6,6 +6,9 @@ document.addEventListener('DOMContentLoaded', () => {
     loginForm.addEventListener('submit', function(e) {
       const email = document.getElementById('email');
       const password = document.getElementById('password');
+      const submitButton = document.getElementById('iniciarsesion');
+      const spinner = submitButton.querySelector('.spinner-border');
+      const buttonText = submitButton.querySelector('.button-text');
       let isValid = true;
 
       // Reset previous validation states
@@ -26,7 +29,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (!isValid) {
         e.preventDefault();
+        return;
       }
+
+      // Show loading state
+      if (submitButton && spinner && buttonText) {
+        submitButton.disabled = true;
+        spinner.classList.remove('d-none');
+        buttonText.textContent = 'Iniciando sesión...';
+      }
+
+      // The form will submit normally, but we show loading state
+      // The server will handle the redirect logic
     });
   }
 
@@ -93,7 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const loginModal = document.getElementById('exampleModal');
     const registerModal = document.getElementById('staticBackdrop');
     
-    // Check for login errors
+    // Check for login errors or access denied messages
     if (loginModal && loginModal.querySelector('.alert.alert-danger') && window.bootstrap) {
       const modal = new window.bootstrap.Modal(loginModal);
       modal.show();
@@ -104,7 +118,32 @@ document.addEventListener('DOMContentLoaded', () => {
       const modal = new window.bootstrap.Modal(registerModal);
       modal.show();
     }
+
+    // Check for general error messages (access denied, session expired)
+    const generalAlert = document.querySelector('.alert.alert-danger:not(.modal .alert)');
+    if (generalAlert) {
+      // Auto-hide general alerts after 5 seconds
+      setTimeout(() => {
+        if (generalAlert && generalAlert.parentNode) {
+          generalAlert.style.transition = 'opacity 0.5s';
+          generalAlert.style.opacity = '0';
+          setTimeout(() => {
+            if (generalAlert.parentNode) {
+              generalAlert.parentNode.removeChild(generalAlert);
+            }
+          }, 500);
+        }
+      }, 5000);
+    }
   } catch (err) {
     console.log('Bootstrap modal initialization error:', err);
+  }
+
+  // Handle URL parameters for error messages
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('error')) {
+    // Clean URL after showing error
+    const cleanUrl = window.location.pathname;
+    window.history.replaceState({}, document.title, cleanUrl);
   }
 });
