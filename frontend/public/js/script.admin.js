@@ -61,249 +61,21 @@ function mostrarSeccionDesdeHash() {
     const id = hash.substring(1);
     mostrarSeccion(id);
 }
-
 // Inicializar la sección desde el hash
 mostrarSeccionDesdeHash();
 
 // Funcionalidad para productos
-document.addEventListener('DOMContentLoaded', function() {
-    // Mejorar la tabla de productos existente
-    mejorarTablaProductos();
-    
-    // Agregar funcionalidad al botón "Agregar Producto"
-    const btnAgregarProducto = document.querySelector('.agregar-btn');
-    if (btnAgregarProducto) {
-        btnAgregarProducto.addEventListener('click', function() {
-            mostrarModalCrearProducto();
-        });
-    }
-});
 
-function mejorarTablaProductos() {
-    const tablaProductos = document.getElementById('tabla-productos');
-    if (!tablaProductos) return;
-
-    // Agregar columnas de estado y visibilidad a productos existentes
-    const tbody = tablaProductos.querySelector('tbody');
-    if (tbody) {
-        const filas = tbody.querySelectorAll('tr');
-        filas.forEach((fila, index) => {
-            // Agregar columna de estado
-            const celdaEstado = document.createElement('td');
-            celdaEstado.innerHTML = '<span class="badge bg-success">activo</span>';
-            
-            // Agregar columna de visibilidad
-            const celdaVisibilidad = document.createElement('td');
             celdaVisibilidad.innerHTML = `
                 <div class="form-check form-switch">
                     <input class="form-check-input toggle-visibility" type="checkbox" checked data-producto-index="${index}">
                     <label class="form-check-label">Visible</label>
                 </div>
             `;
-            
-            // Modificar la última celda (acciones)
-            const ultimaCelda = fila.querySelector('td:last-child');
-            if (ultimaCelda) {
-                ultimaCelda.innerHTML = `
-                    <div class="btn-group" role="group">
-                        <button type="button" class="btn btn-sm btn-outline-primary btn-editar" data-producto-index="${index}">
-                            <i class="fas fa-edit"></i> Editar
-                        </button>
-                        <button type="button" class="btn btn-sm btn-outline-danger btn-eliminar" data-producto-index="${index}">
-                            <i class="fas fa-trash"></i> Eliminar
-                        </button>
-                    </div>
-                `;
                 
-                // Insertar las nuevas celdas antes de la celda de acciones
-                fila.insertBefore(celdaEstado, ultimaCelda);
-                fila.insertBefore(celdaVisibilidad, ultimaCelda);
-            }
-        });
-
-        // Agregar event listeners para los toggles de visibilidad
-        tbody.addEventListener('change', function(e) {
-            if (e.target.classList.contains('toggle-visibility')) {
-                toggleProductVisibility(e.target);
-            }
-        });
-
-        // Agregar event listeners para botones de acción
-        tbody.addEventListener('click', function(e) {
-            if (e.target.closest('.btn-eliminar')) {
-                const index = e.target.closest('.btn-eliminar').dataset.productoIndex;
-                eliminarProducto(index);
-            }
-            
-            if (e.target.closest('.btn-editar')) {
-                const index = e.target.closest('.btn-editar').dataset.productoIndex;
-                editarProducto(index);
-            }
-        });
-    }
-
-    // Actualizar encabezados de la tabla
-    const thead = tablaProductos.querySelector('thead tr');
-    if (thead) {
-        // Agregar nuevos encabezados antes del último (que debería ser acciones)
-        const ultimoTh = thead.querySelector('th:last-child');
-        if (ultimoTh) {
-            const thEstado = document.createElement('th');
-            thEstado.textContent = 'Estado';
-            
-            const thVisibilidad = document.createElement('th');
-            thVisibilidad.textContent = 'Visible';
-            
-            ultimoTh.textContent = 'Acciones';
-            
-            thead.insertBefore(thEstado, ultimoTh);
-            thead.insertBefore(thVisibilidad, ultimoTh);
-        }
-    }
-}
-
-function toggleProductVisibility(toggle) {
-    const index = toggle.dataset.productoIndex;
-    const label = toggle.nextElementSibling;
-    const isVisible = toggle.checked;
-    
-    // Deshabilitar el toggle mientras se procesa
-    toggle.disabled = true;
-
-    // Hacer la llamada real al servidor
-    fetch(`/api/admin/productos/${index}/toggle-visibility`, {
-        method: 'PATCH',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // Actualizar la etiqueta
-            label.textContent = isVisible ? 'Visible' : 'Oculto';
-            mostrarAlerta(data.message, 'success');
-        } else {
-            // Revertir el toggle si hay error
-            toggle.checked = !isVisible;
-            mostrarAlerta(data.message || 'Error al cambiar visibilidad', 'danger');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        // Revertir el toggle si hay error
-        toggle.checked = !isVisible;
-        mostrarAlerta('Error de conexión', 'danger');
-    })
-    .finally(() => {
-        toggle.disabled = false;
-    });
-}
-
-function eliminarProducto(index) {
-    if (!confirm('¿Estás seguro de que deseas eliminar este producto?')) {
-        return;
-    }
-
-    // Hacer la llamada real al servidor
-    fetch(`/productos/${index}`, {
-        method: 'DELETE',
-        headers: {
-            'api-key-441': 'contrasena-super-secreta' // API key del entorno
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // Remover la fila de la tabla
-            const fila = document.querySelector(`tr[data-producto-index="${index}"]`);
-            if (fila) {
-                fila.remove();
-            }
-            mostrarAlerta('Producto eliminado exitosamente', 'success');
-        } else {
-            mostrarAlerta(data.message || 'Error al eliminar producto', 'danger');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        mostrarAlerta('Error de conexión', 'danger');
-    });
-}
-
-function editarProducto(index) {
-    mostrarAlerta('Funcionalidad de edición en desarrollo', 'info');
-}
-
-function mostrarModalCrearProducto() {
-    // Crear modal si no existe
-    if (!document.getElementById('modalCrearProducto')) {
-        crearModalCrearProducto();
-    }
-
-    // Cargar categorías y marcas
-    cargarCategoriasYMarcas();
-
     // Mostrar el modal
     const modal = new bootstrap.Modal(document.getElementById('modalCrearProducto'));
     modal.show();
-}
-
-async function cargarCategoriasYMarcas() {
-    try {
-        const [categoriasResponse, marcasResponse] = await Promise.all([
-            fetch('/api/admin/categorias'),
-            fetch('/api/admin/marcas')
-        ]);
-
-        if (categoriasResponse.ok) {
-            const categoriasData = await categoriasResponse.json();
-            llenarSelectCategorias('categoria', categoriasData.data || []);
-        }
-
-        if (marcasResponse.ok) {
-            const marcasData = await marcasResponse.json();
-            llenarSelectMarcas('marca', marcasData.data || []);
-        }
-    } catch (error) {
-        console.error('Error cargando categorías y marcas:', error);
-        mostrarAlerta('Error cargando datos necesarios', 'danger');
-    }
-}
-
-function llenarSelectCategorias(selectId, categorias) {
-    const select = document.getElementById(selectId);
-    if (!select) return;
-
-    // Limpiar opciones existentes excepto la primera
-    while (select.children.length > 1) {
-        select.removeChild(select.lastChild);
-    }
-
-    categorias.forEach(categoria => {
-        const option = document.createElement('option');
-        option.value = categoria._id;
-        option.textContent = categoria.nombre;
-        select.appendChild(option);
-    });
-}
-
-function llenarSelectMarcas(selectId, marcas) {
-    const select = document.getElementById(selectId);
-    if (!select) return;
-
-    // Limpiar opciones existentes excepto la primera
-    while (select.children.length > 1) {
-        select.removeChild(select.lastChild);
-    }
-
-    marcas.forEach(marca => {
-        const option = document.createElement('option');
-        option.value = marca._id;
-        option.textContent = marca.nombre;
-        select.appendChild(option);
-    });
-}
 
 function crearModalCrearProducto() {
     const modalHTML = `
@@ -530,5 +302,5 @@ function mostrarAlerta(mensaje, tipo) {
         if (alerta.parentNode) {
             alerta.remove();
         }
-    }, 5000);
+    }, 3000);
 }
