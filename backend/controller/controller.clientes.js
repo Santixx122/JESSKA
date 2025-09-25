@@ -11,7 +11,9 @@ function controlError(res, message, error) {
 
 const getClientes = async (req, res) => {
     try {
-        const clientes = await Cliente.find();
+        const filtro = {};
+        if (req.query.usuarioId) filtro.usuarioId = req.query.usuarioId;
+        const clientes = await Cliente.find(filtro);
         res.status(200).json({
             success: true,
             message: 'Clientes encontrados con éxito.',

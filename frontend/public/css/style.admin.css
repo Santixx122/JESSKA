@@ -6,6 +6,10 @@
     width: 100%;
     height: 80px;
     background-color: #212121;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1001;
 }
 
 .content-nav-admin {
@@ -92,19 +96,28 @@
 
 .global-content-admin {
     display: inline-flex;
-    width: 100%;
+    width: calc(100% - 275px);
     height: 100%;
+    margin-left: 275px;
+    padding-top: 80px;
+    min-height: 100vh;
+    box-sizing: border-box;
 }
 
 /*Contenido lateral*/
 .lateral-content-admin {
     width: 275px;
-    height: 100vh;
+    height: calc(100vh - 80px);
     background-color: #292929;
     color: #fff;
     display: flex;
     flex-direction: column;
     align-items: center;
+    position: fixed;
+    top: 80px;
+    left: 0;
+    z-index: 1000;
+    overflow-y: auto;
 }
 .lateral-content-admin h4{
     margin-top: 0.5em;
@@ -257,6 +270,7 @@
 
 .section.active {
     display: flex;
+    margin: 2em;
     flex-direction: column;
     opacity: 1;
     transform: translateY(0);
@@ -486,43 +500,40 @@
   box-sizing: border-box;
 }
 
-.lateral-content-admin {
-  position: fixed;
-  left: 0;
-  top: 80px;
-  height: calc(100vh - 80px);
-  min-height: 300px;
-  z-index: 10;
-}
-
-.global-content-admin {
-  margin-left: 275px;
-  width: calc(100% - 275px);
-  min-width: 0;
-}
+/* Estilos duplicados eliminados - se mantienen los principales arriba */
 
 @media (max-width: 992px) {
+  .nav-admin {
+    position: static;
+  }
   .lateral-content-admin {
     position: static;
     width: 100%;
     height: auto;
     min-height: unset;
+    top: auto;
   }
   .global-content-admin {
     margin-left: 0;
+    padding-top: 0;
     width: 100%;
     }
 }
 
 @media (max-width: 600px) {
+  .nav-admin {
+    position: static;
+  }
   .lateral-content-admin {
     position: static;
     width: 100%;
     height: auto;
     min-height: unset;
+    top: auto;
   }
   .global-content-admin {
     margin-left: 0;
+    padding-top: 0;
     width: 100%;
     }
 }

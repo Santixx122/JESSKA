@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
   <meta charset="UTF-8">
@@ -8,55 +8,60 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Signika:wght@300..700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
     rel="stylesheet">
   <!--boostrap styles-->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
-  <!--splide.js styles-->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css">
   <!--styles-->
   <link rel="stylesheet" href="css/style.landing.css">
-  <title>JESKKA</title>
+  <title>JESSKA - Descubre la nueva colección</title>
 </head>
 
 <body>
-  <header>
-    <nav class="navbar navbar-expand-lg bg-body-tertiary fixed-top">
-      <div class="container-fluid">
-
-        <h3><strong>JESSKA</strong></h3>
-
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-          aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item">
-              <a class="nav-link" aria-current="page" href="#">Inicio</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" aria-current="page" href="#Productos">Productos</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" aria-current="page" href="Assets/pages/catalogo.html">Catalogo</a>
-            </li>
-          </ul>
-          <div class="carrito">
-            <a href="./Assets/pages/carritoCompras.html" class="nav-link">
-              <img src="img/carrito-compras.svg" alt="">
-            </a>
-          </div>
-          <div>
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-              Iniciar Sesion
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg fixed-top">
+    <div class="container">
+      <a class="navbar-brand" href="/">JESSKA</a>
+      
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav mx-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/">Inicio</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#productos">Productos</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/catalogo">Catálogo</a>
+          </li>
+        </ul>
+        
+        <div class="d-flex align-items-center">
+          <a href="/carrito" class="cart-icon">
+            <img src="img/carrito-compras.svg" alt="Carrito">
+          </a>
+          
+          <% if (typeof usuario !== 'undefined' && usuario) { %>
+            <div class="d-flex align-items-center gap-2 ms-3">
+              <a href="/perfil" class="user-profile-link">Hola, <strong><%= usuario.nombre || usuario.email %></strong></a>
+              <form method="post" action="/logout" class="m-0">
+                <button type="submit" class="btn-profile">Cerrar sesión</button>
+              </form>
+            </div>
+          <% } else { %>
+            <button type="button" class="btn-login ms-3" data-bs-toggle="modal" data-bs-target="#exampleModal">
+              Iniciar Sesión
             </button>
-          </div>
+          <% } %>
         </div>
       </div>
-    </nav>
-  </header>
+    </div>
+  </nav>
   <!--Modal 1-->
   <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -64,16 +69,57 @@
         <div class="form-container" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
           aria-hidden="true">
           <p class="title">Bienvenido</p>
-          <form class="form">
+          <% if (typeof success !== 'undefined' && success) { %>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+              <%= success %>
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          <% } %>
+          <% if (typeof error !== 'undefined' && error) { %>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+              <%= error %>
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          <% } %>
+          <form method="post" action="/login" class="form" id="loginForm" novalidate>
             <div class="mb-3">
-              <input id="email" type="email" class="input form-control" placeholder="Email">
-              <div class="invalid-feedback">Por favor, ingrese un correo válido.</div>
+              <input 
+                id="email" 
+                type="email" 
+                class="input form-control <%= (typeof errorField !== 'undefined' && errorField === 'email') ? 'is-invalid' : '' %>" 
+                placeholder="Email" 
+                name="email"
+                value="<%= (typeof formData !== 'undefined' && formData.email) ? formData.email : '' %>"
+                required>
+              <div class="invalid-feedback" id="email-error">
+                <% if (typeof errorField !== 'undefined' && errorField === 'email') { %>
+                  <%= error %>
+                <% } else { %>
+                  Por favor, ingrese un correo válido.
+                <% } %>
+              </div>
             </div>
             <div class="mb-3">
-              <input id="password" type="password" class="input form-control" placeholder="Contraseña">
-              <div class="invalid-feedback">Por favor, ingrese una contraseña válida.</div>
+              <input 
+                id="password" 
+                type="password" 
+                class="input form-control <%= (typeof errorField !== 'undefined' && errorField === 'password') ? 'is-invalid' : '' %>" 
+                placeholder="Contraseña" 
+                name="password"
+                required
+                minlength="6">
+              <div class="invalid-feedback" id="password-error">
+                <% if (typeof errorField !== 'undefined' && errorField === 'password') { %>
+                  <%= error %>
+                <% } else { %>
+                  La contraseña debe tener al menos 6 caracteres.
+                <% } %>
+              </div>
             </div>
-            <button id="iniciarsesion" class="btn btn-primary w-100">Iniciar Sesión</button>
+            <button type='submit' id="iniciarsesion" class="btn btn-primary w-100">
+              <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+              <span class="button-text">Iniciar Sesión</span>
+            </button>
           </form>
           <p class="sign-up-label">
             No tienes cuenta? <a href="" data-bs-toggle="modal" data-bs-target="#staticBackdrop"><span
@@ -109,32 +155,50 @@
         <div class="modal-header">
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <form class="form">
+        <form class="form" method="post" action="/register" id="registerForm" novalidate>
           <p class="title2">Registrarse </p>
+          <% if (typeof successRegister !== 'undefined' && successRegister) { %>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+              <%= successRegister %>
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          <% } %>
+          <% if (typeof errorRegister !== 'undefined' && errorRegister) { %>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+              <%= errorRegister %>
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          <% } %>
           <p class="message">Regístrese ahora y obtenga acceso completo a nuestra aplicación. </p>
           <div class="flex">
             <label>
-              <input required="" placeholder="" type="text" class="input">
-              <span>Primer Nombre</span>
+              <input required="true" placeholder="" type="text" class="input form-control <%= (typeof errorRegisterField !== 'undefined' && errorRegisterField === 'nombre') ? 'is-invalid' : '' %>" name="nombre" value="<%= (typeof regFormData !== 'undefined' && regFormData.nombre) ? regFormData.nombre : '' %>">
+              <span>Nombre</span>
+              <div class="invalid-feedback"> <%= (typeof errorRegisterField !== 'undefined' && errorRegisterField === 'nombre' && typeof errorRegister !== 'undefined' && errorRegister) ? errorRegister : 'El nombre es obligatorio (mínimo 3 caracteres).' %></div>
             </label>
 
             <label>
-              <input required="" placeholder="" type="text" class="input">
-              <span>Segundo Nombre</span>
+              <input required="true" placeholder="" type="email" class="input form-control <%= (typeof errorRegisterField !== 'undefined' && errorRegisterField === 'email') ? 'is-invalid' : '' %>" name="email" value="<%= (typeof regFormData !== 'undefined' && regFormData.email) ? regFormData.email : '' %>">
+              <span>Email</span>
+              <div class="invalid-feedback"> <%= (typeof errorRegisterField !== 'undefined' && errorRegisterField === 'email' && typeof errorRegister !== 'undefined' && errorRegister) ? errorRegister : 'Ingresa un email válido.' %></div>
             </label>
           </div>
+
           <label>
-            <input required="" placeholder="" type="email" class="input">
-            <span>Email</span>
+            <input required="true" placeholder="" type="text" class="input form-control <%= (typeof errorRegisterField !== 'undefined' && errorRegisterField === 'telefono') ? 'is-invalid' : '' %>" name="telefono" value="<%= (typeof regFormData !== 'undefined' && regFormData.telefono) ? regFormData.telefono : '' %>">
+            <span>Telefono</span>
+            <div class="invalid-feedback"> <%= (typeof errorRegisterField !== 'undefined' && errorRegisterField === 'telefono' && typeof errorRegister !== 'undefined' && errorRegister) ? errorRegister : 'Ingrese un teléfono válido.' %></div>
           </label>
 
           <label>
-            <input required="" placeholder="" type="password" class="input">
+            <input required="true" placeholder="" type="password" class="input form-control <%= (typeof errorRegisterField !== 'undefined' && errorRegisterField === 'password') ? 'is-invalid' : '' %>" name="password" minlength="8">
             <span>Contraseña</span>
+            <div class="invalid-feedback"> <%= (typeof errorRegisterField !== 'undefined' && errorRegisterField === 'password' && typeof errorRegister !== 'undefined' && errorRegister) ? errorRegister : 'La contraseña debe tener mínimo 8 caracteres.' %></div>
           </label>
           <label>
-            <input required="" placeholder="" type="password" class="input">
+            <input required="true" placeholder="" type="password" class="input form-control" name="confirmPassword" id="confirmPassword">
             <span>Confirmar Contraseña</span>
+            <div class="invalid-feedback">Las contraseñas no coinciden.</div>
           </label>
           <button class="submit">Registrarse</button>
           <p class="signin">Ya tienes una cuenta ? <a href="" data-bs-toggle="modal"
@@ -143,369 +207,80 @@
       </div>
     </div>
   </div>
-  <!--contenido global-->
-  <main id="inicio-landing" class="body-content">
-    <!--Banner-->
-    <article class="Banner">
-      <div class="body-banner">
-        <div class="texto-banner">
-          <div>
-            <h1><strong>¡Desata tu rendimiento!</strong></h1>
-          </div>
-          <div>
-            <p>
-              Nuevas zapatillas deportivas. <br>
-              Comodidad, estilo y <br> alto rendimiento en cada paso. <br>
-            </p>
-          </div>
-        </div>
-      </div>
-    </article>
-    <!--Primer contenido-->
-    <div class="global-content">
-      <div class="second-content">
-        <h1><strong>El equilibrio perfecto entre estilo y funcionalidad.</strong></h1>
-      </div>
-      <div class="second-content-img">
-        <img src="img/logo_Urban_Steps (1).svg" id="logo">
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="container">
+      <div class="hero-content">
+        <h1>Descubre la nueva colección</h1>
+        <p>Encuentra el calzado perfecto para cada ocasión. Explora nuestra amplia gama de estilos y diseños.</p>
+        <a href="/catalogo" class="btn-collection">Ver colección</a>
       </div>
     </div>
-    <!--segundo contenido-->
-    <div class="global-second-contents" id="Productos">
-      <!--carrusel de productos-->
-      <h3>Hombre</h3>
-      <div class="third-content">
-        <section class="splide">
-          <div class="splide__track">
-            <ul class="splide__list">
-              <li class="splide__slide">
-                <div class="card" style="width: 18rem;">
-                  <div class="card-header">
-                    <img src="/img/carrusel-hombre-3.svg" class="card-img-top" alt="...">
-                  </div>
-                  <div class="card-body">
-                    <h5>Tenis Nike</h5>
-                    <p>precio: $180.000</p>
-                  </div>
-                  <div class="card-footer">
-                    <button class="button">
-                      <span>Comprar</span>
-                    </button>
-                  </div>
-                </div>
-              </li>
-              <li class="splide__slide">
-                <div class="card" style="width: 18rem;">
-                  <div class="card-header">
-                    <img src="/img/carrusel-hombre-4.svg" class="card-img-top" alt="...">
-                  </div>
-                  <div class="card-body">
-                    <h5>Tenis Negros Nike</h5>
-                    <p>Precio: $150.000</p>
-                  </div>
-                  <div class="card-footer">
-                    <button class="button">
-                      <span>Comprar</span>
-                    </button>
-                  </div>
-                </div>
-              </li>
-              <li class="splide__slide">
-                <div class="card" style="width: 18rem;">
-                  <div class="card-header">
-                    <img src="/img/carrusel-hombre-2.svg" class="card-img-top" alt="...">
-                  </div>
-                  <div class="card-body">
-                    <h5>Tenis Deportivos Grises</h5>
-                    <p>Precio: $170.000</p>
-                  </div>
-                  <div class="card-footer">
-                    <button class="button">
-                      <span>Comprar</span>
-                    </button>
-                  </div>
-                </div>
-              </li>
-              <li class="splide__slide">
-                <div class="card" style="width: 18rem;">
-                  <div class="card-header">
-                    <img src="/img/carrusel-hombre-6.svg" class="card-img-top" alt="...">
-                  </div>
-                  <div class="card-body">
-                    <h5>Tenis Vans</h5>
-                    <p>Precio: $200.000</p>
-                  </div>
-                  <div class="card-footer">
-                    <button class="button">
-                      <span>Comprar</span>
-                    </button>
-                  </div>
-                </div>
-              </li>
-              <li class="splide__slide">
-                <div class="card" style="width: 18rem;">
-                  <div class="card-header">
-                    <img src="/img/carrusel-hombre-7.svg" class="card-img-top" alt="...">
-                  </div>
-                  <div class="card-body">
-                    <h5>Tenis Adidas</h5>
-                    <p>precio: $240.000</p>
-                  </div>
-                  <div class="card-footer">
-                    <button class="button">
-                      <span>Comprar</span>
-                    </button>
-                  </div>
-                </div>
-              </li>
-              <li class="splide__slide">
-                <div class="card" style="width: 18rem;">
-                  <div class="card-header">
-                    <img src="/img/carrusel-hombre-8.svg" class="card-img-top">
-                  </div>
-                  <div class="card-body">
-                    <h5>Tenis Deportivos</h5>
-                    <p>Precio: $150.00</p>
-                  </div>
-                  <div class="card-footer">
-                    <button class="button">
-                      <span>Comprar</span>
-                    </button>
-                  </div>
+  </section>
 
+  <!-- Featured Products Section -->
+  <section class="featured-products" id="productos">
+    <div class="container">
+      <h2 class="section-title">Productos destacados</h2>
+      <div class="row">
+        <% if (typeof productosDestacados !== 'undefined' && productosDestacados && productosDestacados.length > 0) { %>
+          <% productosDestacados.forEach(function(producto) { %>
+            <div class="col-lg-4 col-md-6 mb-4">
+              <div class="product-card">
+                <img src="<%= producto.imagen || 'img/placeholder-product.jpg' %>" alt="<%= producto.titulo %>" class="product-image">
+                <div class="product-info">
+                  <h3 class="product-title"><%= producto.titulo %></h3>
+                  <p class="product-description"><%= producto.descripcion || 'Producto de alta calidad para uso diario' %></p>
                 </div>
-              </li>
-
-            </ul>
+              </div>
+            </div>
+          <% }); %>
+        <% } else { %>
+          <!-- Placeholder products for when no featured products are set -->
+          <div class="col-lg-4 col-md-6 mb-4">
+            <div class="product-card">
+              <img src="img/carrusel-hombre-3.svg" alt="Zapatillas de running" class="product-image">
+              <div class="product-info">
+                <h3 class="product-title">Zapatillas de running</h3>
+                <p class="product-description">Perfectas para corredores de rendimiento</p>
+              </div>
+            </div>
           </div>
-        </section>
-      </div>
-      <h3>Mujer</h3>
-
-      <div class="third-content">
-        <section class="splide" id="splide2">
-          <div class="splide__track">
-            <ul class="splide__list">
-              <li class="splide__slide">
-                <div class="card" style="width: 18rem;">
-                  <div class="card-header">
-                    <img src="/img/carrusel-mujer-1.svg" class="card-img-top">
-                  </div>
-                  <div class="card-body">
-                    <h5>Tenis Deportivo Mujer</h5>
-                    <p>Precio: $170.000</p>
-                  </div>
-                  <div class="card-footer">
-                    <button class="button">
-                      <span>Comprar</span>
-                    </button>
-                  </div>
-                </div>
-              </li>
-              <li class="splide__slide">
-                <div class="card" style="width: 18rem;">
-                  <div class="card-header">
-                    <img src="/img/carrusel-mujer-2.svg" class="card-img-top">
-                  </div>
-                  <div class="card-body">
-                    <h5>Tenis Mujer</h5>
-                    <p>Precio: $150.000</p>
-                  </div>
-                  <div class="card-footer">
-                    <button class="button">
-                      <span>Comprar</span>
-                    </button>
-                  </div>
-                </div>
-              </li>
-              <li class="splide__slide">
-                <div class="card" style="width: 18rem;">
-                  <div class="card-header">
-                    <img src="/img/carrusel-mujer-3.svg" class="card-img-top">
-                  </div>
-                  <div class="card-body">
-                    <h5>Tenis Casuales Mujer</h5>
-                    <p>Precio: $150.000</p>
-                  </div>
-                  <div class="card-footer">
-                    <button class="button">
-                      <span>Comprar</span>
-                    </button>
-                  </div>
-                </div>
-              </li>
-              <li class="splide__slide">
-                <div class="card" style="width: 18rem;">
-                  <div class="card-header">
-                    <img src="/img/carrusel-mujer-4.svg" class="card-img-top">
-                  </div>
-                  <div class="card-body">
-                    <h5>Tenis Mujer</h5>
-                    <p>Precio: $160.000</p>
-                  </div>
-                  <div class="card-footer">
-                    <button class="button">
-                      <span>Comprar</span>
-                    </button>
-                  </div>
-                </div>
-              </li>
-              <li class="splide__slide">
-                <div class="card" style="width: 18rem;">
-                  <div class="card-header">
-                    <img src="/img/carrusel-mujer-5.svg" class="card-img-top">
-                  </div>
-                  <div class="card-body">
-                    <h5>Tenis Blancos Mujer</h5>
-                    <p>Precio: $120.000</p>
-                  </div>
-                  <div class="card-footer">
-                    <button class="button">
-                      <span>Comprar</span>
-                    </button>
-                  </div>
-                </div>
-              </li>
-              <li class="splide__slide">
-                <div class="card" style="width: 18rem;">
-                  <div class="card-header">
-                    <img src="/img/carrusel-mujer-6.svg" class="card-img-top">
-                  </div>
-                  <div class="card-body">
-                    <h5>Tenis para Mujer</h5>
-                    <p>Precio: $190.000</p>
-                  </div>
-                  <div class="card-footer">
-                    <button class="button">
-                      <span>Comprar</span>
-                    </button>
-                  </div>
-                </div>
-              </li>
-            </ul>
+          <div class="col-lg-4 col-md-6 mb-4">
+            <div class="product-card">
+              <img src="img/carrusel-mujer-1.svg" alt="Zapatillas casuales" class="product-image">
+              <div class="product-info">
+                <h3 class="product-title">Zapatillas casuales</h3>
+                <p class="product-description">Comodidad y estilo para el día a día</p>
+              </div>
+            </div>
           </div>
-        </section>
-      </div>
-      <h3>Niños</h3>
-      <div class="third-content">
-        <section class="splide" id="splide2">
-          <div class="splide__track">
-            <ul class="splide__list">
-              <li class="splide__slide">
-                <div class="card" style="width: 18rem;">
-                  <div class="card-header">
-                    <img src="/img/carrusel-infante-1.svg" class="card-img-top">
-                  </div>
-                  <div class="card-body">
-                    <h5>Tenis para Niños</h5>
-                    <p>Precio: $150.000</p>
-                  </div>
-                  <div class="card-footer">
-                    <button class="button">
-                      <span>Comprar</span>
-                    </button>
-                  </div>
-                </div>
-              </li>
-              <li class="splide__slide">
-                <div class="card" style="width: 18rem;">
-                  <div class="card-header">
-                    <img src="/img/carrusel-infante-2.svg" class="card-img-top">
-                  </div>
-                  <div class="card-body">
-                    <h5>Tenis para Niña</h5>
-                    <p>Precio: $140.000</p>
-                  </div>
-                  <div class="card-footer">
-                    <button class="button">
-                      <span>Comprar</span>
-                    </button>
-                  </div>
-                </div>
-              </li>
-              <li class="splide__slide">
-                <div class="card" style="width: 18rem;">
-                  <div class="card-header">
-                    <img src="/img/carrusel-infante-3.svg" class="card-img-top">
-                  </div>
-                  <div class="card-body">
-                    <h5>Tenis para Niño</h5>
-                    <p>Precio: $190.000</p>
-                  </div>
-                  <div class="card-footer">
-                    <button class="button">
-                      <span>Comprar</span>
-                    </button>
-                  </div>
-                </div>
-              </li>
-              <li class="splide__slide">
-                <div class="card" style="width: 18rem;">
-                  <div class="card-header">
-                    <img src="/img/carrusel-infante-4.svg" class="card-img-top">
-                  </div>
-                  <div class="card-body">
-                    <h5>Tenis Unisex</h5>
-                    <p>Precio: $170.000</p>
-                  </div>
-                  <div class="card-footer">
-                    <button class="button">
-                      <span>Comprar</span>
-                    </button>
-                  </div>
-                </div>
-              </li>
-              <li class="splide__slide">
-                <div class="card" style="width: 18rem;">
-                  <div class="card-header">
-                    <img src="/img/carrusel-infante-5.svg" class="card-img-top">
-                  </div>
-                  <div class="card-body">
-                    <h5>Tenis Nike para Niño</h5>
-                    <p>Precio: $199.000</p>
-                  </div>
-                  <div class="card-footer">
-                    <button class="button">
-                      <span>Comprar</span>
-                    </button>
-                  </div>
-                </div>
-              </li>
-              <li class="splide__slide">
-                <div class="card" style="width: 18rem;">
-                  <div class="card-header">
-                    <img src="/img/carrusel-infante-6.svg" class="card-img-top">
-                  </div>
-                  <div class="card-body">
-                    <h5>Tenis Jordan para Niños</h5>
-                    <p>Precio: $210.000</p>
-                  </div>
-                  <div class="card-footer">
-                    <button class="button">
-                      <span>Comprar</span>
-                    </button>
-                  </div>
-                </div>
-              </li>
-
-            </ul>
+          <div class="col-lg-4 col-md-6 mb-4">
+            <div class="product-card">
+              <img src="img/carrusel-hombre-7.svg" alt="Zapatos formales" class="product-image">
+              <div class="product-info">
+                <h3 class="product-title">Zapatos formales</h3>
+                <p class="product-description">Elegancia para ocasiones especiales</p>
+              </div>
+            </div>
           </div>
-        </section>
+        <% } %>
       </div>
     </div>
-  </main>
-  <!--Footer-->
-  <footer class="text-center py-4">
-    <p>&copy; 2025 JESSKA. El equilibrio perfecto entre estilo y funcionalidad</p>
-
+  </section>
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2025 JESSKA. Todos los derechos reservados.</p>
+    </div>
   </footer>
-  <!--splide.js-->
-  <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
-  <!--boostrap-->
+
+  <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq"
     crossorigin="anonymous"></script>
-  <!--script-->
+  
+  <!-- Custom JavaScript -->
   <script src="js/script.landing.js"></script>
 </body>
 

@@ -1,0 +1,62 @@
+
+fecha: Tue Sep 16 2025 22:08:14 GMT-0600 (hora estándar central) metodo: GET 
+fecha: Wed Sep 17 2025 17:44:16 GMT-0600 (hora estándar central) metodo: GET 
+fecha: Wed Sep 17 2025 17:46:15 GMT-0600 (hora estándar central) metodo: GET 
+fecha: Wed Sep 17 2025 17:47:24 GMT-0600 (hora estándar central) metodo: GET 
+fecha: Wed Sep 17 2025 17:48:58 GMT-0600 (hora estándar central) metodo: GET 
+fecha: Wed Sep 17 2025 17:49:33 GMT-0600 (hora estándar central) metodo: GET 
+fecha: Wed Sep 17 2025 17:52:06 GMT-0600 (hora estándar central) metodo: GET 
+fecha: Wed Sep 17 2025 17:53:02 GMT-0600 (hora estándar central) metodo: GET 
+fecha: Wed Sep 17 2025 17:54:14 GMT-0600 (hora estándar central) metodo: GET 
+fecha: Wed Sep 17 2025 18:13:31 GMT-0600 (hora estándar central) metodo: GET 
+fecha: Wed Sep 17 2025 18:16:21 GMT-0600 (hora estándar central) metodo: GET 
+fecha: Wed Sep 17 2025 18:18:41 GMT-0600 (hora estándar central) metodo: GET 
+fecha: Wed Sep 17 2025 19:57:35 GMT-0600 (hora estándar central) metodo: GET 
+fecha: Sun Sep 21 2025 09:28:28 GMT-0500 (hora estándar de Colombia) metodo: GET 
+fecha: Tue Sep 23 2025 18:34:30 GMT-0600 (hora estándar central) metodo: GET 
+fecha: Tue Sep 23 2025 19:11:43 GMT-0600 (hora estándar central) metodo: GET 
+fecha: Tue Sep 23 2025 19:13:29 GMT-0600 (hora estándar central) metodo: GET 
+fecha: Tue Sep 23 2025 20:04:10 GMT-0600 (hora estándar central) metodo: GET 
+fecha: Tue Sep 23 2025 20:40:11 GMT-0600 (hora estándar central) metodo: GET 
+fecha: Tue Sep 23 2025 20:41:10 GMT-0600 (hora estándar central) metodo: GET 
+fecha: Tue Sep 23 2025 22:06:06 GMT-0600 (hora estándar central) metodo: GET 
+fecha: Tue Sep 23 2025 22:08:59 GMT-0600 (hora estándar central) metodo: GET 
+fecha: Tue Sep 23 2025 22:09:55 GMT-0600 (hora estándar central) metodo: GET 
+fecha: Tue Sep 23 2025 22:10:54 GMT-0600 (hora estándar central) metodo: GET 
+fecha: Tue Sep 23 2025 22:11:00 GMT-0600 (hora estándar central) metodo: GET 
+fecha: Tue Sep 23 2025 22:14:55 GMT-0600 (hora estándar central) metodo: GET 
+fecha: Tue Sep 23 2025 22:20:31 GMT-0600 (hora estándar central) metodo: GET 
+fecha: Tue Sep 23 2025 22:20:35 GMT-0600 (hora estándar central) metodo: GET 
+fecha: Tue Sep 23 2025 22:21:12 GMT-0600 (hora estándar central) metodo: GET 
+fecha: Wed Sep 24 2025 13:28:00 GMT-0500 (hora estándar de Colombia) metodo: GET 
+fecha: Wed Sep 24 2025 13:35:40 GMT-0500 (hora estándar de Colombia) metodo: GET 
+fecha: Wed Sep 24 2025 14:28:33 GMT-0500 (hora estándar de Colombia) metodo: GET 
+fecha: Wed Sep 24 2025 14:36:03 GMT-0500 (hora estándar de Colombia) metodo: GET 
+fecha: Thu Sep 25 2025 11:15:50 GMT-0500 (hora estándar de Colombia) metodo: GET 
+fecha: Thu Sep 25 2025 11:17:20 GMT-0500 (hora estándar de Colombia) metodo: GET 
+fecha: Thu Sep 25 2025 11:04:13 GMT-0600 (hora estándar central) metodo: GET 
+fecha: Thu Sep 25 2025 11:04:33 GMT-0600 (hora estándar central) metodo: GET 
+fecha: Thu Sep 25 2025 11:07:53 GMT-0600 (hora estándar central) metodo: GET 
+fecha: Thu Sep 25 2025 12:25:29 GMT-0600 (hora estándar central) metodo: GET 
+fecha: Thu Sep 25 2025 13:43:01 GMT-0600 (hora estándar central) metodo: GET 
+fecha: Thu Sep 25 2025 13:43:33 GMT-0600 (hora estándar central) metodo: GET 
+fecha: Thu Sep 25 2025 13:47:09 GMT-0600 (hora estándar central) metodo: GET 
+fecha: Thu Sep 25 2025 13:47:49 GMT-0600 (hora estándar central) metodo: GET 
+fecha: Thu Sep 25 2025 13:49:30 GMT-0600 (hora estándar central) metodo: GET 
+fecha: Thu Sep 25 2025 13:50:48 GMT-0600 (hora estándar central) metodo: GET 
+fecha: Thu Sep 25 2025 13:50:56 GMT-0600 (hora estándar central) metodo: GET 
+fecha: Thu Sep 25 2025 13:51:07 GMT-0600 (hora estándar central) metodo: GET 
+fecha: Thu Sep 25 2025 13:56:41 GMT-0600 (hora estándar central) metodo: GET 
+fecha: Thu Sep 25 2025 13:57:01 GMT-0600 (hora estándar central) metodo: GET 
+fecha: Thu Sep 25 2025 13:58:39 GMT-0600 (hora estándar central) metodo: GET 
+fecha: Thu Sep 25 2025 13:59:12 GMT-0600 (hora estándar central) metodo: GET 
+fecha: Thu Sep 25 2025 14:00:04 GMT-0600 (hora estándar central) metodo: GET 
+fecha: Thu Sep 25 2025 14:10:32 GMT-0600 (hora estándar central) metodo: GET 
+fecha: Thu Sep 25 2025 14:12:15 GMT-0600 (hora estándar central) metodo: GET 
+fecha: Thu Sep 25 2025 14:18:10 GMT-0600 (hora estándar central) metodo: GET 
+fecha: Thu Sep 25 2025 14:21:15 GMT-0600 (hora estándar central) metodo: GET 
+fecha: Thu Sep 25 2025 14:23:51 GMT-0600 (hora estándar central) metodo: GET 
+fecha: Thu Sep 25 2025 14:25:34 GMT-0600 (hora estándar central) metodo: GET 
+fecha: Thu Sep 25 2025 14:26:03 GMT-0600 (hora estándar central) metodo: GET 
+fecha: Thu Sep 25 2025 14:26:21 GMT-0600 (hora estándar central) metodo: GET 
+fecha: Thu Sep 25 2025 14:26:37 GMT-0600 (hora estándar central) metodo: GET 

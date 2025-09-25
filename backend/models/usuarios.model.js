@@ -8,12 +8,12 @@ const schemaUsuarios = new mongoose.Schema({
     email: {
         type: String,
         required: [true, 'El email es obligatorio'],
-        match: [/^.+@.+\..+$/, 'El email debe ser válido']
+        match: [/^.+@.+\..+$/, 'El email debe ser válido'],
+        unique: true
     },
     password: {
         type: String,
-        required: [true, 'La contraseña es obligatoria'],
-        match: [/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/, 'La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula y un número']
+        required: [true, 'La contraseña es obligatoria']
     },
     telefono: {
         type: String,
@@ -21,14 +21,17 @@ const schemaUsuarios = new mongoose.Schema({
     },
     rol: {
         type: String,
-        enum: ['cliente', 'admin']
+        enum: ['cliente', 'admin', 'administrador'],
+        default:'cliente'
     },
     estado: {
         type: String,
-        enum: ['activo', 'inactivo']
+        enum: ['activo', 'inactivo'],
+        default: 'activo'
     }
 }, {
     title: 'esquema de usuario'
 });
 
 module.exports = mongoose.model('usuarios', schemaUsuarios);
+
