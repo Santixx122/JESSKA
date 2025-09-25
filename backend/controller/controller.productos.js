@@ -11,19 +11,46 @@ function controlError(res,message,error){
 const getProducts = async (req,res)=>{
     try {
         const productos = await Producto.find()
-            res.status(200).json({
-                success:true,
-                message:'Productos encontrados con exito.',
-                data:productos
-            })
+            .populate('categoriaId', 'nombre')
+            .populate('marcaId', 'nombre')
+            .sort({ fechaRegistro: -1 });
+            
+        res.status(200).json({
+            success:true,
+            message:'Productos encontrados con exito.',
+            data:productos
+        })
     } catch (error) {
         controlError(res,'Ocurrio un error al encontrar los productos',error)
+    }
+}
+
+// Obtener solo productos visibles para el catálogo
+const getVisibleProducts = async (req,res)=>{
+    try {
+        const productos = await Producto.find({ 
+            visible: true, 
+            estado: { $in: ['activo', 'agotado'] } 
+        })
+            .populate('categoriaId', 'nombre')
+            .populate('marcaId', 'nombre')
+            .sort({ fechaRegistro: -1 });
+            
+        res.status(200).json({
+            success:true,
+            message:'Productos visibles encontrados con exito.',
+            data:productos
+        })
+    } catch (error) {
+        controlError(res,'Ocurrio un error al encontrar los productos visibles',error)
     }
 }
 
 const getOneProduct = async (req,res)=>{
     try {
         const producto = await Producto.findById(req.params.id)
+            .populate('categoriaId', 'nombre')
+            .populate('marcaId', 'nombre');
 
         if(!producto){
             return res.status(404).json({
@@ -44,26 +71,43 @@ const getOneProduct = async (req,res)=>{
 
 const createProducts = async (req,res)=>{
     try {
+        const { nombre, descripcion, color, talla, precio, stock, categoriaId, marcaId, estado, visible } = req.body;
+        
+        // Validaciones básicas
+        if (!nombre || !descripcion || !color || !talla || !precio || !stock || !categoriaId || !marcaId) {
+            return res.status(400).json({
+                success: false,
+                message: 'Todos los campos son obligatorios',
+                field: 'general'
+            });
+        }
+        
         const variante = {
-            color: req.body.color,
-            talla: req.body.talla,
-            precio: req.body.precio,
-            stock: req.body.stock
+            color: color.trim(),
+            talla: talla,
+            precio: parseFloat(precio),
+            stock: parseInt(stock)
         };
         
-        const producto={
-            nombre: req.body.nombre,
-            descripcion: req.body.descripcion,
+        const producto = {
+            nombre: nombre.trim(),
+            descripcion: descripcion.trim(),
             variante: [variante],
-            categoriaId: req.body.categoriaId,
-            marcaId: req.body.marcaId,
-            estado: req.body.estado || 'activo'
-        }
+            categoriaId: categoriaId,
+            marcaId: marcaId,
+            estado: estado || 'activo',
+            visible: visible !== undefined ? visible : true
+        };
+        
         const insertarProducto = await Producto.create(producto);
+        const productoCompleto = await Producto.findById(insertarProducto._id)
+            .populate('categoriaId', 'nombre')
+            .populate('marcaId', 'nombre');
+            
         res.status(201).json({
             success:true,
-            message:'El producto se creo exitosamente',
-            data:insertarProducto
+            message:'El producto se creó exitosamente',
+            data:productoCompleto
         })
     } catch (error) {
         controlError(res,'El producto no pudo ser creado exitosamente',error)     
@@ -112,10 +156,43 @@ const deleteProduct = async (req,res)=>{
     }
 }
 
+// Función para cambiar el estado de visibilidad de un producto
+const toggleProductVisibility = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const producto = await Producto.findById(id);
+        
+        if (!producto) {
+            return res.status(404).json({
+                success: false,
+                message: 'Producto no encontrado'
+            });
+        }
+        
+        // Cambiar visibilidad
+        producto.visible = !producto.visible;
+        await producto.save();
+        
+        const productoActualizado = await Producto.findById(id)
+            .populate('categoriaId', 'nombre')
+            .populate('marcaId', 'nombre');
+        
+        res.status(200).json({
+            success: true,
+            message: `Producto ${producto.visible ? 'mostrado' : 'ocultado'} exitosamente`,
+            data: productoActualizado
+        });
+    } catch (error) {
+        controlError(res, 'Error al cambiar la visibilidad del producto', error);
+    }
+};
+
 module.exports={
     getProducts,
+    getVisibleProducts,
     getOneProduct,
     createProducts,
     updateProduct,
-    deleteProduct
+    deleteProduct,
+    toggleProductVisibility
 }
