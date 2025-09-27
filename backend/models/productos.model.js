@@ -75,7 +75,8 @@ const SchemaProducto = new mongoose.Schema({
             values: ['activo', 'agotado', 'inactivo'],
             message: 'El estado debe ser "activo", "agotado" o "inactivo"'
         },
-        default: 'activo'
+        default: 'activo',
+        required:[true,'El estado es obligatorio']
     },
     visible: {
         type: Boolean,

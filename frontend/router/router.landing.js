@@ -18,33 +18,10 @@ router.get('/', async (req, res) => {
             },
             withCredentials: true
         });
-
         const usuario = respuesta.data.usuario;
 
-        // Obtener productos destacados
-        let productosDestacados = [];
-        try {
-            const productosResponse = await axios.get(`${URL_BACKEND}/productos/destacados`, {
-                headers: { 'api-key-441': process.env.APIKEY_PASS }
-            });
-            productosDestacados = productosResponse.data.data || [];
-        } catch (productosError) {
-            console.log('No se pudieron cargar productos destacados');
-        }
-
-        // Manejar mensajes de error desde query parameters
-        let errorMessage = null;
-        if (req.query.error === 'acceso_denegado') {
-            errorMessage = 'Acceso denegado. No tienes permisos para acceder al panel de administrador.';
-        } else if (req.query.error === 'sesion_expirada') {
-            errorMessage = 'Tu sesión ha expirado. Por favor, inicia sesión nuevamente.';
-        }
-
         res.render('pages/landing', { 
-            usuario, 
-            productosDestacados,
-            error: errorMessage,
-            errorField: errorMessage ? 'general' : null
+            usuario
         });
 
     } catch (error) {

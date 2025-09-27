@@ -71,6 +71,7 @@ const getOneProduct = async (req,res)=>{
 
 const createProducts = async (req,res)=>{
     try {
+         console.log("📩 Body recibido:", req.body);
         const { nombre, descripcion, color, talla, precio, stock, categoriaId, marcaId, estado, visible } = req.body;
         
         // Validaciones básicas

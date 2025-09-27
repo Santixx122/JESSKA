@@ -54,4 +54,6 @@ document.addEventListener("DOMContentLoaded", () => {
   paginarTabla("tabla-usuarios", "paginacion-usuarios", 5);
   paginarTabla("tabla-productos", "paginacion-productos", 5);
   paginarTabla("tabla-pedidos", "paginacion-pedidos", 5);
+  paginarTabla("tabla-categorias","paginacion-categorias",5)
+  paginarTabla("tabla-marcas","paginacion-marcas",5)
 });
