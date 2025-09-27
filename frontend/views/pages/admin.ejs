@@ -158,7 +158,6 @@
             <table class="list-style" id="tabla-productos">
                 <thead>
                     <tr>
-                        <th>Id</th>
                         <th>Nombre</th>
                         <th>Descripcion</th>
                         <th>Color</th>
@@ -173,9 +172,6 @@
                 <tbody>
                     <% productos.forEach(function(producto){ %>
                         <tr>
-                            <td>
-                                <%= producto._id %>
-                            </td>
                             <td>
                                 <%= producto.nombre %>
                             </td>
@@ -196,26 +192,44 @@
                                     <%= v.stock %>
                                 </td>
                                 <% }) %>
-                                <td>
-                                    
-                                </td>
-                                    <td>
-                                        <div class="form-check form-switch">
-                                            <input class="form-check-input toggle-visibility" type="checkbox" checked
-                                                data-producto-index="">
-                                            <label class="form-check-label">Visible</label>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="btn-group" role="group">
-                                            <button type="button" class="btn btn-sm btn-outline-primary btn-editar">
-                                                <i class="fas fa-edit"></i> Editar
-                                            </button>
-                                            <button type="button" class="btn btn-sm btn-outline-danger btn-eliminar">
-                                                <i class="fas fa-trash"></i> Eliminar
-                                            </button>
-                                        </div>
-                                    </td>
+                                    <% if(producto.estado==='activo' ){ %>
+                                        <td>
+                                            <span class="badge rounded-pill bg-success">
+                                                <%= producto.estado %>
+                                            </span>
+                                        </td>
+                                        <% }else if(producto.estado==='inactivo' ){ %>
+                                            <td>
+                                                <span class="badge rounded-pill bg-secondary">
+                                                    <%= producto.estado %>
+                                                </span>
+                                            </td>
+                                            <% }else{ %>
+                                                <td>
+                                                    <span class="badge rounded-pill bg-danger">
+                                                        <%= producto.estado %>
+                                                    </span>
+                                                </td>
+                                                <% } %>
+                                                    <td>
+                                                        <div class="form-check form-switch">
+                                                            <input class="form-check-input toggle-visibility"
+                                                                type="checkbox" checked data-producto-index="">
+                                                            <label class="form-check-label">Visible</label>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="btn-group" role="group">
+                                                            <button type="button"
+                                                                class="btn btn-sm btn-outline-primary btn-editar">
+                                                                <i class="fas fa-edit"></i> Editar
+                                                            </button>
+                                                            <button type="button"
+                                                                class="btn btn-sm btn-outline-danger btn-eliminar">
+                                                                <i class="fas fa-trash"></i> Eliminar
+                                                            </button>
+                                                        </div>
+                                                    </td>
                         </tr>
                         <% }); %>
                 </tbody>
@@ -224,7 +238,8 @@
             <nav>
                 <ul class="pagination justify-content-center" id="paginacion-productos"></ul>
             </nav>
-            <button class="agregar-btn">Agregar Producto</button>
+            <button class="agregar-btn" data-bs-toggle="modal" data-bs-target="#modalCrearProducto">Agregar
+                Producto</button>
         </div>
 
         <!-- Usuarios -->
@@ -233,6 +248,7 @@
             <table class="list-style" id="tabla-usuarios">
                 <thead>
                     <tr>
+                        <th>ID</th>
                         <th>Nombre</th>
                         <th>Correo</th>
                         <th>Telefono</th>
@@ -242,8 +258,13 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <% usuario.forEach(function(usuarios, index){ %>
+                    <% usuario.forEach(function(usuarios){ %>
                         <tr>
+                            <td>
+                                <button class="btn btn-sm btn-secondary copiar-btn" data-id="<%= usuarios._id %>">
+                                    Copiar
+                                </button>
+                            </td>
                             <td>
                                 <%= usuarios.nombre %>
                             </td>
@@ -262,11 +283,11 @@
                             <td>
                                 <div class="btn-group" role="group">
                                     <button type="button" class="btn btn-sm btn-outline-primary btn-editar"
-                                        data-producto-index="<%= index %>">
+                                        data-producto-index="">
                                         <i class="fas fa-edit"></i> Editar
                                     </button>
                                     <button type="button" class="btn btn-sm btn-outline-danger btn-eliminar"
-                                        data-producto-index="<%= index %>">
+                                        data-producto-index="">
                                         <i class="fas fa-trash"></i> Eliminar
                                     </button>
                                 </div>
@@ -279,7 +300,8 @@
             <nav>
                 <ul class="pagination justify-content-center" id="paginacion-usuarios"></ul>
             </nav>
-            <button class="agregar-btn">Agregar Usuario</button>
+            <button class="agregar-btn" data-bs-toggle="modal" data-bs-target="#modalCrearUsario">Agregar
+                Usuario</button>
         </div>
 
         <!-- Pedidos -->
@@ -296,7 +318,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <% pedidos.forEach(function(p, index){ %>
+                    <% pedidos.forEach(function(p){ %>
                         <tr>
                             <td>
                                 <%= p.clienteId %>
@@ -313,11 +335,11 @@
                             <td>
                                 <div class="btn-group" role="group">
                                     <button type="button" class="btn btn-sm btn-outline-primary btn-editar"
-                                        data-producto-index="<%= index %>">
+                                        data-producto-index="">
                                         <i class="fas fa-edit"></i> Editar
                                     </button>
                                     <button type="button" class="btn btn-sm btn-outline-danger btn-eliminar"
-                                        data-producto-index="<%= index %>">
+                                        data-producto-index="">
                                         <i class="fas fa-trash"></i> Eliminar
                                     </button>
                                 </div>
@@ -334,6 +356,407 @@
         </div>
 
 
+        <!--Categorias-->
+        <div id="Categorias" class="section products-clients">
+            <h2>Categorias</h2>
+            <table class="list-style" id="tabla-categorias">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Descripción</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% categorias.forEach(function(p){ %>
+                        <tr>
+                            <td>
+                                <button class="btn btn-sm btn-secondary copiar-btn" data-id="<%= p._id %>">
+                                    Copiar
+                                </button>
+                            </td>
+                            <td>
+                                <%= p.nombre %>
+                            </td>
+                            <td>
+                                <%= p.descripcion %>
+                            </td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <button type="button" class="btn btn-sm btn-outline-primary btn-editar"
+                                        data-producto-index="">
+                                        <i class="fas fa-edit"></i> Editar
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-danger btn-eliminar"
+                                        data-producto-index="">
+                                        <i class="fas fa-trash"></i> Eliminar
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <% }) %>
+                </tbody>
+            </table>
+            <!-- Paginación de categorias -->
+            <nav>
+                <ul class="pagination justify-content-center" id="paginacion-categorias"></ul>
+            </nav>
+            <button class="agregar-btn" data-bs-toggle="modal" data-bs-target="#modalCrearCategoria">Agregar
+                categoria</button>
+        </div>
+
+        <!--Marcas-->
+
+        <div id="Marcas" class="section products-clients">
+            <h2>Marcas</h2>
+            <table class="list-style" id="tabla-marcas">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% marcas.forEach(function(p){ %>
+                        <tr>
+                            <td>
+                                <button class="btn btn-sm btn-secondary copiar-btn" data-id="<%= p._id %>">
+                                    Copiar
+                                </button>
+                            </td>
+                            <td>
+                                <%= p.nombre %>
+                            </td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <button type="button" class="btn btn-sm btn-outline-primary btn-editar"
+                                        data-producto-index="">
+                                        <i class="fas fa-edit"></i> Editar
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-danger btn-eliminar"
+                                        data-producto-index="">
+                                        <i class="fas fa-trash"></i> Eliminar
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <% }) %>
+                </tbody>
+            </table>
+            <!-- Paginación de marcas -->
+            <nav>
+                <ul class="pagination justify-content-center" id="paginacion-marcas"></ul>
+            </nav>
+            <button class="agregar-btn" data-bs-toggle="modal" data-bs-target="#modalCrearMarca">Agregar
+                marca</button>
+        </div>
+
+        <!--MODAL PRODUCTOS-->
+
+        <div class="modal fade" id="modalCrearProducto" tabindex="-1" aria-labelledby="modalCrearProductoLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalCrearProductoLabel">Crear Nuevo Producto</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="/admin/crearProducto" method="post" id="formCrearProducto">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="nombre" class="form-label">Nombre *</label>
+                                        <input type="text" class="form-control" id="nombre" name="nombre" required>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="categoria" class="form-label">Categoría *</label>
+                                        <select class="form-select" id="categoria" name="categoriaId" required>
+                                            <option value="">Seleccionar categoría</option>
+                                            <% categorias.forEach(function(p){ %>
+                                                <option value="<%= p._id %>">
+                                                    <%= p.nombre %>
+                                                </option>
+                                                <% }) %>
+                                        </select>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="marca" class="form-label">Marca *</label>
+                                        <select class="form-select" id="marca" name="marcaId" required>
+                                            <option value="">Seleccionar marca</option>
+                                            <% marcas.forEach(function(p){ %>
+                                                <option value="<%= p._id %>">
+                                                    <%= p.nombre %>
+                                                </option>
+                                                <% }) %>
+                                        </select>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="color" class="form-label">Color *</label>
+                                        <input type="text" class="form-control" id="color" name="color" required>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="descripcion" class="form-label">Descripción *</label>
+                                <textarea class="form-control" id="descripcion" name="descripcion" rows="3"
+                                    required></textarea>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="mb-3">
+                                        <label for="talla" class="form-label">Talla *</label>
+                                        <select class="form-select" id="talla" name="talla" required>
+                                            <option value="">Seleccionar</option>
+                                            <option value="35">35</option>
+                                            <option value="36">36</option>
+                                            <option value="37">37</option>
+                                            <option value="38">38</option>
+                                            <option value="39">39</option>
+                                            <option value="40">40</option>
+                                            <option value="41">41</option>
+                                            <option value="42">42</option>
+                                            <option value="43">43</option>
+                                            <option value="44">44</option>
+                                            <option value="45">45</option>
+                                        </select>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="mb-3">
+                                        <label for="precio" class="form-label">Precio *</label>
+                                        <input type="number" class="form-control" id="precio" name="precio" min="0"
+                                            step="0.01" required>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="mb-3">
+                                        <label for="stock" class="form-label">Stock *</label>
+                                        <input type="number" class="form-control" id="stock" name="stock" min="0"
+                                            required>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="mb-3">
+                                        <label for="estado" class="form-label">Estado</label>
+                                        <select class="form-select" id="estado" name="estado">
+                                            <option value="activo">Activo</option>
+                                            <option value="agotado">Agotado</option>
+                                            <option value="inactivo">Inactivo</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="visible" name="visible" checked>
+                                    <label class="form-check-label" for="visible">
+                                        Visible en catálogo
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary"
+                                    data-bs-dismiss="modal">Cancelar</button>
+                                <button type="submit" class="btn btn-primary">
+                                    <span class="spinner-border spinner-border-sm d-none" role="status"></span>
+                                    Crear Producto
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!--Modal usuarios-->
+        <div class="modal fade" id="modalCrearUsario" tabindex="-1" aria-labelledby="modalCrearUsuarioLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalCrearUsuarioLabel">Crear Nuevo Usuario</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="/admin/crearUsuario" method="post" id="formCrearProducto">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="nombre" class="form-label">Nombre *</label>
+                                        <input type="text" class="form-control" id="nombre" name="nombre" required>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="email" class="form-label">Email *</label>
+                                        <input type="email" class="form-control" id="email" name="email" required>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="telefono" class="form-label">Telefono *</label>
+                                        <input type="tel" class="form-control" id="telefono" name="telefono" required>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="password" class="form-label">Contraseña *</label>
+                                        <input type="password" class="form-control" id="password" name="password"
+                                            required>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="mb-3">
+                                        <label for="rol" class="form-label">Rol *</label>
+                                        <select class="form-select" id="rol" name="rol" required>
+                                            <option value="">Seleccionar</option>
+                                            <option value="usuario">Usuario</option>
+                                            <option value="Administrador">Administrador</option>
+                                        </select>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="mb-3">
+                                        <label for="estado" class="form-label">Estado</label>
+                                        <select class="form-select" id="estado" name="estado">
+                                            <option value="activo">Activo</option>
+                                            <option value="inactivo">Inactivo</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary"
+                                    data-bs-dismiss="modal">Cancelar</button>
+                                <button type="submit" class="btn btn-primary">
+                                    <span class="spinner-border spinner-border-sm d-none" role="status"></span>
+                                    Crear Usuario
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--MODAL CATEGORIAS-->
+        <div class="modal fade" id="modalCrearCategoria" tabindex="-1" aria-labelledby="modalCrearCategoriaLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalCrearCategoriaLabel">Crear Nueva Categoria</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="/admin/crearCategoria" method="post" id="formCrearProducto">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="nombre" class="form-label">Nombre *</label>
+                                        <input type="text" class="form-control" id="nombre" name="nombre" required>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="descripcion" class="form-label">Descripcion *</label>
+                                        <textarea type="email" class="form-control" id="descripcion" name="descripcion"
+                                            required></textarea>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary"
+                                    data-bs-dismiss="modal">Cancelar</button>
+                                <button type="submit" class="btn btn-primary">
+                                    <span class="spinner-border spinner-border-sm d-none" role="status"></span>
+                                    Crear Usuario
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--MODAL MARCAS-->
+
+        <div class="modal fade" id="modalCrearMarca" tabindex="-1" aria-labelledby="modalCrearMarcaLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalCrearMarcaLabel">Crear Nueva Marca</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="/admin/crearCategoria" method="post" id="formCrearProducto">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="nombre" class="form-label">Nombre *</label>
+                                        <input type="text" class="form-control" id="nombre" name="nombre" required>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary"
+                                    data-bs-dismiss="modal">Cancelar</button>
+                                <button type="submit" class="btn btn-primary">
+                                    <span class="spinner-border spinner-border-sm d-none" role="status"></span>
+                                    Crear Usuario
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="toast-container position-fixed bottom-0 end-0 p-3">
+            <div id="copyToast" class="toast align-items-center text-bg-success border-0" role="alert"
+                aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        ID copiado exitosamente
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                        aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
         <!--Char js-->
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <!--boostrap-->

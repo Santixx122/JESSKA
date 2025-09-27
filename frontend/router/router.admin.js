@@ -9,7 +9,7 @@ router.get('/admin', async (req, res) => {
     try {
         // Verificar sesión del usuario
         const sessionResponse = await axios.get(`${URL_BACKEND}/login/me`, {
-            headers: { 
+            headers: {
                 'api-key-441': process.env.APIKEY_PASS,
                 ...(req.headers.cookie ? { Cookie: req.headers.cookie } : {})
             },
@@ -24,7 +24,7 @@ router.get('/admin', async (req, res) => {
         }
 
         // Cargar datos del panel de administrador
-        const [resProductos, resUsuarios, resPedidos, resAdministradores] = await Promise.all([
+        const [resProductos, resUsuarios, resPedidos, resMarcas,resCategorias] = await Promise.all([
             axios.get(`${URL_BACKEND}/productos`, {
                 headers: {
                     'api-key-441': process.env.APIKEY_PASS
@@ -40,7 +40,12 @@ router.get('/admin', async (req, res) => {
                     'api-key-441': process.env.APIKEY_PASS
                 }
             }),
-            axios.get(`${URL_BACKEND}/admin/administradores`, {
+            axios.get(`${URL_BACKEND}/marcas`, {
+                headers: {
+                    'api-key-441': process.env.APIKEY_PASS
+                }
+            }),
+            axios.get(`${URL_BACKEND}/categorias`, {
                 headers: {
                     'api-key-441': process.env.APIKEY_PASS
                 }
@@ -50,223 +55,75 @@ router.get('/admin', async (req, res) => {
         const productos = resProductos.data.data;
         const usuarios = resUsuarios.data.data;
         const pedidos = resPedidos.data.data;
-        const administradores = resAdministradores.data.data;
+        const marcas = resMarcas.data.data;
+        const categorias = resCategorias.data.data
 
-        res.render('pages/admin', { 
-            productos, 
-            usuario: usuarios, 
-            pedidos, 
-            administradores,
-            usuarioActual: usuario 
+        res.render('pages/admin', {
+            productos,
+            usuario: usuarios,
+            pedidos,
+            marcas,
+            categorias,
+            usuarioActual: usuario
         });
 
     } catch (error) {
         console.error("Error cargando datos del admin:", error.message);
-        
+
         // Si es error de autenticación, redirigir al login
         if (error.response && (error.response.status === 401 || error.response.status === 403)) {
             return res.redirect('/?error=sesion_expirada');
         }
-        
+
         res.render('pages/error500', {
             message: 'Se presentó un error al mostrar los elementos del panel de administrador'
         });
     }
 });
+//Agregar producto 
 
-// Ruta para crear administradores
-router.post('/api/admin/administradores', async (req, res) => {
+router.post('/admin/crearProducto', async (req, res) => {
+
+    console.log("Datos recibidos del formulario:", req.body);
+    const { nombre, categoriaId, marcaId, color, descripcion, talla, precio, stock, estado} = req.body
+    const visible = req.body.visible==='on'
     try {
-        // Verificar sesión del usuario
-        const sessionResponse = await axios.get(`${URL_BACKEND}/login/me`, {
-            headers: { 
-                'api-key-441': process.env.APIKEY_PASS,
-                ...(req.headers.cookie ? { Cookie: req.headers.cookie } : {})
-            },
-            withCredentials: true
-        });
-
-        const usuario = sessionResponse.data.usuario;
-
-        // Verificar que el usuario sea administrador
-        if (!usuario || (usuario.rol !== 'administrador' && usuario.rol !== 'admin')) {
-            return res.status(403).json({ 
-                success: false, 
-                message: 'Acceso denegado. Solo administradores pueden crear otros administradores.' 
-            });
-        }
-
-        // Crear el administrador
-        const response = await axios.post(`${URL_BACKEND}/admin/administradores`, req.body, {
+        await axios.post(`${URL_BACKEND}/productos`,
+            { nombre, categoriaId, marcaId, color, descripcion, talla, precio, stock, estado, visible }, {
             headers: {
                 'api-key-441': process.env.APIKEY_PASS
             }
         });
-
-        res.json(response.data);
-
+        res.redirect('/admin#productos');
     } catch (error) {
-        console.error('Error creando administrador:', error.message);
-        
+        console.error('Error al crear producto:', error.message);
         if (error.response && error.response.data) {
-            return res.status(error.response.status).json(error.response.data);
+            return res.status(error.response.status).send(error.response.data);
         }
-        
-        res.status(500).json({ 
-            success: false, 
-            message: 'Error interno del servidor' 
-        });
+        res.status(500).send('Error interno al crear producto');
     }
-});
+})
 
-// Ruta para crear productos
-router.post('/api/admin/productos', async (req, res) => {
+
+// Agregar Usuario
+
+router.post('/admin/crearUsuario', async(req,res)=>{
+    const {nombre,email,telefono,password,rol,estado}= req.body
     try {
-        // Verificar sesión del usuario
-        const sessionResponse = await axios.get(`${URL_BACKEND}/login/me`, {
-            headers: { 
-                'api-key-441': process.env.APIKEY_PASS,
-                ...(req.headers.cookie ? { Cookie: req.headers.cookie } : {})
-            },
-            withCredentials: true
-        });
-
-        const usuario = sessionResponse.data.usuario;
-
-        // Verificar que el usuario sea administrador
-        if (!usuario || (usuario.rol !== 'administrador' && usuario.rol !== 'admin')) {
-            return res.status(403).json({ 
-                success: false, 
-                message: 'Acceso denegado. Solo administradores pueden crear productos.' 
-            });
-        }
-
-        // Crear el producto
-        const response = await axios.post(`${URL_BACKEND}/productos`, req.body, {
+        await axios.post(`${URL_BACKEND}/usuarios`,
+            {nombre,email,password,telefono,rol,estado}, {
             headers: {
                 'api-key-441': process.env.APIKEY_PASS
             }
         });
-
-        res.json(response.data);
-
+        res.redirect('/admin#Usuarios');
     } catch (error) {
-        console.error('Error creando producto:', error.message);
-        
+        console.error('Error al crear producto:', error.message);
         if (error.response && error.response.data) {
-            return res.status(error.response.status).json(error.response.data);
+            return res.status(error.response.status).send(error.response.data);
         }
-        
-        res.status(500).json({ 
-            success: false, 
-            message: 'Error interno del servidor' 
-        });
+        res.status(500).send('Error interno al crear producto');
     }
-});
-
-// Ruta para cambiar visibilidad de productos
-router.patch('/api/admin/productos/:id/toggle-visibility', async (req, res) => {
-    try {
-        // Verificar sesión del usuario
-        const sessionResponse = await axios.get(`${URL_BACKEND}/login/me`, {
-            headers: { 
-                'api-key-441': process.env.APIKEY_PASS,
-                ...(req.headers.cookie ? { Cookie: req.headers.cookie } : {})
-            },
-            withCredentials: true
-        });
-
-        const usuario = sessionResponse.data.usuario;
-
-        // Verificar que el usuario sea administrador
-        if (!usuario || (usuario.rol !== 'administrador' && usuario.rol !== 'admin')) {
-            return res.status(403).json({ 
-                success: false, 
-                message: 'Acceso denegado. Solo administradores pueden modificar productos.' 
-            });
-        }
-
-        // Cambiar visibilidad del producto
-        const response = await axios.patch(`${URL_BACKEND}/productos/${req.params.id}/toggle-visibility`, {}, {
-            headers: {
-                'api-key-441': process.env.APIKEY_PASS
-            }
-        });
-
-        res.json(response.data);
-
-    } catch (error) {
-        console.error('Error cambiando visibilidad del producto:', error.message);
-        
-        if (error.response && error.response.data) {
-            return res.status(error.response.status).json(error.response.data);
-        }
-        
-        res.status(500).json({ 
-            success: false, 
-            message: 'Error interno del servidor' 
-        });
-    }
-});
-
-// Ruta para obtener categorías
-router.get('/api/admin/categorias', async (req, res) => {
-    try {
-        const response = await axios.get(`${URL_BACKEND}/categorias`, {
-            headers: {
-                'api-key-441': process.env.APIKEY_PASS
-            }
-        });
-
-        res.json(response.data);
-
-    } catch (error) {
-        console.error('Error obteniendo categorías:', error.message);
-        res.status(500).json({ 
-            success: false, 
-            message: 'Error interno del servidor' 
-        });
-    }
-});
-
-// Ruta para obtener marcas
-router.get('/api/admin/marcas', async (req, res) => {
-    try {
-        const response = await axios.get(`${URL_BACKEND}/marcas`, {
-            headers: {
-                'api-key-441': process.env.APIKEY_PASS
-            }
-        });
-
-        res.json(response.data);
-
-    } catch (error) {
-        console.error('Error obteniendo marcas:', error.message);
-        res.status(500).json({ 
-            success: false, 
-            message: 'Error interno del servidor' 
-        });
-    }
-});
-
-// Ruta para obtener productos visibles (para el catálogo)
-router.get('/api/productos/visibles', async (req, res) => {
-    try {
-        const response = await axios.get(`${URL_BACKEND}/productos/visibles`, {
-            headers: {
-                'api-key-441': process.env.APIKEY_PASS
-            }
-        });
-
-        res.json(response.data);
-
-    } catch (error) {
-        console.error('Error obteniendo productos visibles:', error.message);
-        res.status(500).json({ 
-            success: false, 
-            message: 'Error interno del servidor' 
-        });
-    }
-});
+})
 
 module.exports = router;

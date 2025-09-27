@@ -86,14 +86,16 @@ const getUsuarioById = async (req, res) => {
 
 
 const createUsuario = async (req, res) => {
-
     try {
-        let { nombre, email, password, telefono } = req.body;
+        let { nombre, email, password, telefono,rol,estado } = req.body;
 
         // Normalizar
         if (typeof email === 'string') email = email.toLowerCase().trim();
         if (typeof nombre === 'string') nombre = nombre.trim();
         if (typeof telefono === 'string') telefono = telefono.trim();
+        if (typeof rol === 'string') rol = rol.toLowerCase().trim();
+        if (typeof estado === 'string') estado = estado.toLowerCase().trim();
+
 
         // Validaciones básicas
         if (!nombre) {
@@ -120,11 +122,11 @@ const createUsuario = async (req, res) => {
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
-        const nuevoUsuario = await Usuario.create({ nombre, email, password: hashedPassword, telefono });
+        const nuevoUsuario = await Usuario.create({ nombre, email, password: hashedPassword, telefono,rol,estado});
         res.status(201).json({
             success: true,
             message: 'El usuario se creó exitosamente',
-            data: { id: nuevoUsuario._id, nombre: nuevoUsuario.nombre, email: nuevoUsuario.email, telefono: nuevoUsuario.telefono }
+            data: { id: nuevoUsuario._id, nombre: nuevoUsuario.nombre, email: nuevoUsuario.email, telefono: nuevoUsuario.telefono, rol: nuevoUsuario.rol, estado: nuevoUsuario.estado}
         });
     } catch (error) {
         // Manejar errores de validación de Mongoose y clave duplicada
