@@ -84,7 +84,7 @@ router.get('/catalogo', async (req, res) => {
         // Obtener productos 
         let productos = [];
         try {
-            const productosResponse = await axios.get(`${URL_BACKEND}/productos`, {
+            const productosResponse = await axios.get(`${URL_BACKEND}/productos?showAll=true`, {
                 headers: { 'api-key-441': process.env.APIKEY_PASS }
             });
             productos = productosResponse.data.data || [];
@@ -194,5 +194,40 @@ router.post('/logout', async (req, res) => {
   }
 });
 
+
+router.get('/producto/:id', async (req, res) => {
+  const id = req.params.id;
+  let usuario = null;
+
+  try {
+    // intentar obtener sesión del usuario (si existe)
+    try {
+      const meResp = await axios.get(`${URL_BACKEND}/login/me`, {
+        headers: {
+          'api-key-441': process.env.APIKEY_PASS,
+          ...(req.headers.cookie ? { Cookie: req.headers.cookie } : {})
+        },
+        withCredentials: true
+      });
+      usuario = meResp.data.usuario;
+    } catch (err) {
+      usuario = null; // no autenticado, continuar
+    }
+
+    // obtener producto desde backend
+    const prodResp = await axios.get(`${URL_BACKEND}/productos/${id}`, {
+      headers: { 'api-key-441': process.env.APIKEY_PASS }
+    });
+
+    const producto = prodResp.data.data;
+
+    
+
+    res.render('pages/detalle-producto', { producto, usuario });
+  } catch (error) {
+    console.error('Error cargando producto:', error.message || error);
+    return res.status(500).render('pages/detalle-producto', { producto: null, usuario });
+  }
+});
 
 module.exports = router;

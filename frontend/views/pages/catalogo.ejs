@@ -38,7 +38,7 @@
           </ul>
           <div class="d-flex align-items-center">
             <a href="/carrito" class="cart-icon">
-              <img src="img/carrito-compras.svg" alt="Carrito">
+              <img src="/img/carrito-compras.svg" alt="Carrito">
             </a>
             <% if (typeof usuario !=='undefined' && usuario) { %>
               <div class="d-flex align-items-center gap-2 ms-3">
@@ -273,13 +273,14 @@
                       <% } %>
                     </div>
 
-                    <!-- Botón de añadir al carrito -->
+                    <!-- Botón de ver detalle / navegar al detalle del producto -->
                     <div class="d-grid">
-                      <button class="btn btn-dark" type="button" data-id="<%= p._id %>" 
-                              <%= (p.estado === 'agotado' || (p.variante && p.variante[0].stock === 0)) ? 'disabled' : '' %>>
-                        <i class="bi bi-cart-plus me-2"></i>
-                        <%= (p.estado === 'agotado' || (p.variante && p.variante[0].stock === 0)) ? 'Agotado' : 'Añadir al carrito' %>
-                      </button>
+                      <a href="/producto/<%= p._id %>" class="btn btn-dark w-100"
+                         role="button"
+                         <%= (p.estado === 'agotado' || (p.variante && p.variante[0].stock === 0)) ? 'aria-disabled="true"' : '' %>>
+                        <i class="bi bi-box-seam me-2"></i>
+                        Ver detalle
+                      </a>
                     </div>
                   </div>
                 </div>
