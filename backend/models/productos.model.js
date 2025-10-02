@@ -78,11 +78,6 @@ const SchemaProducto = new mongoose.Schema({
         default: 'activo',
         required:[true,'El estado es obligatorio']
     },
-    visible: {
-        type: Boolean,
-        default: true,
-        required: [true, 'La visibilidad es obligatoria']
-    },
     categoriaId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'categorias', // Referencia al modelo de categorías

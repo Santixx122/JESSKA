@@ -47,43 +47,28 @@ const getUsuarios = async (req, res) => {
 
 const getUsuarioById = async (req, res) => {
     try {
-        const {email,password} = req.body;
+        const id = req.params.id;
+        if (!id) {
+            return res.status(400).json({ success: false, message: 'El id es requerido' });
+        }
 
-        validacion.usuario(nombre)
-        validacion.password(password)
-
-        const usuario = await Usuario.findOne({email});
+        const usuario = await Usuario.findById(id).select('-password');
         if (!usuario) {
             return res.status(404).json({
                 success: false,
                 message: 'Usuario no encontrado'
             });
         }
-        const isValid = await bcrypt.compare(password,usuario.password)
-        if(!isValid){
-            return res.status(404).json({
-                success:false,
-                message: 'El usuario es incorrecto'
-            })
-        }
-
-        const token = jwt.sign(
-            { id: user._id, username: user.username },
-            process.env.SECRET_KEY,
-            { expiresIn: '1h' }
-        );
 
         res.status(200).json({
             success: true,
             message: 'Usuario encontrado con éxito',
-            data: usuario,
-            token
+            data: usuario
         });
     } catch (error) {
         controlError(res, 'Ocurrió un error al buscar el usuario', error);
     }
 };
-
 
 const createUsuario = async (req, res) => {
     try {
@@ -143,47 +128,67 @@ const createUsuario = async (req, res) => {
 
 
 const updateUsuario = async (req, res) => {
+    console.log(req.body)
     try {
         const id = req.params.id;
         const nuevosDatos = { ...req.body };
 
-        // Normalizar
+        // Normalizar entrada
         if (typeof nuevosDatos.email === 'string') nuevosDatos.email = nuevosDatos.email.toLowerCase().trim();
         if (typeof nuevosDatos.nombre === 'string') nuevosDatos.nombre = nuevosDatos.nombre.trim();
         if (typeof nuevosDatos.telefono === 'string') nuevosDatos.telefono = nuevosDatos.telefono.trim();
+        if (typeof nuevosDatos.rol === 'string') nuevosDatos.rol = nuevosDatos.rol.trim();
+        if (typeof nuevosDatos.estado === 'string') nuevosDatos.estado = nuevosDatos.estado.trim();
 
-        // Si envía password, hashearla
+        // Validar y hashear password si viene
         if (nuevosDatos.password) {
             if (typeof nuevosDatos.password !== 'string' || nuevosDatos.password.length < 8) {
-                return res.status(400).json({ success: false, message: 'El contraseña debe ser mayor a 8 caracteres', field: 'password' });
+                return res.status(400).json({ success: false, message: 'La contraseña debe ser mayor a 8 caracteres', field: 'password' });
             }
             nuevosDatos.password = await bcrypt.hash(nuevosDatos.password, 10);
         }
 
-        const usuarioActualizado = await Usuario.findByIdAndUpdate(id, nuevosDatos, { new: true, runValidators: true });
+        // Buscar documento, aplicar cambios y guardar (mejor que findByIdAndUpdate para validaciones)
+        const usuario = await Usuario.findById(id);
+        if (!usuario) {
+            return res.status(404).json({ success: false, message: 'Usuario no encontrado' });
+        }
 
-        if (!usuarioActualizado)
-            return res.status(404).json({
-                success: false,
-                message: 'Usuario no encontrado'
-            });
+        // Si se intenta cambiar el email, verificar unicidad
+        if (nuevosDatos.email && nuevosDatos.email !== usuario.email) {
+            const exist = await Usuario.findOne({ email: nuevosDatos.email });
+            if (exist) {
+                return res.status(400).json({ success: false, message: 'El email ya está registrado', field: 'email' });
+            }
+        }
+
+        // Campos permitidos a actualizar
+        const campos = ['nombre','email','telefono','rol','estado','password'];
+        campos.forEach(c => {
+            if (nuevosDatos[c] !== undefined) usuario[c] = nuevosDatos[c];
+        });
+
+        await usuario.save();
 
         res.status(200).json({
             success: true,
             message: 'Usuario actualizado con éxito',
-            data: { id: usuarioActualizado._id, nombre: usuarioActualizado.nombre, email: usuarioActualizado.email, telefono: usuarioActualizado.telefono }
+            data: { id: usuario._id, nombre: usuario.nombre, email: usuario.email, telefono: usuario.telefono, rol: usuario.rol, estado: usuario.estado }
         });
     } catch (error) {
+        console.error('UPDATE USUARIO ERROR =>', error);
+        // devolver detalles útiles para debug
         if (error && error.code === 11000) {
-            return res.status(400).json({ success: false, message: 'El email ya está registrado', field: 'email' });
+            return res.status(400).json({ success: false, message: 'El email ya está registrado', field: 'email', raw: error });
         }
         if (error && error.errors) {
             const firstKey = Object.keys(error.errors)[0];
-            return res.status(400).json({ success: false, message: error.errors[firstKey].message, field: firstKey });
+            return res.status(400).json({ success: false, message: error.errors[firstKey].message, field: firstKey, raw: error });
         }
-        controlError(res, 'El usuario no se pudo actualizar', error);
+        // fallback: enviar todo el error para investigar
+        return res.status(500).json({ success: false, message: 'El usuario no se pudo actualizar', error: error.message, raw: error });
     }
-}; 
+}
 
 
 const deleteUsuario = async (req, res) => {
