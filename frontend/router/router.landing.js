@@ -81,10 +81,10 @@ router.get('/catalogo', async (req, res) => {
             // Usuario no autenticado, continuar sin usuario
         }
 
-        // Obtener productos visibles
+        // Obtener productos 
         let productos = [];
         try {
-            const productosResponse = await axios.get(`${URL_BACKEND}/productos/visibles`, {
+            const productosResponse = await axios.get(`${URL_BACKEND}/productos`, {
                 headers: { 'api-key-441': process.env.APIKEY_PASS }
             });
             productos = productosResponse.data.data || [];

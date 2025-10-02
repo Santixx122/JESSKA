@@ -165,7 +165,6 @@
                         <th>Precio</th>
                         <th>Cantidad</th>
                         <th>Estado</th>
-                        <th>Visibilidad</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -212,16 +211,18 @@
                                                 </td>
                                                 <% } %>
                                                     <td>
-                                                        <div class="form-check form-switch">
-                                                            <input class="form-check-input toggle-visibility"
-                                                                type="checkbox" checked data-producto-index="">
-                                                            <label class="form-check-label">Visible</label>
-                                                        </div>
-                                                    </td>
-                                                    <td>
                                                         <div class="btn-group" role="group">
                                                             <button type="button"
-                                                                class="btn btn-sm btn-outline-primary btn-editar">
+                                                                class="btn btn-sm btn-outline-primary btn-editar"
+                                                                data-type="producto" data-id="<%= producto._id %>"
+                                                                data-nombre="<%= producto.nombre %>"
+                                                                data-color="<%= producto.variante[0].color %>"
+                                                                data-descripcion="<%= producto.descripcion %>"
+                                                                data-talla="<%= producto.variante[0].talla %>"
+                                                                data-precio="<%= producto.variante[0].precio %>"
+                                                                data-stock="<%= producto.variante[0].stock %>"
+                                                                data-estado="<%= producto.estado %>"
+                                                                data-visible="<%= producto.visible %>">
                                                                 <i class="fas fa-edit"></i> Editar
                                                             </button>
                                                             <button type="button"
@@ -283,7 +284,9 @@
                             <td>
                                 <div class="btn-group" role="group">
                                     <button type="button" class="btn btn-sm btn-outline-primary btn-editar"
-                                        data-producto-index="">
+                                        data-type="usuario" data-id="<%= usuarios._id %>"
+                                        data-nombre="<%= usuarios.nombre %>" data-email="<%= usuarios.email %>"
+                                        data-telefono="<%= usuarios.telefono %>">
                                         <i class="fas fa-edit"></i> Editar
                                     </button>
                                     <button type="button" class="btn btn-sm btn-outline-danger btn-eliminar"
@@ -300,7 +303,7 @@
             <nav>
                 <ul class="pagination justify-content-center" id="paginacion-usuarios"></ul>
             </nav>
-            <button class="agregar-btn" data-bs-toggle="modal" data-bs-target="#modalCrearUsario">Agregar
+            <button class="agregar-btn" data-bs-toggle="modal" data-bs-target="#modalCrearUsuario">Agregar
                 Usuario</button>
         </div>
 
@@ -334,8 +337,7 @@
                             </td>
                             <td>
                                 <div class="btn-group" role="group">
-                                    <button type="button" class="btn btn-sm btn-outline-primary btn-editar"
-                                        data-producto-index="">
+                                    <button type="button" class="btn btn-sm btn-outline-primary btn-editar">
                                         <i class="fas fa-edit"></i> Editar
                                     </button>
                                     <button type="button" class="btn btn-sm btn-outline-danger btn-eliminar"
@@ -385,7 +387,11 @@
                             <td>
                                 <div class="btn-group" role="group">
                                     <button type="button" class="btn btn-sm btn-outline-primary btn-editar"
-                                        data-producto-index="">
+                                        data-type="categoria"
+    data-id="<%= p._id %>"
+    data-nombre="<%= p.nombre %>"
+    data-descripcion="<%= p.descripcion %>"
+                                    >
                                         <i class="fas fa-edit"></i> Editar
                                     </button>
                                     <button type="button" class="btn btn-sm btn-outline-danger btn-eliminar"
@@ -432,7 +438,9 @@
                             <td>
                                 <div class="btn-group" role="group">
                                     <button type="button" class="btn btn-sm btn-outline-primary btn-editar"
-                                        data-producto-index="">
+                                        data-type="marca"
+                                            data-id="<%= p._id %>"
+                                            data-nombre="<%= p.nombre %>">
                                         <i class="fas fa-edit"></i> Editar
                                     </button>
                                     <button type="button" class="btn btn-sm btn-outline-danger btn-eliminar"
@@ -589,7 +597,7 @@
 
 
         <!--Modal usuarios-->
-        <div class="modal fade" id="modalCrearUsario" tabindex="-1" aria-labelledby="modalCrearUsuarioLabel"
+        <div class="modal fade" id="modalCrearUsuario" tabindex="-1" aria-labelledby="modalCrearUsuarioLabel"
             aria-hidden="true">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
@@ -598,7 +606,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form action="/admin/crearUsuario" method="post" id="formCrearProducto">
+                        <form action="/admin/crearUsuario" method="post" id="formCrearUsuario">
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="mb-3">
@@ -677,7 +685,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form action="/admin/crearCategoria" method="post" id="formCrearProducto">
+                        <form action="/admin/crearCategoria" method="post" id="formCrearCategoria">
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="mb-3">
@@ -702,7 +710,7 @@
                                     data-bs-dismiss="modal">Cancelar</button>
                                 <button type="submit" class="btn btn-primary">
                                     <span class="spinner-border spinner-border-sm d-none" role="status"></span>
-                                    Crear Usuario
+                                    Crear Categoria
                                 </button>
                             </div>
                         </form>
@@ -722,7 +730,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form action="/admin/crearCategoria" method="post" id="formCrearProducto">
+                        <form action="/admin/crearMarcas" method="post" id="formCrearMarca">
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="mb-3">
@@ -737,7 +745,7 @@
                                     data-bs-dismiss="modal">Cancelar</button>
                                 <button type="submit" class="btn btn-primary">
                                     <span class="spinner-border spinner-border-sm d-none" role="status"></span>
-                                    Crear Usuario
+                                    Crear Marca
                                 </button>
                             </div>
                         </form>

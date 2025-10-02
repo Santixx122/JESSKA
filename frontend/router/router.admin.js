@@ -25,7 +25,7 @@ router.get('/admin', async (req, res) => {
 
         // Cargar datos del panel de administrador
         const [resProductos, resUsuarios, resPedidos, resMarcas,resCategorias] = await Promise.all([
-            axios.get(`${URL_BACKEND}/productos`, {
+            axios.get(`${URL_BACKEND}/productos/admin`, {
                 headers: {
                     'api-key-441': process.env.APIKEY_PASS
                 }
@@ -123,6 +123,183 @@ router.post('/admin/crearUsuario', async(req,res)=>{
             return res.status(error.response.status).send(error.response.data);
         }
         res.status(500).send('Error interno al crear producto');
+    }
+})
+
+router.post('/admin/crearCategoria', async(req,res)=>{
+    const {nombre,descripcion}=req.body;
+    try {
+        await axios.post(`${URL_BACKEND}/categorias`,
+            {nombre,descripcion}, {
+            headers: {
+                'api-key-441': process.env.APIKEY_PASS
+            }
+        });
+
+        res.redirect('/admin#Categorias')
+    } catch (error) {
+        console.error('Error al crear producto:', error.message);
+        if (error.response && error.response.data) {
+            return res.status(error.response.status).send(error.response.data);
+        }
+        res.status(500).send('Error interno al crear producto');
+    }
+})
+
+router.post('/admin/crearMarcas',async(req,res)=>{
+    const {nombre}=req.body;
+    try {
+        await axios.post(`${URL_BACKEND}/marcas`,
+            {nombre}, {
+            headers: {
+                'api-key-441': process.env.APIKEY_PASS
+            }
+        });
+        res.redirect('/admin#Marcas')
+    } catch (error) {
+        console.error('Error al crear producto:', error.message);
+        if (error.response && error.response.data) {
+            return res.status(error.response.status).send(error.response.data);
+        }
+        res.status(500).send('Error interno al crear producto');
+    }
+})
+
+//EDITAR
+
+//MARCA
+router.post('/admin/editarMarca/:id', async(req,res)=>{
+    const {id}=req.params;
+    const {nombre}= req.body;
+    try {
+        await axios.put(`${URL_BACKEND}/marcas/${id}`,
+            {nombre}, {
+            headers: {
+                'api-key-441': process.env.APIKEY_PASS
+            }
+        });
+        res.redirect('/admin#Marcas')
+    } catch (error) {
+        console.error("Error al editar producto:", error.message);
+
+        if (error.response && error.response.data) {
+            return res
+        .status(error.response.status)
+        .send(error.response.data);
+    }
+
+    res.status(500).send("Error interno al editar producto");
+    }
+})
+
+//PRODUCTOS
+router.post("/admin/editarProducto/:id", async (req, res) => {
+  const { id } = req.params;
+  const { nombre, descripcion, categoriaId, marcaId, precio, stock, estado} = req.body;
+  const visible = req.body.visible==='on'
+
+  try {
+    await axios.put(
+      `${URL_BACKEND}/productos/${id}`,
+      { nombre, descripcion, categoriaId, marcaId, precio, stock, estado, visible },
+      {
+        headers: {
+          "api-key-441": process.env.APIKEY_PASS,
+        },
+      }
+    );
+
+        res.redirect('/admin#productos');
+
+  } catch (error) {
+    console.error("Error al editar producto:", error.message);
+
+    if (error.response && error.response.data) {
+      return res
+        .status(error.response.status)
+        .send(error.response.data);
+    }
+
+    res.status(500).send("Error interno al editar producto");
+  }
+});
+
+//CATEGORIAS
+router.post('/admin/editarCategoria/:id' ,async(req,res)=>{
+    const {id}= req.params;
+    const {nombre,descripcion}=req.body;
+    try {
+        await axios.put(`${URL_BACKEND}/categorias/${id}`,
+        { nombre, descripcion },{
+            headers:{
+                'api-key-441': process.env.APIKEY_PASS
+            }
+        }
+       ) 
+    res.redirect('/admin#Categorias');
+
+    } catch (error) {
+        console.error("Error al editar producto:", error.message);
+
+        if (error.response && error.response.data) {
+            return res
+            .status(error.response.status)
+            .send(error.response.data);
+    }
+
+    res.status(500).send("Error interno al editar producto");
+    }
+})
+
+router.post('/admin/editarProducto/:id' ,async(req,res)=>{
+    const {id }= req.params;
+    const { nombre, descripcion, categoriaId, marcaId, precio, stock, estado, visible } = req.body;
+    try {
+       await axios.put(`${URL_BACKEND}/usuarios/${id}`,
+        { nombre, descripcion, categoriaId, marcaId, precio, stock, estado, visible },{
+            headers:{
+                'api-key-441': process.env.APIKEY_PASS
+            }
+        }
+       )
+    res.redirect('/admin#Productos');
+
+    } catch (error) {
+        console.error("Error al editar producto:", error.message);
+
+        if (error.response && error.response.data) {
+            return res
+            .status(error.response.status)
+            .send(error.response.data);
+    }
+
+    res.status(500).send("Error interno al editar producto");
+    }
+})
+
+//USUARIO
+router.post('/admin/editarUsuario/:id',async(req,res)=>{
+      const { id } = req.params;
+        const {nombre,email,telefono,password,rol,estado}= req.body
+    try {
+        await axios.put(`${URL_BACKEND}/usuarios/${id}`,
+            {nombre,email,password,telefono,rol,estado}, {
+            headers: {
+                'api-key-441': process.env.APIKEY_PASS
+            }
+        });
+
+        res.redirect('/admin#Usuarios');
+    }catch(error){
+    console.error("Error al editar producto:", error.message);
+
+    if (error.response && error.response.data) {
+      return res
+        .status(error.response.status)
+        .send(error.response.data);
+    }
+
+    res.status(500).send("Error interno al editar producto");
     }
 })
 

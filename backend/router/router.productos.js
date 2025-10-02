@@ -5,9 +5,9 @@ const validatorApiKey = require('../apiKey/apikey')
 
 router.use(validatorApiKey)
 
+router.get('/admin',controllerProducts.getAllProductsAdmin)
+
 router.get('/',controllerProducts.getProducts)
-router.get('/visibles',controllerProducts.getVisibleProducts)
-router.get('/destacados',controllerProducts.getVisibleProducts) // Productos destacados son los visibles
 router.get('/:id',controllerProducts.getOneProduct)
 router.post('/',controllerProducts.createProducts)
 router.put('/:id',controllerProducts.updateProduct)

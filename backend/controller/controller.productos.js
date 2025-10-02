@@ -8,43 +8,36 @@ function controlError(res,message,error){
     })
 }
 
-const getProducts = async (req,res)=>{
+const getProducts = async (req, res) => {
     try {
-        const productos = await Producto.find()
-            .populate('categoriaId', 'nombre')
-            .populate('marcaId', 'nombre')
-            .sort({ fechaRegistro: -1 });
-            
-        res.status(200).json({
-            success:true,
-            message:'Productos encontrados con exito.',
-            data:productos
-        })
-    } catch (error) {
-        controlError(res,'Ocurrio un error al encontrar los productos',error)
-    }
-}
+        // Obtener el query param 'visible' (opcional)
+        const showAll = req.query.showAll === 'true';
+        
+        // Construir el filtro base
+        const filter = {
+            estado: { $in: ['activo', 'agotado'] }
+        };
 
-// Obtener solo productos visibles para el catálogo
-const getVisibleProducts = async (req,res)=>{
-    try {
-        const productos = await Producto.find({ 
-            visible: true, 
-            estado: { $in: ['activo', 'agotado'] } 
-        })
+        // Si no se solicitan todos, solo mostrar los visibles
+        if (!showAll) {
+            filter.visible = true;
+        }
+
+        const productos = await Producto.find(filter)
             .populate('categoriaId', 'nombre')
             .populate('marcaId', 'nombre')
+            .select('nombre descripcion estado visible variante precio imagenes')
             .sort({ fechaRegistro: -1 });
             
         res.status(200).json({
-            success:true,
-            message:'Productos visibles encontrados con exito.',
-            data:productos
-        })
+            success: true,
+            message: 'Productos encontrados con éxito.',
+            data: productos
+        });
     } catch (error) {
-        controlError(res,'Ocurrio un error al encontrar los productos visibles',error)
+        controlError(res, 'Ocurrió un error al encontrar los productos', error);
     }
-}
+};
 
 const getOneProduct = async (req,res)=>{
     try {
@@ -71,7 +64,6 @@ const getOneProduct = async (req,res)=>{
 
 const createProducts = async (req,res)=>{
     try {
-         console.log("📩 Body recibido:", req.body);
         const { nombre, descripcion, color, talla, precio, stock, categoriaId, marcaId, estado, visible } = req.body;
         
         // Validaciones básicas
@@ -188,12 +180,30 @@ const toggleProductVisibility = async (req, res) => {
     }
 };
 
+const getAllProductsAdmin = async (req, res) => {
+    try {
+        const productos = await Producto.find()
+            .populate('categoriaId', 'nombre')
+            .populate('marcaId', 'nombre')
+            .select('nombre descripcion estado visible variante precio imagenes fechaRegistro')
+            .sort({ fechaRegistro: -1 });
+            
+        res.status(200).json({
+            success: true,
+            message: 'Productos encontrados con éxito.',
+            data: productos
+        });
+    } catch (error) {
+        controlError(res, 'Ocurrió un error al encontrar los productos', error);
+    }
+};
+
 module.exports={
     getProducts,
-    getVisibleProducts,
     getOneProduct,
     createProducts,
     updateProduct,
     deleteProduct,
-    toggleProductVisibility
+    toggleProductVisibility,
+    getAllProductsAdmin  
 }
