@@ -303,4 +303,94 @@ router.post('/admin/editarUsuario/:id',async(req,res)=>{
     }
 })
 
+router.delete('/admin/eliminarProducto/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        await axios.delete(`${URL_BACKEND}/productos/${id}`, {
+            headers: {
+                'api-key-441': process.env.APIKEY_PASS
+            }
+        });
+        res.json({ success: true, message: 'Producto eliminado correctamente' });
+    } catch (error) {
+        console.error("Error al eliminar producto:", error.message);
+        if (error.response) {
+            return res.status(error.response.status).json(error.response.data);
+        }
+        res.status(500).json({ success: false, message: 'Error al eliminar producto' });
+    }
+});
+
+router.delete('/admin/eliminarUsuario/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        await axios.delete(`${URL_BACKEND}/usuarios/${id}`, {
+            headers: {
+                'api-key-441': process.env.APIKEY_PASS
+            }
+        });
+        res.json({ success: true, message: 'Usuario eliminado correctamente' });
+    } catch (error) {
+        console.error("Error al eliminar usuario:", error.message);
+        if (error.response) {
+            return res.status(error.response.status).json(error.response.data);
+        }
+        res.status(500).json({ success: false, message: 'Error al eliminar usuario' });
+    }
+});
+
+router.delete('/admin/eliminarCategoria/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        await axios.delete(`${URL_BACKEND}/categorias/${id}`, {
+            headers: {
+                'api-key-441': process.env.APIKEY_PASS
+            }
+        });
+        res.json({ success: true, message: 'Categoría eliminada correctamente' });
+    } catch (error) {
+        console.error("Error al eliminar categoría:", error.message);
+        if (error.response) {
+            return res.status(error.response.status).json(error.response.data);
+        }
+        res.status(500).json({ success: false, message: 'Error al eliminar categoría' });
+    }
+});
+
+router.delete('/admin/eliminarMarca/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        await axios.delete(`${URL_BACKEND}/marcas/${id}`, {
+            headers: {
+                'api-key-441': process.env.APIKEY_PASS
+            }
+        });
+        res.json({ success: true, message: 'Marca eliminada correctamente' });
+    } catch (error) {
+        console.error("Error al eliminar marca:", error.message);
+        if (error.response) {
+            return res.status(error.response.status).json(error.response.data);
+        }
+        res.status(500).json({ success: false, message: 'Error al eliminar marca' });
+    }
+});
+
+router.delete('/admin/eliminarPedido/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        await axios.delete(`${URL_BACKEND}/pedidos/${id}`, {
+            headers: {
+                'api-key-441': process.env.APIKEY_PASS
+            }
+        });
+        res.json({ success: true, message: 'Pedido eliminado correctamente' });
+    } catch (error) {
+        console.error("Error al eliminar pedido:", error.message);
+        if (error.response) {
+            return res.status(error.response.status).json(error.response.data);
+        }
+        res.status(500).json({ success: false, message: 'Error al eliminar pedido' });
+    }
+});
+
 module.exports = router;
