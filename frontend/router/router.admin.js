@@ -58,13 +58,20 @@ router.get('/admin', async (req, res) => {
         const marcas = resMarcas.data.data;
         const categorias = resCategorias.data.data
 
+        const stockTotal = productos.reduce((accProducto, producto) => {
+            const stockProducto = producto.variante.reduce((accVariante, v) => accVariante + v.stock, 0);
+            return accProducto + stockProducto;
+        }, 0);
+        const ganancias = pedidos.reduce((acc, pedido) => acc + pedido.total, 0);
         res.render('pages/admin', {
             productos,
             usuario: usuarios,
             pedidos,
             marcas,
             categorias,
-            usuarioActual: usuario
+            usuarioActual: usuario,
+            ganancias,
+            stockTotal
         });
 
     } catch (error) {

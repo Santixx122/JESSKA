@@ -44,24 +44,6 @@ router.get('/', async (req, res) => {
 
 // Rutas de perfil movidas a frontend/router/router.perfil.js
 
-// Página del carrito de compras
-router.get('/carrito', async (req, res) => {
-    try {
-        const respuesta = await axios.get(`${URL_BACKEND}/login/me`, {
-            headers: { 
-                'api-key-441': process.env.APIKEY_PASS,
-                ...(req.headers.cookie ? { Cookie: req.headers.cookie } : {})
-            },
-            withCredentials: true
-        });
-
-        const usuario = respuesta.data.usuario;
-        res.render('pages/carrito', { usuario });
-
-    } catch (error) {
-        res.render('pages/carrito', { usuario: null });
-    }
-});
 
 // Página del catálogo
 router.get('/catalogo', async (req, res) => {
@@ -228,6 +210,79 @@ router.get('/producto/:id', async (req, res) => {
     console.error('Error cargando producto:', error.message || error);
     return res.status(500).render('pages/detalle-producto', { producto: null, usuario });
   }
+});
+
+
+// Página del carrito de compras
+router.get('/carrito', async (req, res) => {
+    try {
+        const respuesta = await axios.get(`${URL_BACKEND}/login/me`, {
+            headers: { 
+                'api-key-441': process.env.APIKEY_PASS,
+                ...(req.headers.cookie ? { Cookie: req.headers.cookie } : {})
+            },
+            withCredentials: true
+        });
+
+        const usuario = respuesta.data.usuario;
+        const productosCarrito = req.session.carrito || [];
+
+        res.render('pages/carrito', { usuario, productosCarrito });
+
+    } catch (error) {
+        const productosCarrito = req.session.carrito || []; 
+        res.render('pages/carrito', { usuario: null, productosCarrito });
+    }
+});
+
+
+// routes/carrito.js
+router.post("/carrito/agregar", (req, res) => {
+  const { productoId, nombre, precio, imagen } = req.body;
+  let cantidad = parseInt(req.body.cantidad);
+
+  // Validar cantidad mínima
+  if (isNaN(cantidad) || cantidad < 1) cantidad = 1;
+
+  // Inicializar carrito si no existe
+  if (!req.session.carrito) req.session.carrito = [];
+
+  // Buscar producto existente en el carrito
+  const productoExistente = req.session.carrito.find(p => p.id && p.id.toString() === productoId);
+
+  if (productoExistente) {
+    // Si ya existe, sumar la cantidad
+    productoExistente.cantidad += cantidad;
+  } else {
+    // Si no existe, agregar nuevo producto
+    req.session.carrito.push({
+      id: productoId,
+      nombre,
+      precio: parseFloat(precio),
+      imagen,
+      cantidad
+    });
+  }
+
+  console.log("🛒 Carrito actualizado:", req.session.carrito);
+
+  // Redirigir al carrito
+  res.redirect('/carrito');
+});
+
+// Eliminar producto del carrito
+router.post("/carrito/eliminar", async (req, res) => {
+  const { productoId } = req.body;
+
+  if (!req.session.carrito) req.session.carrito = [];
+
+  req.session.carrito = req.session.carrito.filter(
+    item => item.id.toString() !== productoId
+  );
+
+  console.log("🗑️ Producto eliminado. Carrito:", req.session.carrito);
+
+  res.redirect("/carrito");
 });
 
 module.exports = router;

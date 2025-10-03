@@ -112,6 +112,18 @@ document.addEventListener("DOMContentLoaded", () => {
         modal.show();
       }
 
+            if (type === "pedido") {
+        const modal = new bootstrap.Modal(document.getElementById("modalCrearProducto"));
+        const form = document.getElementById("formCrearProducto");
+
+        document.getElementById("modalCrearProductoLabel").innerText = "Crear Producto";
+        form.querySelector("button[type=submit]").innerHTML = "Agregar";
+        form.action = "/admin/crearProducto";
+        form.reset();
+
+        modal.show();
+      }
+      
       if (type === "producto") {
         const modal = new bootstrap.Modal(document.getElementById("modalCrearProducto"));
         const form = document.getElementById("formCrearProducto");

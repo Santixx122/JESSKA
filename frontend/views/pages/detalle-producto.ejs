@@ -119,9 +119,21 @@
         <% } %>
 
         <!-- Botón agregar al carrito -->
-        <div class="d-grid">
-          <button class="btn btn-dark btn-lg">Agregar al carrito</button>
-        </div>
+<!-- Formulario agregar al carrito -->
+<form action="/carrito/agregar" method="POST" class="d-grid">
+  <!-- Datos ocultos del producto -->
+  <input type="hidden" name="productoId" value="<%= producto._id %>">
+  <input type="hidden" name="nombre" value="<%= producto.nombre %>">
+  <input type="hidden" name="precio" value="<%= producto.variante && producto.variante[0] ? producto.variante[0].precio : 0 %>">
+  <input type="hidden" name="imagen" value="<%= producto.imagenes && producto.imagenes.length > 0 ? producto.imagenes[0] : '/img/placeholder.webp' %>">
+
+  <!-- Campo cantidad -->
+  <input type="hidden" id="cantidadInput" name="cantidad" value="1">
+
+  <!-- Botón -->
+  <button type="submit" class="btn btn-dark btn-lg">Agregar al carrito</button>
+</form>
+
       </div>
     </div>
   </main>

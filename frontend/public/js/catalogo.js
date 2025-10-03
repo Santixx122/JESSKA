@@ -1,3 +1,7 @@
+const express = require("express");
+const router = express.Router();
+
+
 // Funcionalidad del catálogo
 document.addEventListener('DOMContentLoaded', function() {
     cargarProductosVisibles();
@@ -197,3 +201,29 @@ async function agregarAlCarrito(productoId) {
         }
     }
 }
+
+
+
+// POST /carrito/agregar
+router.post("/agregar", (req, res) => {
+  const { productoId, variante, cantidad } = req.body;
+
+  if (!req.session.carrito) {
+    req.session.carrito = [];
+  }
+
+  // Buscar si el producto ya está en el carrito
+  const item = req.session.carrito.find(
+    i => i.productoId === productoId && i.variante === variante
+  );
+
+  if (item) {
+    item.cantidad += cantidad;
+  } else {
+    req.session.carrito.push({ productoId, variante, cantidad });
+  }
+
+  res.json({ message: "Producto agregado al carrito", carrito: req.session.carrito });
+});
+
+module.exports = router;

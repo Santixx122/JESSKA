@@ -231,84 +231,101 @@
       </div>
     </div>
   </div>
-  <main class="carrito-container">
-    <div class="container mt-5 pt-5">
-      <div class="row">
-        <!-- Carrito de productos -->
-        <div class="col-lg-8">
-          <div class="carrito-header">
-            <h2 class="carrito-title">Tu Carrito</h2>
-          </div>
+<main class="carrito-container">
+  <div class="container mt-5 pt-5">
+    <div class="row">
+      
+      <!-- Lista de productos -->
+      <div class="col-lg-8">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th class="text-center">Cantidad</th>
+              <th class="text-center">Subtotal</th>
+              <th class="text-end">Acciones</th>
+            </tr>
+          </thead>
 
-          <div class="carrito-productos">
-            <!-- Tabla de productos -->
-            <div class="table-responsive">
-              <table class="table carrito-table">
-                <thead>
-                  <tr>
-                    <th scope="col">Producto</th>
-                    <th scope="col" class="text-center">Cantidad</th>
-                    <th scope="col" class="text-center">Subtotal</th>
-                    <th scope="col"></th>
-                  </tr>
-                </thead>
-                <tbody id="carrito-items">
-                  <!-- Los productos se cargarán dinámicamente desde JavaScript -->
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
+          <tbody id="carrito-items">
+            <% if (productosCarrito && productosCarrito.length > 0) { %>
+              <% let total = 0; %>
+              <% productosCarrito.forEach(prod => { 
+                   total += prod.precio * prod.cantidad;
+              %>
+                <tr>
+                  <!-- Producto -->
+                  <td class="align-middle">
+                    <div class="d-flex align-items-center">
+                      <img src="<%= prod.imagen %>" alt="<%= prod.nombre %>" width="60" class="me-3 rounded">
+                      <div>
+                        <h6 class="mb-0"><%= prod.nombre %></h6>
+                        <small class="text-muted">$<%= prod.precio.toLocaleString('es-CO') %></small>
+                      </div>
+                    </div>
+                  </td>
 
-        <!-- Resumen del pedido -->
-        <div class="col-lg-4">
-          <div class="resumen-pedido">
-            <h4 class="resumen-title">Resumen del Pedido</h4>
+                  <!-- Cantidad -->
+                  <td class="text-center align-middle">
+                    <%= prod.cantidad %>
+                  </td>
 
-            <div class="resumen-item">
-              <span>Subtotal</span>
-              <span id="subtotal-amount">$0.00</span>
-            </div>
+                  <!-- Subtotal -->
+                  <td class="text-center align-middle">
+                    $<%= (prod.precio * prod.cantidad).toLocaleString('es-CO') %>
+                  </td>
 
-            <div class="resumen-item">
-              <span>Envío</span>
-              <span id="envio-amount">Gratis</span>
-            </div>
-
-            <div class="resumen-item">
-              <span>Impuestos</span>
-              <span id="impuestos-amount">$0.00</span>
-            </div>
-
-            <hr class="resumen-divider">
-
-            <div class="resumen-total">
-              <span>Total</span>
-              <span id="total-amount">$0.00</span>
-            </div>
-
-            <button class="btn btn-primary btn-lg w-100 mt-3 proceder-pago">
-              Proceder al Pago
-            </button>
-
-            <div class="continuar-comprando mt-3 text-center">
-              <a href="/" class="text-decoration-none">← Continuar comprando</a>
-            </div>
-          </div>
-        </div>
+                  <!-- Eliminar -->
+                  <td class="text-end align-middle">
+                    <form action="/carrito/eliminar" method="POST" class="d-inline">
+                      <input type="hidden" name="productoId" value="<%= prod.id %>">
+                      <button type="submit" class="btn btn-sm btn-danger">
+                        <i class="bi bi-trash"></i> Eliminar
+                      </button>
+                    </form>
+                  </td>
+                </tr>
+              <% }) %>
+            <% } else { %>
+              <tr>
+                <td colspan="4" class="text-center py-4">
+                  <div class="carrito-vacio">
+                    <h5 class="mb-2">Tu carrito está vacío</h5>
+                    <a href="/catalogo" class="btn btn-primary">Explorar productos</a>
+                  </div>
+                </td>
+              </tr>
+            <% } %>
+          </tbody>
+        </table>
       </div>
 
-      <!-- Carrito vacío (oculto por defecto) -->
-      <div class="carrito-vacio text-center" id="carrito-vacio" style="display: none;">
-        <div class="py-5">
-          <img src="img/carrito-vacio.svg" alt="Carrito vacío" class="carrito-vacio-img mb-4">
-          <h3>Tu carrito está vacío</h3>
-          <p class="text-muted mb-4">¡Agrega algunos productos para comenzar!</p>
-          <a href="/" class="btn btn-primary">Explorar productos</a>
-        </div>
+      <!-- Resumen de compra -->
+      <div class="col-lg-4">
+        <% if (productosCarrito && productosCarrito.length > 0) { %>
+          <% let total = 0; 
+             productosCarrito.forEach(prod => { total += prod.precio * prod.cantidad });
+          %>
+          <div class="card shadow-sm">
+            <div class="card-body">
+              <h5 class="card-title mb-3">Resumen de compra</h5>
+              <div class="d-flex justify-content-between mb-3">
+                <span>Total a pagar:</span>
+                <strong>$<%= total.toLocaleString('es-CO') %></strong>
+              </div>
+              <form action="/pago" method="POST">
+                <button type="submit" class="btn btn-dark w-100">Pagar</button>
+              </form>
+            </div>
+          </div>
+        <% } %>
       </div>
+
     </div>
-  </main>
+  </div>
+</main>
+
+
 
   <!-- Modal de login (si no está autenticado) -->
   <% if (typeof usuario==='undefined' || !usuario) { %>
@@ -335,8 +352,8 @@
       <!--font awesome-->
       <script src="https://kit.fontawesome.com/your-fontawesome-kit.js" crossorigin="anonymous"></script>
       <!--carrito js-->
-      <script src="js/carrito.js"></script>
-      <script src="js/script.landing.js"></script>
+      <script src="/js/carrito.js"></script>
+      <script src="/js/script.landing.js"></script>
 </body>
 
 </html>
