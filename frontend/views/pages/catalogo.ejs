@@ -281,14 +281,16 @@
                                     <% } %>
                           </div>
 
-                    <!-- Botón de añadir al carrito -->
-                    <div class="d-grid">
-                      <button class="btn btn-dark" type="button" data-id="<%= p._id %>" 
-                              <%= (p.estado === 'agotado' || (p.variante && p.variante[0].stock === 0)) ? 'disabled' : '' %>>
-                        <i class="bi bi-cart-plus me-2"></i>
-                        <%= (p.estado === 'agotado' || (p.variante && p.variante[0].stock === 0)) ? 'Agotado' : 'Añadir al carrito' %>
-                      </button>
-                    </div>
+                          <!-- Botón de añadir al carrito -->
+                          <div class="d-grid">
+                            <a href="/producto/<%= p._id %>"
+                              class="btn btn-dark <%= (p.estado === 'agotado' || (p.variante && p.variante[0].stock === 0)) ? 'disabled' : '' %>">
+                              <i class="bi bi-cart-plus me-2"></i>
+                              <%= (p.estado==='agotado' || (p.variante && p.variante[0].stock===0)) ? 'Agotado'
+                                : 'Ver detalle' %>
+                            </a>
+                          </div>
+
                   </div>
                 </div>
               </div>
