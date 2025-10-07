@@ -2,8 +2,12 @@ const express = require('express');
 const router = express.Router();
 const axios = require('axios');
 require('dotenv').config();
+const multer = require('multer');
+const FormData = require('form-data');
 
 const URL_BACKEND = process.env.URL_BACKEND || 'http://localhost:4040';
+const upload = multer({ storage: multer.memoryStorage() });
+
 
 router.get('/admin', async (req, res) => {
     try {
@@ -89,27 +93,59 @@ router.get('/admin', async (req, res) => {
 });
 //Agregar producto 
 
-router.post('/admin/crearProducto', async (req, res) => {
-
-    console.log("Datos recibidos del formulario:", req.body);
-    const { nombre, categoriaId, marcaId, color, descripcion, talla, precio, stock, estado} = req.body
-    const visible = req.body.visible==='on'
+router.post('/api/admin/productos', upload.single('imagen'), async (req, res) => {
     try {
-        await axios.post(`${URL_BACKEND}/productos`,
-            { nombre, categoriaId, marcaId, color, descripcion, talla, precio, stock, estado, visible }, {
+        // 1. Validar la sesión del administrador
+        const sessionResponse = await axios.get(`${URL_BACKEND}/login/me`, {
             headers: {
-                'api-key-441': process.env.APIKEY_PASS
-            }
+                'api-key-441': process.env.APIKEY_PASS,
+                ...(req.headers.cookie ? { Cookie: req.headers.cookie } : {})
+            },
+            withCredentials: true
         });
-        res.redirect('/admin#productos');
-    } catch (error) {
-        console.error('Error al crear producto:', error.message);
-        if (error.response && error.response.data) {
-            return res.status(error.response.status).send(error.response.data);
+
+        const usuario = sessionResponse.data.usuario;
+        if (!usuario || (usuario.rol !== 'administrador' && usuario.rol !== 'admin')) {
+            return res.status(403).json({ success: false, message: 'Acceso denegado. Se requiere ser administrador.' });
         }
-        res.status(500).send('Error interno al crear producto');
+
+        // 2. Reconstruir el FormData para enviarlo al backend
+        const form = new FormData();
+
+        // Añadir todos los campos de texto
+        for (const key in req.body) {
+            form.append(key, req.body[key]);
+        }
+
+        // Añadir el archivo si existe
+        if (req.file) {
+            form.append('imagen', req.file.buffer, {
+                filename: req.file.originalname,
+                contentType: req.file.mimetype,
+            });
+        }
+
+        //Enviar la petición al backend
+        await axios.post(`${URL_BACKEND}/productos`, form, {
+            headers: {
+                ...form.getHeaders(), // Importante para multipart/form-data
+                'api-key-441': process.env.APIKEY_PASS,
+                 ...(req.headers.cookie ? { Cookie: req.headers.cookie } : {})
+            },
+             withCredentials: true
+        });
+
+        res.redirect('/admin#productos')
+
+    } catch (error) {
+        console.error('Respuesta del backend:', error.response?.data || error.message);
+        console.error('Error en el proxy de creación de producto:', error.message);
+        if (error.response) {
+            return res.status(error.response.status).json(error.response.data);
+        }
+        res.status(500).json({ success: false, message: 'Error interno del servidor en el proxy.' });
     }
-})
+});
 
 
 // Agregar Usuario

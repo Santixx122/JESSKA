@@ -4,10 +4,12 @@ const cron = require('node-cron');
 const backup = require('./config/backup');
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
-
+const { initializeBucket } = require('./services/supabase');
 
 require('dotenv').config()
 require('./config/connection')
+
+initializeBucket();
 
 const app = express();
 

@@ -73,7 +73,6 @@ router.get('/catalogo', async (req, res) => {
         } catch (productosError) {
             console.error('Error cargando productos:', productosError.message);
         }
-
         res.render('pages/catalogo', { usuario, productos });
 
     } catch (error) {

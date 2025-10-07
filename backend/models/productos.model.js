@@ -3,14 +3,11 @@ const mongoose = require('mongoose');
 const VarianteSchema = new mongoose.Schema({
     color: {
         type: String,
-        required: true,
-        trim: true
+        required: true
     },
     talla: {
         type: String,
-        required: true,
-        enum: ['35', '36', '37', '38', '39', '40', '41', '42', '43', '44', '45'],
-        trim: true
+        required: true
     },
     precio: {
         type: Number,
@@ -47,12 +44,21 @@ const SchemaProducto = new mongoose.Schema({
         trim: true,
         maxLength: [100, 'El nombre no puede exceder 100 caracteres']
     },
+    imagenUrl: {
+        type: String,
+        trim: true
+    },
     descripcion: {
         type: String,
         required: [true, 'La descripción es obligatoria'],
         trim: true,
         maxLength: [500, 'La descripción no puede exceder 500 caracteres'],
         minLength: [10, 'La descripción debe tener al menos 10 caracteres']
+    },
+
+    imagenUrl: {
+        type: String, // Guardamos la URL como un texto.
+        trim: true    // Eliminamos espacios en blanco al inicio o al final.
     },
     variante: {
         type: [VarianteSchema],
