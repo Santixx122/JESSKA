@@ -108,6 +108,7 @@ const createUsuario = async (req, res) => {
 
         const hashedPassword = await bcrypt.hash(password, 10);
         const nuevoUsuario = await Usuario.create({ nombre, email, password: hashedPassword, telefono,rol,estado});
+    // id devuelto por mongoose
         res.status(201).json({
             success: true,
             message: 'El usuario se creó exitosamente',
@@ -169,6 +170,8 @@ const updateUsuario = async (req, res) => {
         });
 
         await usuario.save();
+
+    // id devuelto al actualizar usuario
 
         res.status(200).json({
             success: true,

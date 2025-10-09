@@ -119,6 +119,7 @@ if (req.file) {
         .from('imagenes-productos')
         .getPublicUrl(fileName);
 
+    // Guardar la URL pública como string (compatible con el esquema actual)
     producto.imagenUrl = publicUrl;
 }
 

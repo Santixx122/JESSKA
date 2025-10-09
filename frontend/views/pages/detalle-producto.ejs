@@ -63,7 +63,7 @@
     <div class="row g-5">
       <!-- Imagen -->
       <div class="col-md-6 text-center">
-        <img src="<%= producto.imagenes && producto.imagenes.length > 0 ? producto.imagenes[0] : '/img/placeholder.webp' %>"
+  <img src="<%= Array.isArray(producto.imagenUrl) ? (producto.imagenUrl.length>0 ? producto.imagenUrl[0] : '/img/placeholder.webp') : (producto.imagenUrl || '/img/placeholder.webp') %>"
              alt="<%= producto.nombre %>"
              class="img-fluid rounded shadow-sm">
       </div>

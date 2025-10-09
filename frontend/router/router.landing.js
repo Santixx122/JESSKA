@@ -196,6 +196,7 @@ router.get('/producto/:id', async (req, res) => {
     }
 
     // obtener producto desde backend
+    // obtener producto desde backend
     const prodResp = await axios.get(`${URL_BACKEND}/productos/${id}`, {
       headers: { 'api-key-441': process.env.APIKEY_PASS }
     });
@@ -237,7 +238,7 @@ router.get('/carrito', async (req, res) => {
 
 // routes/carrito.js
 router.post("/carrito/agregar", (req, res) => {
-  const { productoId, nombre, precio, imagen } = req.body;
+  const { productoId, nombre, precio, imagenUrl } = req.body;
   let cantidad = parseInt(req.body.cantidad);
 
   // Validar cantidad mínima
@@ -258,7 +259,7 @@ router.post("/carrito/agregar", (req, res) => {
       id: productoId,
       nombre,
       precio: parseFloat(precio),
-      imagen,
+      imagenUrl,
       cantidad
     });
   }

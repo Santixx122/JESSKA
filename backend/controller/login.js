@@ -82,6 +82,8 @@ const login = async (req,res)=>{
         const isAdmin = user.rol === 'administrador' || user.rol === 'admin';
 
         // Configurar cookie con token
+    // id del usuario autenticado (no imprimir en producción)
+
         res
             .cookie('access_token',token,{
                 httpOnly: true,
