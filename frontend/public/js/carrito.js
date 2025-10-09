@@ -274,3 +274,6 @@ function obtenerTotalCarrito() {
 window.cambiarCantidad = cambiarCantidad;
 window.eliminarProducto = eliminarProducto;
 window.agregarAlCarrito = agregarAlCarrito;
+
+
+

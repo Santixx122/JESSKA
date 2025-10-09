@@ -112,6 +112,18 @@ document.addEventListener("DOMContentLoaded", () => {
         modal.show();
       }
 
+            if (type === "pedido") {
+        const modal = new bootstrap.Modal(document.getElementById("modalCrearProducto"));
+        const form = document.getElementById("formCrearProducto");
+
+        document.getElementById("modalCrearProductoLabel").innerText = "Crear Producto";
+        form.querySelector("button[type=submit]").innerHTML = "Agregar";
+        form.action = "/admin/crearProducto";
+        form.reset();
+
+        modal.show();
+      }
+      
       if (type === "producto") {
         const modal = new bootstrap.Modal(document.getElementById("modalCrearProducto"));
         const form = document.getElementById("formCrearProducto");
@@ -253,3 +265,72 @@ document.getElementById("modalCrearUsuario").addEventListener("hidden.bs.modal",
   form.action = "/admin/crearUsuario";
   form.reset();
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+  const tablas = [
+    { id: "tabla-productos", ruta: "/admin/eliminarProducto/", entidad: "Producto" },
+    { id: "tabla-usuarios", ruta: "/admin/eliminarUsuario/", entidad: "Usuario" },
+    { id: "tabla-categorias", ruta: "/admin/eliminarCategoria/", entidad: "Categoría" },
+    { id: "tabla-marcas", ruta: "/admin/eliminarMarca/", entidad: "Marca" },
+    { id: "tabla-pedidos", ruta: "/admin/eliminarPedido/", entidad: "Pedido" }
+  ];
+
+  let idAEliminar = null;
+  let filaAEliminar = null;
+  let rutaAEliminar = null;
+  let entidadAEliminar = null;
+
+  const modalEliminar = new bootstrap.Modal(document.getElementById("modalConfirmarEliminar"));
+  const btnConfirmarEliminar = document.getElementById("btnConfirmarEliminar");
+  const toastEliminar = new bootstrap.Toast(document.getElementById("toastEliminar"), { delay: 2000 });
+  const toastMsg = document.getElementById("toastEliminarMsg");
+
+  tablas.forEach(tablaInfo => {
+    const tabla = document.getElementById(tablaInfo.id);
+    if (!tabla) return;
+
+    tabla.addEventListener("click", (e) => {
+      if (e.target.closest(".btn-eliminar")) {
+        const boton = e.target.closest(".btn-eliminar");
+        idAEliminar = boton.getAttribute("data-id");
+        filaAEliminar = boton.closest("tr");
+        rutaAEliminar = tablaInfo.ruta;
+        entidadAEliminar = tablaInfo.entidad;
+          const textoModal = document.getElementById("modalEliminarTexto");
+          if (textoModal) {
+            textoModal.textContent = `¿Seguro que deseas eliminar este ${entidadAEliminar.toLowerCase()}?`;
+          }
+        modalEliminar.show();
+      }
+    });
+  });
+
+  btnConfirmarEliminar.addEventListener("click", async () => {
+    if (!idAEliminar || !rutaAEliminar) return;
+    try {
+      const res = await axios.delete(rutaAEliminar + idAEliminar);
+      if (res.data.success) {
+        filaAEliminar.remove();
+        toastMsg.textContent = `${entidadAEliminar} eliminado correctamente`;
+        document.getElementById("toastEliminar").classList.remove("text-bg-danger");
+        document.getElementById("toastEliminar").classList.add("text-bg-success");
+      } else {
+        toastMsg.textContent = `No se pudo eliminar el ${entidadAEliminar.toLowerCase()}`;
+        document.getElementById("toastEliminar").classList.remove("text-bg-success");
+        document.getElementById("toastEliminar").classList.add("text-bg-danger");
+      }
+    } catch (error) {
+      toastMsg.textContent = "Error al conectar con el servidor";
+      document.getElementById("toastEliminar").classList.remove("text-bg-success");
+      document.getElementById("toastEliminar").classList.add("text-bg-danger");
+    }
+    modalEliminar.hide();
+    toastEliminar.show();
+    // Limpiar variables
+    idAEliminar = null;
+    filaAEliminar = null;
+    rutaAEliminar = null;
+    entidadAEliminar = null;
+  });
+});
+

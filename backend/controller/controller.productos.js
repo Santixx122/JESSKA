@@ -1,4 +1,5 @@
 const Producto = require('../models/productos.model')
+const { supabase } = require('../services/supabase');
 
 function controlError(res,message,error){
     res.status(500).json({
@@ -26,7 +27,7 @@ const getProducts = async (req, res) => {
         const productos = await Producto.find(filter)
             .populate('categoriaId', 'nombre')
             .populate('marcaId', 'nombre')
-            .select('nombre descripcion estado visible variante precio imagenes')
+            .select('nombre descripcion estado visible variante precio imagenUrl')
             .sort({ fechaRegistro: -1 });
             
         res.status(200).json({
@@ -62,7 +63,9 @@ const getOneProduct = async (req,res)=>{
     }
 }
 
-const createProducts = async (req,res)=>{
+const createProducts = async (req,res)=>{ 
+
+    console.log('aquí va la petición: ',req.body, req.file)
     try {
         const { nombre, descripcion, color, talla, precio, stock, categoriaId, marcaId, estado, visible } = req.body;
         
@@ -92,6 +95,34 @@ const createProducts = async (req,res)=>{
             visible: visible !== undefined ? visible : true
         };
         
+        // --- Lógica de subida de imagen a Supabase ---
+if (req.file) {
+    const fileName = `producto-${Date.now()}`;
+    const fileBuffer = req.file.buffer;
+    const fileMimetype = req.file.mimetype;
+
+    // Subir la imagen al bucket
+    const { error: uploadError } = await supabase.storage
+        .from('imagenes-productos')
+        .upload(fileName, fileBuffer, {
+            contentType: fileMimetype,
+            upsert: false
+        });
+
+    if (uploadError) {
+        return controlError(res, 'Error al subir la imagen a Supabase', uploadError);
+    }
+
+    // Obtener URL pública
+    const { data: { publicUrl } } = supabase
+        .storage
+        .from('imagenes-productos')
+        .getPublicUrl(fileName);
+
+    producto.imagenUrl = publicUrl;
+}
+
+
         const insertarProducto = await Producto.create(producto);
         const productoCompleto = await Producto.findById(insertarProducto._id)
             .populate('categoriaId', 'nombre')
@@ -99,13 +130,13 @@ const createProducts = async (req,res)=>{
             
         res.status(201).json({
             success:true,
-            message:'El producto se creó exitosamente',
             data:productoCompleto
         })
     } catch (error) {
         controlError(res,'El producto no pudo ser creado exitosamente',error)     
     }
 }
+
 
 const updateProduct = async (req,res)=>{
     try {

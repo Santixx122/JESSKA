@@ -44,24 +44,6 @@ router.get('/', async (req, res) => {
 
 // Rutas de perfil movidas a frontend/router/router.perfil.js
 
-// Página del carrito de compras
-router.get('/carrito', async (req, res) => {
-    try {
-        const respuesta = await axios.get(`${URL_BACKEND}/login/me`, {
-            headers: { 
-                'api-key-441': process.env.APIKEY_PASS,
-                ...(req.headers.cookie ? { Cookie: req.headers.cookie } : {})
-            },
-            withCredentials: true
-        });
-
-        const usuario = respuesta.data.usuario;
-        res.render('pages/carrito', { usuario });
-
-    } catch (error) {
-        res.render('pages/carrito', { usuario: null });
-    }
-});
 
 // Página del catálogo
 router.get('/catalogo', async (req, res) => {
@@ -84,14 +66,13 @@ router.get('/catalogo', async (req, res) => {
         // Obtener productos 
         let productos = [];
         try {
-            const productosResponse = await axios.get(`${URL_BACKEND}/productos`, {
+            const productosResponse = await axios.get(`${URL_BACKEND}/productos?showAll=true`, {
                 headers: { 'api-key-441': process.env.APIKEY_PASS }
             });
             productos = productosResponse.data.data || [];
         } catch (productosError) {
             console.error('Error cargando productos:', productosError.message);
         }
-
         res.render('pages/catalogo', { usuario, productos });
 
     } catch (error) {
@@ -194,5 +175,138 @@ router.post('/logout', async (req, res) => {
   }
 });
 
+
+router.get('/producto/:id', async (req, res) => {
+  const id = req.params.id;
+  let usuario = null;
+
+  try {
+    // intentar obtener sesión del usuario (si existe)
+    try {
+      const meResp = await axios.get(`${URL_BACKEND}/login/me`, {
+        headers: {
+          'api-key-441': process.env.APIKEY_PASS,
+          ...(req.headers.cookie ? { Cookie: req.headers.cookie } : {})
+        },
+        withCredentials: true
+      });
+      usuario = meResp.data.usuario;
+    } catch (err) {
+      usuario = null; // no autenticado, continuar
+    }
+
+    // obtener producto desde backend
+    const prodResp = await axios.get(`${URL_BACKEND}/productos/${id}`, {
+      headers: { 'api-key-441': process.env.APIKEY_PASS }
+    });
+
+    const producto = prodResp.data.data;
+
+    
+
+    res.render('pages/detalle-producto', { producto, usuario });
+  } catch (error) {
+    console.error('Error cargando producto:', error.message || error);
+    return res.status(500).render('pages/detalle-producto', { producto: null, usuario });
+  }
+});
+
+
+// Página del carrito de compras
+router.get('/carrito', async (req, res) => {
+    try {
+        const respuesta = await axios.get(`${URL_BACKEND}/login/me`, {
+            headers: { 
+                'api-key-441': process.env.APIKEY_PASS,
+                ...(req.headers.cookie ? { Cookie: req.headers.cookie } : {})
+            },
+            withCredentials: true
+        });
+
+        const usuario = respuesta.data.usuario;
+        const productosCarrito = req.session.carrito || [];
+
+        res.render('pages/carrito', { usuario, productosCarrito });
+
+    } catch (error) {
+        const productosCarrito = req.session.carrito || []; 
+        res.render('pages/carrito', { usuario: null, productosCarrito });
+    }
+});
+
+
+// routes/carrito.js
+router.post("/carrito/agregar", (req, res) => {
+  const { productoId, nombre, precio, imagen } = req.body;
+  let cantidad = parseInt(req.body.cantidad);
+
+  // Validar cantidad mínima
+  if (isNaN(cantidad) || cantidad < 1) cantidad = 1;
+
+  // Inicializar carrito si no existe
+  if (!req.session.carrito) req.session.carrito = [];
+
+  // Buscar producto existente en el carrito
+  const productoExistente = req.session.carrito.find(p => p.id && p.id.toString() === productoId);
+
+  if (productoExistente) {
+    // Si ya existe, sumar la cantidad
+    productoExistente.cantidad += cantidad;
+  } else {
+    // Si no existe, agregar nuevo producto
+    req.session.carrito.push({
+      id: productoId,
+      nombre,
+      precio: parseFloat(precio),
+      imagen,
+      cantidad
+    });
+  }
+
+  // Redirigir al carrito
+  res.redirect('/carrito');
+});
+
+// Eliminar producto del carrito
+router.post("/carrito/eliminar", async (req, res) => {
+  const { productoId } = req.body;
+
+  if (!req.session.carrito) req.session.carrito = [];
+
+  req.session.carrito = req.session.carrito.filter(
+    item => item.id.toString() !== productoId
+  );
+
+  res.redirect("/carrito");
+});
+
+
+
+
+
+
+router.post('/pagar', async (req, res) => {
+  try {
+    const rawItems = req.body.items;
+
+    if (!rawItems || !Array.isArray(rawItems)) {
+      return res.status(400).json({ error: 'Datos del carrito inválidos.' });
+    }
+
+    // Transformar los datos al formato que MercadoPago espera
+    const items = rawItems.map(item => ({
+      title: item.nombre,
+      quantity: parseInt(item.cantidad),
+      unit_price: parseFloat(item.precio)
+    }));
+
+    const respuesta = await axios.post(`${URL_BACKEND}/api/orden/crear`, { items });
+
+    res.json(respuesta.data);
+  } catch (error) {
+    console.error('Error al crear preferencia desde el front:', error.message);
+    res.status(500).json({ error: 'No se pudo crear la orden (front).' });
+  }
+});
 
 module.exports = router;

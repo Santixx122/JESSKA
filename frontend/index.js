@@ -6,6 +6,15 @@ const PORT = process.env.PORT || 5050
 const routerAdmin = require('./router/router.admin')
 const routerLanding = require('./router/router.landing');
 const routerPerfil = require('./router/router.perfil');
+const session = require("express-session");
+
+app.use(session({
+  secret: "clave-super-secreta", // cámbiala por algo fuerte
+  resave: false,
+  saveUninitialized: false,
+  cookie: { secure: false } 
+}));
+
 
 app.set('view engine', 'ejs');
 app.set('views',path.join(__dirname,'views'))

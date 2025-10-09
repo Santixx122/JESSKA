@@ -4,10 +4,13 @@ const cron = require('node-cron');
 const backup = require('./config/backup');
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
-
+const { initializeBucket } = require('./services/supabase');
+const path = require('path');
 
 require('dotenv').config()
 require('./config/connection')
+
+initializeBucket();
 
 const app = express();
 
@@ -21,7 +24,7 @@ app.use(express.urlencoded({extended:true}));
 
 app.use(morgan('dev'))
 
-const PORT = process.env.PORT || 4040
+const PORT = process.env.PORT || 4000
 
 const routerProducts = require('./router/router.productos')
 const routerCategorias = require('./router/router.categorias')
@@ -51,6 +54,7 @@ app.use('/usuarios',routerUsuarios)
 app.use('/login',routerLogin)
 app.use('/mensajes', routerMensajes)
 app.use('/resenas', routerResenas)
+app.use('/api/orden', require('./router/mercadopago.routes'));
 
 app.listen(PORT,()=>{
     console.log(`Servidor Backend funcionando en el puerto ${PORT}`)
