@@ -10,11 +10,15 @@ services:
       - key: NODE_ENV
         value: production
       - key: MONGO_URI
-        value: mongodb+srv://<tu_usuario>:<tu_contraseña>@<cluster>.mongodb.net/<db>
+        value: mongodb+srv://JuanEstebanAdso:CzFpF3eRIfoXZbBG@cluster0.xfphf.mongodb.net/JESSKA_DB
       - key: JWT_SECRET
         value: 123456
       - key: CLIENT_URL
         value: https://jesska-frontend.onrender.com
+      - key: SUPABASE_URL
+        value: https://dmsokxvxgznmuyoquaxy.supabase.co
+      - key: SUPABASE_ANON_KEY
+        value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRtc29reHZ4Z3pubXV5b3F1YXh5Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1ODczOTYxNSwiZXhwIjoyMDc0MzE1NjE1fQ.iy9at6pNpauxCRx7jxnwmfw7Njghdwtvjw0JqNSwv6M
 
   - type: web
     name: jesska-frontend
