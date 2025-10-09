@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: jesska
+    name: jesska-backend
     env: node
     rootDir: backend
     plan: free
@@ -37,7 +37,7 @@ services:
         value: APP_USR-d7a8e5ac-dbdf-4d27-8117-15139210b49e
 
   - type: web
-    name: JESSKA-APP
+    name: jesska
     env: node
     rootDir: frontend
     plan: free
@@ -48,7 +48,7 @@ services:
         value: 10001
       - key: URL_BACKEND
         # 👇 importante: aquí debes poner el link que Render te da cuando deployas el backend
-        value: https://jesska.onrender.com
+        value: https://jesska-backend.onrender.com
       - key: APIKEY_NAME
         value: api-key-441
       - key: APIKEY_PASS
