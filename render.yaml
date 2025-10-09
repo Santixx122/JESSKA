@@ -37,7 +37,7 @@ services:
         value: APP_USR-d7a8e5ac-dbdf-4d27-8117-15139210b49e
 
   - type: web
-    name: JESSKA
+    name: JESSKA-APP
     env: node
     rootDir: frontend
     plan: free
