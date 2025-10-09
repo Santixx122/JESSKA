@@ -20,9 +20,9 @@ const nuevaOrden = async (req, res) => {
       body: {
         items,
         back_urls: {
-          success: "http://localhost:3000/success",
-          failure: "http://localhost:3000/failure",
-          pending: "http://localhost:3000/pending",
+          success: "https://jesska-app.onrender.com/success",
+          failure: "https://jesska-app.onrender.com/failure",
+          pending: "https://jesska-app.onrender.com/pending",
         },
         auto_return: "approved",
       },

@@ -41,14 +41,8 @@ const getProducts = async (req, res) => {
 };
 
 const getOneProduct = async (req,res)=>{
-console.log("🧭 ID recibido:", req.params.id);
-if (!/^[0-9a-fA-F]{24}$/.test(req.params.id)) {
-  console.error("❌ ID inválido detectado:", req.params.id);
-  return res.status(400).json({
-    success: false,
-    message: "El ID proporcionado no es válido."
-  });
-}    try {
+
+  try {
     const id = req.params.id
         // 🧩 Validar que sea un ObjectId válido
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -75,7 +69,6 @@ if (!/^[0-9a-fA-F]{24}$/.test(req.params.id)) {
         }
     } catch (error) {
         controlError(res,'Se produjo un error al buscar el producto.',error)
-        console.error("💥 Error en getOneProduct:", error);
     }
 }
 
@@ -135,6 +128,7 @@ if (req.file) {
         .from('imagenes-productos')
         .getPublicUrl(fileName);
 
+    // Guardar la URL pública como string (compatible con el esquema actual)
     producto.imagenUrl = publicUrl;
 }
 

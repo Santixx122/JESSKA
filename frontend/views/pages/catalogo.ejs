@@ -247,7 +247,9 @@
             <div class="col-md-4 col-lg-3">
               <div class="product-card h-100 shadow-sm rounded">
                 <div class="position-relative">
-                  <img src="<%= p.imagenUrl %>" class="card-img-top product-img p-4" alt="<%= p.nombre %>"
+                  <img
+                    src="<%= Array.isArray(p.imagenUrl) ? (p.imagenUrl.length>0 ? p.imagenUrl[0] : '/img/placeholder.webp') : (p.imagenUrl || '/img/placeholder.webp') %>"
+                    class="card-img-top product-img p-4" alt="<%= p.nombre %>"
                     onerror="this.onerror=null;this.src='img/placeholder.webp';">
                 </div>
                 <div class="card-body p-4">
@@ -284,10 +286,11 @@
 
                           <!-- Botón de añadir al carrito -->
                           <div class="d-grid">
-                            <a href="/producto/<%= p.id %>"
+                            <a href="/producto/<%= p._id %>"
                               class="btn btn-dark <%= (p.estado === 'agotado' || (p.variante && p.variante[0].stock === 0)) ? 'disabled' : '' %>">
                               <i class="bi bi-cart-plus me-2"></i>
-                              <%= (p.estado==='agotado' || (p.variante && p.variante[0].stock===0)) ? 'Agotado': 'Ver detalle' %>
+                              <%= (p.estado==='agotado' || (p.variante && p.variante[0].stock===0)) ? 'Agotado'
+                                : 'Ver detalle' %>
                             </a>
                           </div>
                   </div>
@@ -301,7 +304,7 @@
                     No hay productos disponibles en este momento.
                   </div>
                 </div>
-          <% } %>
+                <% } %>
       </div>
     </section>
 

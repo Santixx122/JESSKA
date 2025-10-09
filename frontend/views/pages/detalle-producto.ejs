@@ -63,8 +63,7 @@
     <div class="row g-5">
       <!-- Imagen -->
       <div class="col-md-6 text-center">
-        <img src="<%= producto.imagenUrl ? producto.imagenUrl[0] : '/img/placeholder.webp' %>"
-             alt="<%= producto.nombre %>"
+<img src="<%= Array.isArray(producto.imagenUrl) ? (producto.imagenUrl.length>0 ? producto.imagenUrl[0] : '/img/placeholder.webp') : (producto.imagenUrl || '/img/placeholder.webp') %>"             alt="<%= producto.nombre %>"
              class="img-fluid rounded shadow-sm">
       </div>
 
@@ -125,7 +124,7 @@
   <input type="hidden" name="productoId" value="<%= producto._id %>">
   <input type="hidden" name="nombre" value="<%= producto.nombre %>">
   <input type="hidden" name="precio" value="<%= producto.variante && producto.variante[0] ? producto.variante[0].precio : 0 %>">
-  <input type="hidden" name="imagen" value="<%= producto.imagenes && producto.imagenes.length > 0 ? producto.imagenes[0] : '/img/placeholder.webp' %>">
+  <input type="hidden" name="imagen" value="<%= Array.isArray(producto.imagenUrl) ? (producto.imagenUrl.length>0 ? producto.imagenUrl[0] : '/img/placeholder.webp') : (producto.imagenUrl || '/img/placeholder.webp') %>">
 
   <!-- Campo cantidad -->
   <input type="hidden" id="cantidadInput" name="cantidad" value="1">

@@ -5,7 +5,7 @@ require('dotenv').config();
 
 axios.defaults.withCredentials = true;
 
-const URL_BACKEND = process.env.URL_BACKEND || 'http://localhost:4040';
+const URL_BACKEND = process.env.URL_BACKEND || 'https://jesska-backend.onrender.com';
 
 router.get('/', async (req, res) => {
     try {
@@ -197,6 +197,7 @@ router.get('/producto/:id', async (req, res) => {
     }
     console.log('id del producto: ' , id)
     // obtener producto desde backend
+    // obtener producto desde backend
     const prodResp = await axios.get(`${URL_BACKEND}/productos/${id}`, {
       headers: { 'api-key-441': process.env.APIKEY_PASS }
     });
@@ -225,7 +226,6 @@ router.get('/carrito', async (req, res) => {
 
         const usuario = respuesta.data.usuario;
         const productosCarrito = req.session.carrito || [];
-
         res.render('pages/carrito', { usuario, productosCarrito });
 
     } catch (error) {
@@ -237,7 +237,7 @@ router.get('/carrito', async (req, res) => {
 
 // routes/carrito.js
 router.post("/carrito/agregar", (req, res) => {
-  const { productoId, nombre, precio, imagenUrl } = req.body;
+  const { productoId, nombre, precio, imagen } = req.body;
   let cantidad = parseInt(req.body.cantidad);
 
   // Validar cantidad mínima
@@ -258,7 +258,7 @@ router.post("/carrito/agregar", (req, res) => {
       id: productoId,
       nombre,
       precio: parseFloat(precio),
-      imagenUrl,
+      imagen,
       cantidad
     });
   }
@@ -285,6 +285,9 @@ router.post("/carrito/eliminar", async (req, res) => {
 
 
 
+
+
+// Ruta para iniciar el pago
 router.post('/pagar', async (req, res) => {
   try {
     const rawItems = req.body.items;
@@ -300,13 +303,29 @@ router.post('/pagar', async (req, res) => {
       unit_price: parseFloat(item.precio)
     }));
 
+    // Llamar al backend para crear la preferencia
     const respuesta = await axios.post(`${URL_BACKEND}/api/orden/crear`, { items });
 
-    res.json(respuesta.data);
+    // Redirigir al checkout de MercadoPago
+    res.redirect(respuesta.data.init_point);
   } catch (error) {
-    console.error('Error al crear preferencia desde el front:', error.message);
-    res.status(500).json({ error: 'No se pudo crear la orden (front).' });
+    console.error('Error al crear preferencia desde el frontend:', error.message);
+    res.status(500).render('error', { mensaje: 'No se pudo iniciar el pago.' });
   }
 });
 
+// Rutas de retorno desde MercadoPago
+router.get('/success', (req, res) => {
+  res.render('success', { datos: req.query });
+});
+
+router.get('/failure', (req, res) => {
+  res.render('failure', { datos: req.query });
+});
+
+router.get('/pending', (req, res) => {
+  res.render('pending', { datos: req.query });
+});
+
 module.exports = router;
+
