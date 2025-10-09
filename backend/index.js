@@ -54,13 +54,9 @@ app.use('/usuarios',routerUsuarios)
 app.use('/login',routerLogin)
 app.use('/mensajes', routerMensajes)
 app.use('/resenas', routerResenas)
+app.use('/api/orden', require('./router/mercadopago.routes'));
 
 
-app.use(express.static(path.join(__dirname, '../frontend')));
-
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend/index.js'));
-});
 
 app.listen(PORT,()=>{
     console.log(`Servidor Backend funcionando en el puerto ${PORT}`)

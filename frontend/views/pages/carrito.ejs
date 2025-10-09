@@ -231,99 +231,109 @@
       </div>
     </div>
   </div>
-<main class="carrito-container">
-  <div class="container mt-5 pt-5">
-    <div class="row">
-      
-      <!-- Lista de productos -->
-      <div class="col-lg-8">
-        <table class="table table-striped">
-          <thead>
-            <tr>
-              <th>Producto</th>
-              <th class="text-center">Cantidad</th>
-              <th class="text-center">Subtotal</th>
-              <th class="text-end">Acciones</th>
-            </tr>
-          </thead>
+  <main class="carrito-container">
+    <div class="container mt-5 pt-5">
+      <div class="row">
 
-          <tbody id="carrito-items">
-            <% if (productosCarrito && productosCarrito.length > 0) { %>
-              <% let total = 0; %>
-              <% productosCarrito.forEach(prod => { 
-                   total += prod.precio * prod.cantidad;
-              %>
-                <tr>
-                  <!-- Producto -->
-                  <td class="align-middle">
-                    <div class="d-flex align-items-center">
-                      <img src="<%= prod.imagen %>" alt="<%= prod.nombre %>" width="60" class="me-3 rounded">
-                      <div>
-                        <h6 class="mb-0"><%= prod.nombre %></h6>
-                        <small class="text-muted">$<%= prod.precio.toLocaleString('es-CO') %></small>
-                      </div>
-                    </div>
-                  </td>
-
-                  <!-- Cantidad -->
-                  <td class="text-center align-middle">
-                    <%= prod.cantidad %>
-                  </td>
-
-                  <!-- Subtotal -->
-                  <td class="text-center align-middle">
-                    $<%= (prod.precio * prod.cantidad).toLocaleString('es-CO') %>
-                  </td>
-
-                  <!-- Eliminar -->
-                  <td class="text-end align-middle">
-                    <form action="/carrito/eliminar" method="POST" class="d-inline">
-                      <input type="hidden" name="productoId" value="<%= prod.id %>">
-                      <button type="submit" class="btn btn-sm btn-danger">
-                        <i class="bi bi-trash"></i> Eliminar
-                      </button>
-                    </form>
-                  </td>
-                </tr>
-              <% }) %>
-            <% } else { %>
+        <!-- Lista de productos -->
+        <div class="col-lg-8">
+          <table class="table table-striped">
+            <thead>
               <tr>
-                <td colspan="4" class="text-center py-4">
-                  <div class="carrito-vacio">
-                    <h5 class="mb-2">Tu carrito está vacío</h5>
-                    <a href="/catalogo" class="btn btn-primary">Explorar productos</a>
-                  </div>
-                </td>
+                <th>Producto</th>
+                <th class="text-center">Cantidad</th>
+                <th class="text-center">Subtotal</th>
+                <th class="text-end">Acciones</th>
               </tr>
-            <% } %>
-          </tbody>
-        </table>
-      </div>
+            </thead>
 
-      <!-- Resumen de compra -->
-      <div class="col-lg-4">
-        <% if (productosCarrito && productosCarrito.length > 0) { %>
-          <% let total = 0; 
-             productosCarrito.forEach(prod => { total += prod.precio * prod.cantidad });
-          %>
-          <div class="card shadow-sm">
-            <div class="card-body">
-              <h5 class="card-title mb-3">Resumen de compra</h5>
-              <div class="d-flex justify-content-between mb-3">
-                <span>Total a pagar:</span>
-                <strong>$<%= total.toLocaleString('es-CO') %></strong>
+            <tbody id="carrito-items">
+              <% if (productosCarrito && productosCarrito.length> 0) { %>
+                <% let total=0; %>
+                  <% productosCarrito.forEach(prod=> {
+                    total += prod.precio * prod.cantidad;
+                    %>
+                    <tr>
+                      <!-- Producto -->
+                      <td class="align-middle">
+                        <div class="d-flex align-items-center">
+                          <img src="<%= prod.imagen %>" alt="<%= prod.nombre %>" width="60" class="me-3 rounded">
+                          <div>
+                            <h6 class="mb-0">
+                              <%= prod.nombre %>
+                            </h6>
+                            <small class="text-muted">$<%= prod.precio.toLocaleString('es-CO') %></small>
+                          </div>
+                        </div>
+                      </td>
+
+                      <!-- Cantidad -->
+                      <td class="text-center align-middle">
+                        <%= prod.cantidad %>
+                      </td>
+
+                      <!-- Subtotal -->
+                      <td class="text-center align-middle">
+                        $<%= (prod.precio * prod.cantidad).toLocaleString('es-CO') %>
+                      </td>
+
+                      <!-- Eliminar -->
+                      <td class="text-end align-middle">
+                        <form action="/carrito/eliminar" method="POST" class="d-inline">
+                          <input type="hidden" name="productoId" value="<%= prod.id %>">
+                          <button type="submit" class="btn btn-sm btn-danger">
+                            <i class="bi bi-trash"></i> Eliminar
+                          </button>
+                        </form>
+                      </td>
+                    </tr>
+                    <% }) %>
+                      <% } else { %>
+                        <tr>
+                          <td colspan="4" class="text-center py-4">
+                            <div class="carrito-vacio">
+                              <h5 class="mb-2">Tu carrito está vacío</h5>
+                              <a href="/catalogo" class="btn btn-primary">Explorar productos</a>
+                            </div>
+                          </td>
+                        </tr>
+                        <% } %>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Resumen de compra -->
+        <div class="col-lg-4">
+          <% if (productosCarrito && productosCarrito.length> 0) { %>
+            <% let total=0; productosCarrito.forEach(prod=> { total += prod.precio * prod.cantidad });
+              %>
+              <div class="card shadow-sm">
+                <div class="card-body">
+                  <h5 class="card-title mb-3">Resumen de compra</h5>
+                  <div class="d-flex justify-content-between mb-3">
+                    <span>Total a pagar:</span>
+                    <strong>$<%= total.toLocaleString('es-CO') %></strong>
+                  </div>
+                  <form action="/pagar" method="POST">
+                    <% productosCarrito.forEach((prod, index)=> { %>
+                      <input type="hidden" name="items[<%= index %>][id]" value="<%= prod.id %>">
+                      <input type="hidden" name="items[<%= index %>][nombre]" value="<%= prod.nombre %>">
+                      <input type="hidden" name="items[<%= index %>][cantidad]" value="<%= prod.cantidad %>">
+                      <input type="hidden" name="items[<%= index %>][precio]" value="<%= prod.precio %>">
+                      <% }) %>
+
+                        <div id="walletBrick_container"></div>
+                        <button type="submit" id="btnPagar" class="btn btn-dark w-100">Pagar</button>
+                  </form>
+
+                </div>
               </div>
-              <form action="/pago" method="POST">
-                <button type="submit" class="btn btn-dark w-100">Pagar</button>
-              </form>
-            </div>
-          </div>
-        <% } %>
-      </div>
+              <% } %>
+        </div>
 
+      </div>
     </div>
-  </div>
-</main>
+  </main>
 
 
 
@@ -354,6 +364,8 @@
       <!--carrito js-->
       <script src="/js/carrito.js"></script>
       <script src="/js/script.landing.js"></script>
+      <script src="https://sdk.mercadopago.com/js/v2"></script>
+
 </body>
 
 </html>

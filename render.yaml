@@ -1,0 +1,38 @@
+services:
+  - type: web
+    name: jesska-backend
+    env: node
+    plan: free
+    buildCommand: "npm install"
+    startCommand: "npm start"
+    rootDir: backend
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGO_URI
+        value: mongodb+srv://usuario:contraseña@cluster.mongodb.net/jesska
+      - key: JWT_SECRET
+        value: secret123
+      - key: PORT
+        value: 10000
+      - key: SUPABASE_URL
+        value: https://tusupabaseurl.supabase.co
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        value: tu_llave_supabase
+      - key: SUPABASE_BUCKET
+        value: jesska-imgs
+      - key: CLIENT_URL
+        value: https://jesska-frontend.onrender.com
+
+  - type: web
+    name: jesska-frontend
+    env: node
+    plan: free
+    buildCommand: ""
+    startCommand: "npm start"
+    rootDir: frontend
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: API_BASE_URL
+        value: https://jesska-backend.onrender.com
