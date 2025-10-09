@@ -48,7 +48,7 @@ services:
         value: 10001
       - key: URL_BACKEND
         # 👇 importante: aquí debes poner el link que Render te da cuando deployas el backend
-        value: https://jesska-backend.onrender.com
+        value: https://jesska.onrender.com
       - key: APIKEY_NAME
         value: api-key-441
       - key: APIKEY_PASS
