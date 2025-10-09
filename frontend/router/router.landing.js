@@ -263,8 +263,6 @@ router.post("/carrito/agregar", (req, res) => {
     });
   }
 
-  console.log("🛒 Carrito actualizado:", req.session.carrito);
-
   // Redirigir al carrito
   res.redirect('/carrito');
 });
@@ -279,9 +277,36 @@ router.post("/carrito/eliminar", async (req, res) => {
     item => item.id.toString() !== productoId
   );
 
-  console.log("🗑️ Producto eliminado. Carrito:", req.session.carrito);
-
   res.redirect("/carrito");
+});
+
+
+
+
+
+
+router.post('/pagar', async (req, res) => {
+  try {
+    const rawItems = req.body.items;
+
+    if (!rawItems || !Array.isArray(rawItems)) {
+      return res.status(400).json({ error: 'Datos del carrito inválidos.' });
+    }
+
+    // Transformar los datos al formato que MercadoPago espera
+    const items = rawItems.map(item => ({
+      title: item.nombre,
+      quantity: parseInt(item.cantidad),
+      unit_price: parseFloat(item.precio)
+    }));
+
+    const respuesta = await axios.post(`${URL_BACKEND}/api/orden/crear`, { items });
+
+    res.json(respuesta.data);
+  } catch (error) {
+    console.error('Error al crear preferencia desde el front:', error.message);
+    res.status(500).json({ error: 'No se pudo crear la orden (front).' });
+  }
 });
 
 module.exports = router;

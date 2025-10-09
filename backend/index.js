@@ -53,6 +53,8 @@ app.use('/usuarios',routerUsuarios)
 app.use('/login',routerLogin)
 app.use('/mensajes', routerMensajes)
 app.use('/resenas', routerResenas)
+app.use('/api/orden', require('./router/mercadopago.routes'));
+
 
 app.listen(PORT,()=>{
     console.log(`Servidor Backend funcionando en el puerto ${PORT}`)
