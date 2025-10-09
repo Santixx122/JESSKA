@@ -1,6 +1,6 @@
 const Producto = require('../models/productos.model')
 const { supabase } = require('../services/supabase');
-
+const mongoose = require('mongoose');
 function controlError(res,message,error){
     res.status(500).json({
         success: false,
@@ -41,8 +41,23 @@ const getProducts = async (req, res) => {
 };
 
 const getOneProduct = async (req,res)=>{
-    try {
-        const producto = await Producto.findById(req.params.id)
+console.log("🧭 ID recibido:", req.params.id);
+if (!/^[0-9a-fA-F]{24}$/.test(req.params.id)) {
+  console.error("❌ ID inválido detectado:", req.params.id);
+  return res.status(400).json({
+    success: false,
+    message: "El ID proporcionado no es válido."
+  });
+}    try {
+    const id = req.params.id
+        // 🧩 Validar que sea un ObjectId válido
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: `El id "${id}" no es válido.`,
+      });
+    }
+        const producto = await Producto.findById(id)
             .populate('categoriaId', 'nombre')
             .populate('marcaId', 'nombre');
 
@@ -60,6 +75,7 @@ const getOneProduct = async (req,res)=>{
         }
     } catch (error) {
         controlError(res,'Se produjo un error al buscar el producto.',error)
+        console.error("💥 Error en getOneProduct:", error);
     }
 }
 

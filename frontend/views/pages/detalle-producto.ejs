@@ -63,7 +63,7 @@
     <div class="row g-5">
       <!-- Imagen -->
       <div class="col-md-6 text-center">
-        <img src="<%= producto.imagenes && producto.imagenes.length > 0 ? producto.imagenes[0] : '/img/placeholder.webp' %>"
+        <img src="<%= producto.imagenUrl ? producto.imagenUrl[0] : '/img/placeholder.webp' %>"
              alt="<%= producto.nombre %>"
              class="img-fluid rounded shadow-sm">
       </div>
@@ -148,7 +148,7 @@
   <!-- JS Bootstrap -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
   <script src="/js/detalleProducto.js"></script>
-  <script src="js/script.landing.js"></script>
+  <script src="/js/script.landing.js"></script>
 </body>
 
 </html>

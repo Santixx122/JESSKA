@@ -177,6 +177,7 @@ router.post('/logout', async (req, res) => {
 
 
 router.get('/producto/:id', async (req, res) => {
+
   const id = req.params.id;
   let usuario = null;
 
@@ -194,7 +195,7 @@ router.get('/producto/:id', async (req, res) => {
     } catch (err) {
       usuario = null; // no autenticado, continuar
     }
-
+    console.log('id del producto: ' , id)
     // obtener producto desde backend
     const prodResp = await axios.get(`${URL_BACKEND}/productos/${id}`, {
       headers: { 'api-key-441': process.env.APIKEY_PASS }
@@ -203,11 +204,10 @@ router.get('/producto/:id', async (req, res) => {
     const producto = prodResp.data.data;
 
     
-
     res.render('pages/detalle-producto', { producto, usuario });
   } catch (error) {
     console.error('Error cargando producto:', error.message || error);
-    return res.status(500).render('pages/detalle-producto', { producto: null, usuario });
+    return res.status(500).send('Error al cargar los Productos', error.message);
   }
 });
 
@@ -237,7 +237,7 @@ router.get('/carrito', async (req, res) => {
 
 // routes/carrito.js
 router.post("/carrito/agregar", (req, res) => {
-  const { productoId, nombre, precio, imagen } = req.body;
+  const { productoId, nombre, precio, imagenUrl } = req.body;
   let cantidad = parseInt(req.body.cantidad);
 
   // Validar cantidad mínima
@@ -258,7 +258,7 @@ router.post("/carrito/agregar", (req, res) => {
       id: productoId,
       nombre,
       precio: parseFloat(precio),
-      imagen,
+      imagenUrl,
       cantidad
     });
   }

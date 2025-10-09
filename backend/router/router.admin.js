@@ -11,6 +11,7 @@ router.post('/',controllerAdmin.createAdmin)
 router.put('/:id',controllerAdmin.updateAdmin)
 router.delete('/:id',controllerAdmin.deleteAdmin)
 
+
 module.exports=router
 
 

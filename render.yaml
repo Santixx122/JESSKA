@@ -1,0 +1,55 @@
+services:
+  - type: web
+    name: jesska-backend
+    env: node
+    rootDir: backend
+    plan: free
+    buildCommand: "npm install"
+    startCommand: "npm start"
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: USER_DB
+        value: JuanEstebanAdso
+      - key: PASS_DB
+        value: CzFpF3eRIfoXZbBG
+      - key: DB_NAME
+        value: JESSKA_DB
+      - key: SECRET_KEY
+        value: la-contrasena-mas-secreta-de-todos-los-tiempos-con-hashes:-234234@$%#-y-melo
+      - key: EMAIL_USER
+        value: Jesska.store.js@gmail.com
+      - key: PASS_USER
+        value: "ofyn krwz uyco yloi"
+      - key: APIKEY_NAME
+        value: api-key-441
+      - key: APIKEY_PASS
+        value: contrasena-super-secreta
+      - key: MONGO_URI
+        value: mongodb+srv://JuanEstebanAdso:CzFpF3eRIfoXZbBG@cluster0.xfphf.mongodb.net/JESSKA_DB
+      - key: SUPABASE_URL
+        value: https://dmsokxvxgznmuyoquaxy.supabase.co
+      - key: SUPABASE_ANON_KEY
+        value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRtc29reHZ4Z3pubXV5b3F1YXh5Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1ODczOTYxNSwiZXhwIjoyMDc0MzE1NjE1fQ.iy9at6pNpauxCRx7jxnwmfw7Njghdwtvjw0JqNSwv6M
+      - key: MERCADOPAGO_ACCESS_TOKEN
+        value: APP_USR-3341090952215310-100713-6297afa252fc983cd73114f6ec3e404e-2911062470
+      - key: MERCADOPAGO_PUBLIC_KEY
+        value: APP_USR-d7a8e5ac-dbdf-4d27-8117-15139210b49e
+
+  - type: web
+    name: jesska-app
+    env: node
+    rootDir: frontend
+    plan: free
+    buildCommand: "npm install"
+    startCommand: "npm start"
+    envVars:
+      - key: PORT
+        value: 10001
+      - key: URL_BACKEND
+        # 👇 importante: aquí debes poner el link que Render te da cuando deployas el backend
+        value: https://jesska-backend.onrender.com
+      - key: APIKEY_NAME
+        value: api-key-441
+      - key: APIKEY_PASS
+        value: contrasena-super-secreta
