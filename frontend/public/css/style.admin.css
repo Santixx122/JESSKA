@@ -270,6 +270,7 @@
 
 .section.active {
     display: flex;
+    margin: 2em;
     flex-direction: column;
     opacity: 1;
     transform: translateY(0);

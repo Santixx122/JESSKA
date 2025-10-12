@@ -1,20 +1,24 @@
-const express = require('express')
-const morgan = require('morgan')
+const express = require('express');
+const morgan = require('morgan');
 const cron = require('node-cron');
 const backup = require('./config/backup');
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
+const path = require('path');
+const { initializeBucket } = require('./services/supabase');
 
+require('dotenv').config();
+require('./config/connection');
 
-require('dotenv').config()
-require('./config/connection')
+initializeBucket();
 
 const app = express();
 
+// Middleware
 app.use(cookieParser());
 app.use(cors({
-  origin: "http://localhost:5050",  
-  credentials: true               
+  origin: true, 
+  credentials: true
 }));
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
@@ -33,32 +37,32 @@ const routerDetalle = require('./router/router.detallePedidos')
 const routerClientes = require('./router/router.clientes')
 const routerAdmin = require('./router/router.admin')
 const routerUsuarios = require('./router/router.usuarios');
-const routerLogin = require('./router/router.login')
-const routerMensajes = require('./router/router.mensajes')
-const routerResenas = require('./router/router.resenas')
+const routerLogin = require('./router/router.login');
+const routerMensajes = require('./router/router.mensajes');
+const routerResenas = require('./router/router.resenas');
 
-// Registrar las rutas
-app.use('/productos', routerProducts)
-app.use('/pedidos',routerPedido)
-app.use('/marcas', routerMarcas)
-app.use('/factura',routerfacturas)
-app.use('/envios',routerEnvios)
-app.use('/detalle',routerDetalle)
-app.use('/clientes',routerClientes)
-app.use('/categorias', routerCategorias)
-app.use('/admin',routerAdmin)
-app.use('/usuarios',routerUsuarios)
-app.use('/login',routerLogin)
-app.use('/mensajes', routerMensajes)
-app.use('/resenas', routerResenas)
+app.use('/productos', routerProducts);
+app.use('/pedidos', routerPedido);
+app.use('/marcas', routerMarcas);
+app.use('/factura', routerfacturas);
+app.use('/envios', routerEnvios);
+app.use('/detalle', routerDetalle);
+app.use('/clientes', routerClientes);
+app.use('/categorias', routerCategorias);
+app.use('/admin', routerAdmin);
+app.use('/usuarios', routerUsuarios);
+app.use('/login', routerLogin);
+app.use('/mensajes', routerMensajes);
+app.use('/resenas', routerResenas);
+app.use('/api/orden', require('./router/mercadopago.routes'));
+
 
 app.listen(PORT,()=>{
     console.log(`Servidor Backend funcionando en el puerto ${PORT}`)
 })
 /*
 cron.schedule('* * * * * *', async () => {
-    console.log('Realizando Backup de la Base de datos');
-    backup.backupDatabase();
+  console.log('Realizando Backup de la Base de datos');
+  backup.backupDatabase();
 });
-
 */

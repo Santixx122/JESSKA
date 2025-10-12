@@ -2,203 +2,328 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!--google fonts-->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Signika:wght@300..700&display=swap"
-        rel="stylesheet">
-    <!--boostrap styles-->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
-    <!--styles-->
-    <link rel="stylesheet" href="css/catalogo.css">
-    <title>Catalogo</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!--google fonts-->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!--boostrap styles-->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
+  <!--styles-->
+  <link rel="stylesheet" href="css/catalogo.css">
+  <link rel="stylesheet" href="css/style.landing.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <title>Catalogo</title>
 </head>
 
 <body>
-    <!--Header-->
-    <header>
-        <nav class="navbar navbar-expand-lg bg-body-tertiary fixed-top">
-            <div class="container-fluid">
-                <h3><strong>JESSKA</strong></h3>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-                    aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <li class="nav-item">
-                            <a class="nav-link" aria-current="page" href="/">Inicio</a>
-                        </li>
-                    </ul>
-                    <div class="carrito">
-                        <a href="carrito">
-                            <img src="img/carrito-compras.svg" alt="carrito">
-                        </a>
-                    </div>
-                    <div>
-                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                            data-bs-target="#exampleModal">
-                            Iniciar Sesion
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </nav>
-    </header>
-    <!--Modal 1-->
-    <div class="modal fade" id="exampleModal1" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="form-container" id="exampleModal2" tabindex="-1" aria-hidden="true">
-                    <p class="title">Bienvenido</p>
-                    <form class="form">
-                        <input type="email" class="input" placeholder="Email">
-                        <input type="password" class="input" placeholder="contraseña">
-                        <p class="page-link">
-                            <span class="page-link-label">Olvidaste tu contraseña?</span>
-                        </p>
-                        <button class="form-btn">Iniciar Sesion</button>
-                    </form>
-                    <p class="sign-up-label">
-                        No tienes cuenta? <a href="" data-bs-toggle="modal" data-bs-target="#staticBackdrop"><span
-                                class="sign-up-link"> Registrate</span></a>
-                    </p>
-                    <div class="buttons-container">
-                        <div class="google-login-button">
-                            <svg stroke="currentColor" fill="currentColor" stroke-width="0" version="1.1" x="0px"
-                                y="0px" class="google-icon" viewBox="0 0 48 48" height="1em" width="1em"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12
-      c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24
-      c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"></path>
-                                <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657
-      C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"></path>
-                                <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36
-      c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"></path>
-                                <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571
-      c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z">
-                                </path>
-                            </svg>
-                            <span>Iniciar con Google</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!--Modal 2-->
-    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-        aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form class="form">
-                    <p class="title2">Registro </p>
-                    <p class="message">Regístrese ahora y obtenga acceso completo a nuestra aplicación. </p>
-                    <div class="flex">
-                        <label>
-                            <input required="" placeholder="" type="text" class="input">
-                            <span>Primer Nombre</span>
-                        </label>
-
-                        <label>
-                            <input required="" placeholder="" type="text" class="input">
-                            <span>Segundo Nombre</span>
-                        </label>
-                    </div>
-
-                    <label>
-                        <input required="" placeholder="" type="email" class="input">
-                        <span>Email</span>
-                    </label>
-
-                    <label>
-                        <input required="" placeholder="" type="password" class="input">
-                        <span>Contraseña</span>
-                    </label>
-                    <label>
-                        <input required="" placeholder="" type="password" class="input">
-                        <span>Confirmar Contraseña</span>
-                    </label>
-                    <button class="submit">Registrarse</button>
-                    <p class="signin">Ya tienes una cuenta ? <a href="" data-bs-toggle="modal"
-                            data-bs-target="#exampleModal">Iniciar sesion</a> </p>
+  <!--Header-->
+  <header>
+    <nav class="navbar navbar-expand-lg fixed-top">
+      <div class="container">
+        <a class="navbar-brand" href="/">JESSKA</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav mx-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="/">Inicio</a>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#productos" id="productosDropdown" role="button"
+                data-bs-toggle="dropdown" aria-expanded="false">
+                Productos
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="productosDropdown">
+                <li><a class="dropdown-item" href="/catalogo/hombre">Hombre</a></li>
+                <li><a class="dropdown-item" href="/catalogo/mujer">Mujer</a></li>
+              </ul>
+            </li>
+          </ul>
+          <div class="d-flex align-items-center">
+            <a href="/carrito" class="cart-icon">
+              <img src="/img/carrito-compras.svg" alt="Carrito">
+            </a>
+            <% if (typeof usuario !=='undefined' && usuario) { %>
+              <div class="d-flex align-items-center gap-2 ms-3">
+                <a href="/perfil" class="user-profile-link">Hola, <strong>
+                    <%= usuario.nombre || usuario.email %>
+                  </strong></a>
+                <form method="post" action="/logout" class="m-0">
+                  <button type="submit" class="btn-profile">Cerrar sesión</button>
                 </form>
-            </div>
+              </div>
+              <% } else { %>
+                <button type="button" class="btn-login ms-3" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                  Iniciar Sesión
+                </button>
+                <% } %>
+          </div>
         </div>
-    </div>
-    <!--Contenido Principal-->
-    <main>
-        <header>
-            <div class="container mt-5 pt-5">
-                <h1 class="text-center">Catalogo</h1>
-                <p class="text-center">Explora nuestra amplia gama de productos y encuentra lo que necesitas.</p>
+      </div>
+    </nav>
+  </header>
+  <!--Modal 1-->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="form-container" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+          aria-hidden="true">
+          <p class="title">Bienvenido</p>
+          <% if (typeof success !=='undefined' && success) { %>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+              <%= success %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
-        </header>
-        <section class="container mt-5">
-            <div class="row">
-               <!-- <div class="col-md-4 mb-4">
-                    <div class="card">
-                        <div class="card-header">
-                            <img src="../images/carrusel-hombre-3.svg" class="card-img-top" alt="...">
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title">Tenis Hombre</h5>
-                            <p class="card-text">$180.000</p>
-                            <button class="cartBtn">
-                                <svg class="cart" fill="white" viewBox="0 0 576 512" height="1em"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                        d="M0 24C0 10.7 10.7 0 24 0H69.5c22 0 41.5 12.8 50.6 32h411c26.3 0 45.5 25 38.6 50.4l-41 152.3c-8.5 31.4-37 53.3-69.5 53.3H170.7l5.4 28.5c2.2 11.3 12.1 19.5 23.6 19.5H488c13.3 0 24 10.7 24 24s-10.7 24-24 24H199.7c-34.6 0-64.3-24.6-70.7-58.5L77.4 54.5c-.7-3.8-4-6.5-7.9-6.5H24C10.7 48 0 37.3 0 24zM128 464a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm336-48a48 48 0 1 1 0 96 48 48 0 1 1 0-96z">
-                                    </path>
-                                </svg>
-                                Agregar
-                                <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 640 512"
-                                    class="product">
-                                    <path
-                                        d="M211.8 0c7.8 0 14.3 5.7 16.7 13.2C240.8 51.9 277.1 80 320 80s79.2-28.1 91.5-66.8C413.9 5.7 420.4 0 428.2 0h12.6c22.5 0 44.2 7.9 61.5 22.3L628.5 127.4c6.6 5.5 10.7 13.5 11.4 22.1s-2.1 17.1-7.8 23.6l-56 64c-11.4 13.1-31.2 14.6-44.6 3.5L480 197.7V448c0 35.3-28.7 64-64 64H224c-35.3 0-64-28.7-64-64V197.7l-51.5 42.9c-13.3 11.1-33.1 9.6-44.6-3.5l-56-64c-5.7-6.5-8.5-15-7.8-23.6s4.8-16.6 11.4-22.1L137.7 22.3C155 7.9 176.7 0 199.2 0h12.6z">
-                                    </path>
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-                </div>-->
-                
-                <div class="custom-alert alert alert-success" role="alert">
-
-                    <svg class="custom-bi bi flex-shrink-0 me-2" role="img" aria-label="Success:">
-                        <symbol id="check-circle-fill" viewBox="0 0 16 16">
-                            <path
-                                d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
-                        </symbol>
-                        <use xlink:href="#check-circle-fill" />
-                    </svg>
-                    <div>
-                        <p>Producto agregado al carrito correctamente.</p>
-                    </div>
+            <% } %>
+              <% if (typeof error !=='undefined' && error) { %>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                  <%= error %>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
+                <% } %>
+                  <form method="post" action="/login" class="form" id="loginForm" novalidate>
+                    <div class="mb-3">
+                      <input id="email" type="email"
+                        class="input form-control <%= (typeof errorField !== 'undefined' && errorField === 'email') ? 'is-invalid' : '' %>"
+                        placeholder="Email" name="email"
+                        value="<%= (typeof formData !== 'undefined' && formData.email) ? formData.email : '' %>"
+                        required>
+                      <div class="invalid-feedback" id="email-error">
+                        <% if (typeof errorField !=='undefined' && errorField==='email' ) { %>
+                          <%= error %>
+                            <% } else { %>
+                              Por favor, ingrese un correo válido.
+                              <% } %>
+                      </div>
+                    </div>
+                    <div class="mb-3">
+                      <input id="password" type="password"
+                        class="input form-control <%= (typeof errorField !== 'undefined' && errorField === 'password') ? 'is-invalid' : '' %>"
+                        placeholder="Contraseña" name="password" required minlength="6">
+                      <div class="invalid-feedback" id="password-error">
+                        <% if (typeof errorField !=='undefined' && errorField==='password' ) { %>
+                          <%= error %>
+                            <% } else { %>
+                              La contraseña debe tener al menos 6 caracteres.
+                              <% } %>
+                      </div>
+                    </div>
+                    <button type='submit' id="iniciarsesion" class="btn btn-primary w-100">
+                      <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                      <span class="button-text">Iniciar Sesión</span>
+                    </button>
+                  </form>
+                  <p class="sign-up-label">
+                    No tienes cuenta? <a href="" data-bs-toggle="modal" data-bs-target="#staticBackdrop"><span
+                        class="sign-up-link"> Registrate</span></a>
+                  </p>
+                  <div class="buttons-container">
+                    <div class="google-login-button">
+                      <svg stroke="currentColor" fill="currentColor" stroke-width="0" version="1.1" x="0px" y="0px"
+                        class="google-icon" viewBox="0 0 48 48" height="1em" width="1em"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12
+    c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24
+    c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"></path>
+                        <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657
+    C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"></path>
+                        <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36
+    c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"></path>
+                        <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571
+    c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z">
+                        </path>
+                      </svg>
+                      <span>Iniciar con Google</span>
+                    </div>
+                  </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--Modal 2-->
+  <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form class="form" method="post" action="/register" id="registerForm" novalidate>
+          <p class="title2">Registrarse </p>
+          <% if (typeof successRegister !=='undefined' && successRegister) { %>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+              <%= successRegister %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
-        </section>
-    </main>
-    <!--Footer-->
-    <footer class="text-center py-4">
-        <p>&copy; 2025 JESSKA. El equilibrio perfecto entre estilo y funcionalidad</p>
-    </footer>
-    <!--splide.js-->
-    <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
-    <!--boostrap-->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq"
-        crossorigin="anonymous"></script>
-    <!--script-->
-    <script src="../script/catalogo.js"></script>
+            <% } %>
+              <% if (typeof errorRegister !=='undefined' && errorRegister) { %>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                  <%= errorRegister %>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <% } %>
+                  <p class="message">Regístrese ahora y obtenga acceso completo a nuestra aplicación. </p>
+                  <div class="flex">
+                    <label>
+                      <input required="true" placeholder="" type="text"
+                        class="input form-control <%= (typeof errorRegisterField !== 'undefined' && errorRegisterField === 'nombre') ? 'is-invalid' : '' %>"
+                        name="nombre"
+                        value="<%= (typeof regFormData !== 'undefined' && regFormData.nombre) ? regFormData.nombre : '' %>">
+                      <span>Nombre</span>
+                      <div class="invalid-feedback">
+                        <%= (typeof errorRegisterField !=='undefined' && errorRegisterField==='nombre' && typeof
+                          errorRegister !=='undefined' && errorRegister) ? errorRegister
+                          : 'El nombre es obligatorio (mínimo 3 caracteres).' %>
+                      </div>
+                    </label>
+
+                    <label>
+                      <input required="true" placeholder="" type="email"
+                        class="input form-control <%= (typeof errorRegisterField !== 'undefined' && errorRegisterField === 'email') ? 'is-invalid' : '' %>"
+                        name="email"
+                        value="<%= (typeof regFormData !== 'undefined' && regFormData.email) ? regFormData.email : '' %>">
+                      <span>Email</span>
+                      <div class="invalid-feedback">
+                        <%= (typeof errorRegisterField !=='undefined' && errorRegisterField==='email' && typeof
+                          errorRegister !=='undefined' && errorRegister) ? errorRegister : 'Ingresa un email válido.' %>
+                      </div>
+                    </label>
+                  </div>
+
+                  <label>
+                    <input required="true" placeholder="" type="text"
+                      class="input form-control <%= (typeof errorRegisterField !== 'undefined' && errorRegisterField === 'telefono') ? 'is-invalid' : '' %>"
+                      name="telefono"
+                      value="<%= (typeof regFormData !== 'undefined' && regFormData.telefono) ? regFormData.telefono : '' %>">
+                    <span>Telefono</span>
+                    <div class="invalid-feedback">
+                      <%= (typeof errorRegisterField !=='undefined' && errorRegisterField==='telefono' && typeof
+                        errorRegister !=='undefined' && errorRegister) ? errorRegister : 'Ingrese un teléfono válido.'
+                        %>
+                    </div>
+                  </label>
+
+                  <label>
+                    <input required="true" placeholder="" type="password"
+                      class="input form-control <%= (typeof errorRegisterField !== 'undefined' && errorRegisterField === 'password') ? 'is-invalid' : '' %>"
+                      name="password" minlength="8">
+                    <span>Contraseña</span>
+                    <div class="invalid-feedback">
+                      <%= (typeof errorRegisterField !=='undefined' && errorRegisterField==='password' && typeof
+                        errorRegister !=='undefined' && errorRegister) ? errorRegister
+                        : 'La contraseña debe tener mínimo 8 caracteres.' %>
+                    </div>
+                  </label>
+                  <label>
+                    <input required="true" placeholder="" type="password" class="input form-control"
+                      name="confirmPassword" id="confirmPassword">
+                    <span>Confirmar Contraseña</span>
+                    <div class="invalid-feedback">Las contraseñas no coinciden.</div>
+                  </label>
+                  <button class="submit">Registrarse</button>
+                  <p class="signin">Ya tienes una cuenta ? <a href="" data-bs-toggle="modal"
+                      data-bs-target="#exampleModal">Iniciar sesion</a> </p>
+        </form>
+      </div>
+    </div>
+  </div>
+  <!--Contenido Principal-->
+  <main>
+    <header>
+      <div class="container mt-5 pt-5">
+        <h1 class="text-center">Catalogo</h1>
+        <p class="text-center">Explora nuestra amplia gama de productos y encuentra lo que necesitas.</p>
+      </div>
+    </header>
+    <section class="container mt-5">
+      <div class="row g-4">
+        <% if (productos && productos.length> 0) { %>
+          <% productos.forEach(function(p) { %>
+
+            <div class="col-md-4 col-lg-3">
+              <div class="product-card h-100 shadow-sm rounded">
+                <div class="position-relative">
+                  <img
+                    src="<%= Array.isArray(p.imagenUrl) ? (p.imagenUrl.length>0 ? p.imagenUrl[0] : '/img/placeholder.webp') : (p.imagenUrl || '/img/placeholder.webp') %>"
+                    class="card-img-top product-img p-4" alt="<%= p.nombre %>"
+                    onerror="this.onerror=null;this.src='img/placeholder.webp';">
+                </div>
+                <div class="card-body p-4">
+                  <div class="text-center mb-3">
+                    <h5 class="product-title fw-bolder mb-2">
+                      <%= p.nombre %>
+                    </h5>
+
+                    <!-- Estado del producto -->
+                    <% if (p.estado==='activo' ) { %>
+                      <div class="badge bg-success mb-2">Disponible</div>
+                      <% } else if (p.estado==='agotado' ) { %>
+                        <div class="badge bg-danger mb-2">Agotado</div>
+                        <% } %>
+
+                          <p class="product-description text-muted mb-2">
+                            <%= p.descripcion ? p.descripcion.substring(0, 100) + (p.descripcion.length> 100 ? '...' :
+                              '') : 'Sin descripción' %>
+                          </p>
+
+                          <!-- Precio con formato -->
+                          <div class="mb-3">
+                            <% if (p.variante && p.variante.length> 0) { %>
+                              <span class="fs-4 fw-bold text-primary">
+                                $<%= p.variante[0].precio.toLocaleString('es-CO') %>
+                              </span>
+                              <% if (p.variante[0].stock <=5 && p.variante[0].stock> 0) { %>
+                                <div class="badge bg-warning text-dark mt-1">¡Últimas unidades!</div>
+                                <% } %>
+                                  <% } else { %>
+                                    <span class="text-muted">Precio no disponible</span>
+                                    <% } %>
+                          </div>
+
+                          <!-- Botón de añadir al carrito -->
+                          <div class="d-grid">
+                            <a href="/producto/<%= p._id %>"
+                              class="btn btn-dark <%= (p.estado === 'agotado' || (p.variante && p.variante[0].stock === 0)) ? 'disabled' : '' %>">
+                              <i class="bi bi-cart-plus me-2"></i>
+                              <%= (p.estado==='agotado' || (p.variante && p.variante[0].stock===0)) ? 'Agotado'
+                                : 'Ver detalle' %>
+                            </a>
+                          </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <% }) %>
+              <% } else { %>
+                <div class="col-12">
+                  <div class="alert alert-info text-center">
+                    No hay productos disponibles en este momento.
+                  </div>
+                </div>
+                <% } %>
+      </div>
+    </section>
+
+  </main>
+  <!--Footer-->
+  <footer class="footer fixed-bottom ">
+    <div class="container">
+      <p>&copy; 2025 JESSKA. Todos los derechos reservados.</p>
+    </div>
+  </footer>
+  <!--splide.js-->
+  <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
+  <!--boostrap-->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq"
+    crossorigin="anonymous"></script>
+  <!--script-->
+  <script src="../script/catalogo.js"></script>
+  <script src="js/script.landing.js"></script>
 </body>
 
 </html>

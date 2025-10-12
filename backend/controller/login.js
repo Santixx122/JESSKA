@@ -78,17 +78,23 @@ const login = async (req,res)=>{
             { expiresIn: '24h' } 
         );
 
+        // Verificar si el usuario es administrador
+        const isAdmin = user.rol === 'administrador' || user.rol === 'admin';
+
         // Configurar cookie con token
+    // id del usuario autenticado (no imprimir en producción)
+
         res
             .cookie('access_token',token,{
                 httpOnly: true,
                 sameSite: 'lax',
-                secure: process.env.NODE_ENV === 'production', // Solo HTTPS en producción
+                secure: process.env.NODE_ENV === 'production', 
                 maxAge: 1000 * 60 * 60 * 24 // 24 horas
             })
             .status(200).json({
                 success: true,
                 message: 'Login exitoso',
+                redirectToAdmin: isAdmin, // Flag para redirección automática
                 usuario: {
                     id: user._id,
                     nombre: user.nombre,
@@ -100,7 +106,7 @@ const login = async (req,res)=>{
     } catch (error) {
         console.error('Error en login:', error.message);
         res.status(500).json({ 
-            success: false, 
+            success: false,
             message: 'Error interno del servidor. Intente nuevamente',
             field: 'general'
         });

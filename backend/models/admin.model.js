@@ -12,6 +12,8 @@ const schemaAdmin = new mongoose.Schema({
         type: String,
         minLength: 7
     }
+}, {
+    timestamps: true
 })
 
 module.exports = mongoose.model('admin', schemaAdmin, 'admin');
