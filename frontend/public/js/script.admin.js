@@ -90,40 +90,42 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
+// Funcion Editar
+
 // Función para manejar la apertura de modales
 function handleModal(type, mode, btn = null) {
     const config = {
         producto: {
             modalId: 'modalCrearProducto',
-            formId: 'modalCrearProducto',
-            createPath: '/api/admin/productos',
-            editPath: '/api/admin/productos',
+            formId: 'formCrearProducto',
+            createPath: '/admin/crearProducto',
+            editPath: '/admin/editarProducto',
             title: 'Producto'
         },
         usuario: {
             modalId: 'modalCrearUsuario',
-            formId: 'modalCrearUsuario',
+            formId: 'formCrearUsuario',
             createPath: '/admin/crearUsuario',
             editPath: '/admin/editarUsuario',
             title: 'Usuario'
         },
         categoria: {
             modalId: 'modalCrearCategoria',
-            formId: 'modalCrearCategoria',
+            formId: 'formCrearCategoria',
             createPath: '/admin/crearCategoria',
             editPath: '/admin/editarCategoria',
             title: 'Categoría'
         },
         marca: {
             modalId: 'modalCrearMarca',
-            formId: 'modalCrearMarca',
+            formId: 'formCrearMarca',
             createPath: '/admin/crearMarca',
             editPath: '/admin/editarMarca',
             title: 'Marca'
         },
         pedidos: {
             modalId: 'modalCrearPedido',
-            formId: 'modalCrearPedido',
+            formId: 'formCrearPedido',
             createPath: '/admin/crearPedido',
             editPath: '/admin/editarPedido',
             title: 'Pedido'
@@ -133,29 +135,18 @@ function handleModal(type, mode, btn = null) {
     const typeConfig = config[type];
     if (!typeConfig) return;
 
-    const modalElement = document.getElementById(typeConfig.modalId);
-    if (!modalElement) {
-        console.error(`Modal no encontrado: ${typeConfig.modalId}`);
-        return;
-    }
-
-    const form = modalElement.querySelector('form');
-    if (!form) {
-        console.error(`Formulario no encontrado en el modal: ${typeConfig.modalId}`);
-        return;
-    }
-
-    const titleElement = modalElement.querySelector('.modal-title');
-    const modal = new bootstrap.Modal(modalElement);
-
+    const modal = new bootstrap.Modal(document.getElementById(typeConfig.modalId));
+    const form = document.getElementById(typeConfig.formId);
+    const titleElement = document.getElementById(typeConfig.modalId + 'Label');
+    
     if (mode === 'create') {
         titleElement.innerText = `Crear ${typeConfig.title}`;
-        form.querySelector('button[type="submit"]').textContent = 'Agregar';
+        form.querySelector('button[type=submit]').innerHTML = 'Agregar';
         form.action = typeConfig.createPath;
         form.reset();
     } else if (mode === 'edit' && btn) {
         titleElement.innerText = `Editar ${typeConfig.title}`;
-        form.querySelector('button[type="submit"]').textContent = 'Guardar cambios';
+        form.querySelector('button[type=submit]').innerHTML = 'Guardar cambios';
         form.action = `${typeConfig.editPath}/${btn.dataset.id}`;
 
         // Manejo específico para cada tipo
@@ -163,30 +154,20 @@ function handleModal(type, mode, btn = null) {
             try {
                 console.log('Datos del producto a editar:', btn.dataset);
                 
-                // Campos básicos del producto
                 const campos = ['nombre', 'descripcion', 'color', 'talla', 'precio', 'stock', 'estado'];
                 campos.forEach(campo => {
                     const input = form.querySelector(`#${campo}`);
                     if (input) {
                         input.value = btn.dataset[campo] || '';
-                        console.log(`Campo ${campo} actualizado con valor:`, input.value);
                     } else {
                         console.error(`Campo no encontrado: ${campo}`);
                     }
                 });
 
-                // Manejo de checkbox visible
                 const visibleCheck = form.querySelector('#visible');
                 if (visibleCheck) {
                     visibleCheck.checked = btn.dataset.visible === 'true';
                 }
-
-                // Asegurarse de que el select de categoría esté configurado
-                const categoriaSelect = form.querySelector('#categoria');
-                if (categoriaSelect && btn.dataset.categoriaid) {
-                    categoriaSelect.value = btn.dataset.categoriaid;
-                }
-
             } catch (error) {
                 console.error('Error al cargar datos del producto:', error);
             }
@@ -198,28 +179,17 @@ function handleModal(type, mode, btn = null) {
             console.log('Datos del pedido:', btn.dataset);
             
             // Asignar ID de usuario
-            const idUsuarioInput = form.querySelector('#idUsuario');
-            if (idUsuarioInput) {
-                idUsuarioInput.value = btn.dataset.clienteid || '';
-            }
+            form.querySelector('#idUsuario').value = btn.dataset.clienteid || '';
             
             // Formatear y asignar fecha
-            const fechaInput = form.querySelector('#fecha');
-            if (fechaInput && btn.dataset.fecha) {
-                const fecha = new Date(btn.dataset.fecha);
-                fechaInput.value = fecha.toISOString().split('T')[0];
+            const fecha = btn.dataset.fecha;
+            if (fecha) {
+                form.querySelector('#fecha').value = new Date(fecha).toISOString().split('T')[0];
             }
             
             // Asignar total y estado
-            const totalInput = form.querySelector('#total');
-            if (totalInput) {
-                totalInput.value = btn.dataset.total || '';
-            }
-
-            const estadoInput = form.querySelector('#estado');
-            if (estadoInput) {
-                estadoInput.value = btn.dataset.estado || '';
-            }
+            form.querySelector('#total').value = btn.dataset.total || '';
+            form.querySelector('#estado').value = btn.dataset.estado || '';
         } else if (type === 'categoria') {
             form.querySelector('#nombre').value = btn.dataset.nombre || '';
             form.querySelector('#descripcion').value = btn.dataset.descripcion || '';
@@ -228,73 +198,61 @@ function handleModal(type, mode, btn = null) {
         }
     }
 
-    // Mostrar el modal
     modal.show();
 }
 
-// Event listeners para botones cuando el DOM está listo
+// Eventos para botones de agregar
 document.addEventListener('DOMContentLoaded', () => {
-    // Configuración de los modales al abrir para crear
-    document.querySelectorAll('[data-bs-toggle="modal"]').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const modalId = btn.getAttribute('data-bs-target').substring(1);
-            const modal = document.getElementById(modalId);
-            if (modal) {
-                const form = modal.querySelector('form');
-                if (form) {
-                    form.reset();
-                    const submitBtn = form.querySelector('button[type="submit"]');
-                    if (submitBtn) submitBtn.textContent = 'Crear';
-                    // Reset del título
-                    const titleElement = modal.querySelector('.modal-title');
-                    if (titleElement) {
-                        const tipo = modalId.replace('modalCrear', '');
-                        titleElement.textContent = `Crear ${tipo}`;
-                    }
-                }
-            }
-        });
+    // Manejar botones de agregar
+    document.querySelectorAll('.btn-agregar').forEach(btn => {
+        btn.addEventListener('click', () => handleModal(btn.dataset.type, 'create'));
     });
 
-    // Event listeners para botones de editar
+    // Manejar botones de editar
     document.querySelectorAll('.btn-editar').forEach(btn => {
         btn.addEventListener('click', () => handleModal(btn.dataset.type, 'edit', btn));
     });
 });
 
 
-// Configurar event listeners para el reseteo de los modales al cerrarse
-document.addEventListener('DOMContentLoaded', () => {
-    const modales = [
-        { id: 'modalCrearProducto', path: '/api/admin/productos', titulo: 'Producto' },
-        { id: 'modalCrearCategoria', path: '/admin/crearCategoria', titulo: 'Categoría' },
-        { id: 'modalCrearMarca', path: '/admin/crearMarca', titulo: 'Marca' },
-        { id: 'modalCrearUsuario', path: '/admin/crearUsuario', titulo: 'Usuario' },
-        { id: 'modalCrearPedido', path: '/admin/crearPedido', titulo: 'Pedido' }
-    ];
+document.getElementById("modalCrearProducto").addEventListener("hidden.bs.modal", () => {
+  const form = document.getElementById("formCrearProducto");
+  document.getElementById("modalCrearProductoLabel").innerText = "Crear Producto";
+  form.querySelector("button[type=submit]").innerHTML = "Agregar";
+  form.action = "/admin/crearProducto";
+  form.reset();
+});
 
-    modales.forEach(({ id, path, titulo }) => {
-        const modal = document.getElementById(id);
-        if (modal) {
-            modal.addEventListener('hidden.bs.modal', () => {
-                const form = modal.querySelector('form');
-                if (form) {
-                    const titleElement = modal.querySelector('.modal-title');
-                    if (titleElement) {
-                        titleElement.textContent = `Crear ${titulo}`;
-                    }
-                    
-                    const submitBtn = form.querySelector('button[type="submit"]');
-                    if (submitBtn) {
-                        submitBtn.textContent = 'Agregar';
-                    }
-                    
-                    form.action = path;
-                    form.reset();
-                }
-            });
-        }
-    });
+document.getElementById("modalCrearCategoria").addEventListener("hidden.bs.modal", () => {
+  const form = document.getElementById("formCrearCategoria");
+  document.getElementById("modalCrearCategoriaLabel").innerText = "Crear Categoría";
+  form.querySelector("button[type=submit]").innerHTML = "Agregar";
+  form.action = "/admin/crearCategoria";
+  form.reset();
+});
+
+document.getElementById("modalCrearMarca").addEventListener("hidden.bs.modal", () => {
+  const form = document.getElementById("formCrearMarca");
+  document.getElementById("modalCrearMarcaLabel").innerText = "Crear Marca";
+  form.querySelector("button[type=submit]").innerHTML = "Agregar";
+  form.action = "/admin/crearMarca";
+  form.reset();
+});
+
+document.getElementById("modalCrearUsuario").addEventListener("hidden.bs.modal", () => {
+  const form = document.getElementById("formCrearUsuario");
+  document.getElementById("modalCrearUsuarioLabel").innerText = "Crear Usuario";
+  form.querySelector("button[type=submit]").innerHTML = "Agregar";
+  form.action = "/admin/crearUsuario";
+  form.reset();
+});
+
+document.getElementById("modalCrearPedido").addEventListener("hidden.bs.modal", () => {
+  const form = document.getElementById("formCrearPedido");
+  document.getElementById("modalCrearPedidoLabel").innerText = "Crear Pedido";
+  form.querySelector("button[type=submit]").innerHTML = "Agregar";
+  form.action = "/admin/crearPedido";
+  form.reset();
 });
 
 document.addEventListener("DOMContentLoaded", () => {
