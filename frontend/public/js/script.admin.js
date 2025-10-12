@@ -92,145 +92,117 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // Funcion Editar
 
-document.addEventListener("DOMContentLoaded", () => {
-  document.querySelectorAll(".btn-agregar").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const type = btn.dataset.type;
+// Función para manejar la apertura de modales
+function handleModal(type, mode, btn = null) {
+    const config = {
+        producto: {
+            modalId: 'modalCrearProducto',
+            formId: 'formCrearProducto',
+            createPath: '/admin/crearProducto',
+            editPath: '/admin/editarProducto',
+            title: 'Producto'
+        },
+        usuario: {
+            modalId: 'modalCrearUsuario',
+            formId: 'formCrearUsuario',
+            createPath: '/admin/crearUsuario',
+            editPath: '/admin/editarUsuario',
+            title: 'Usuario'
+        },
+        categoria: {
+            modalId: 'modalCrearCategoria',
+            formId: 'formCrearCategoria',
+            createPath: '/admin/crearCategoria',
+            editPath: '/admin/editarCategoria',
+            title: 'Categoría'
+        },
+        marca: {
+            modalId: 'modalCrearMarca',
+            formId: 'formCrearMarca',
+            createPath: '/admin/crearMarca',
+            editPath: '/admin/editarMarca',
+            title: 'Marca'
+        },
+        pedidos: {
+            modalId: 'modalCrearPedido',
+            formId: 'formCrearPedido',
+            createPath: '/admin/crearPedido',
+            editPath: '/admin/editarPedido',
+            title: 'Pedido'
+        }
+    };
 
-      if (type === "usuario") {
-        const modal = new bootstrap.Modal(document.getElementById("modalCrearUsuario"));
-        const form = document.getElementById("formCrearUsuario");
+    const typeConfig = config[type];
+    if (!typeConfig) return;
 
-        // Restaurar a modo CREAR
-        document.getElementById("modalCrearUsuarioLabel").innerText = "Crear Usuario";
-        form.querySelector("button[type=submit]").innerHTML = "Agregar";
-        form.action = "/admin/crearUsuario";
-
-        // Limpiar inputs
+    const modal = new bootstrap.Modal(document.getElementById(typeConfig.modalId));
+    const form = document.getElementById(typeConfig.formId);
+    const titleElement = document.getElementById(typeConfig.modalId + 'Label');
+    
+    if (mode === 'create') {
+        titleElement.innerText = `Crear ${typeConfig.title}`;
+        form.querySelector('button[type=submit]').innerHTML = 'Agregar';
+        form.action = typeConfig.createPath;
         form.reset();
+    } else if (mode === 'edit' && btn) {
+        titleElement.innerText = `Editar ${typeConfig.title}`;
+        form.querySelector('button[type=submit]').innerHTML = 'Guardar cambios';
+        form.action = `${typeConfig.editPath}/${btn.dataset.id}`;
 
-        modal.show();
-      }
+        // Manejo específico para cada tipo
+        if (type === 'producto') {
+            try {
+                console.log('Datos del producto a editar:', btn.dataset);
+                
+                const campos = ['nombre', 'descripcion', 'color', 'talla', 'precio', 'stock', 'estado'];
+                campos.forEach(campo => {
+                    const input = form.querySelector(`#${campo}`);
+                    if (input) {
+                        input.value = btn.dataset[campo] || '';
+                    } else {
+                        console.error(`Campo no encontrado: ${campo}`);
+                    }
+                });
 
-            if (type === "pedido") {
-        const modal = new bootstrap.Modal(document.getElementById("modalCrearProducto"));
-        const form = document.getElementById("formCrearProducto");
+                const visibleCheck = form.querySelector('#visible');
+                if (visibleCheck) {
+                    visibleCheck.checked = btn.dataset.visible === 'true';
+                }
+            } catch (error) {
+                console.error('Error al cargar datos del producto:', error);
+            }
+        } else if (type === 'usuario') {
+            form.querySelector('#nombre').value = btn.dataset.nombre || '';
+            form.querySelector('#email').value = btn.dataset.email || '';
+            form.querySelector('#telefono').value = btn.dataset.telefono || '';
+        } else if (type === 'pedidos') {
+            form.querySelector('#idUsuario').value = btn.dataset.clienteid || '';
+            form.querySelector('#fecha').value = btn.dataset.fechacreacion ? 
+                new Date(btn.dataset.fechacreacion).toISOString().split('T')[0] : '';
+            form.querySelector('#total').value = btn.dataset.total || '';
+            form.querySelector('#estado').value = btn.dataset.estado || '';
+        } else if (type === 'categoria') {
+            form.querySelector('#nombre').value = btn.dataset.nombre || '';
+            form.querySelector('#descripcion').value = btn.dataset.descripcion || '';
+        } else if (type === 'marca') {
+            form.querySelector('#nombre').value = btn.dataset.nombre || '';
+        }
+    }
 
-        document.getElementById("modalCrearProductoLabel").innerText = "Crear Producto";
-        form.querySelector("button[type=submit]").innerHTML = "Agregar";
-        form.action = "/admin/crearProducto";
-        form.reset();
+    modal.show();
+}
 
-        modal.show();
-      }
-      
-      if (type === "producto") {
-        const modal = new bootstrap.Modal(document.getElementById("modalCrearProducto"));
-        const form = document.getElementById("formCrearProducto");
-
-        document.getElementById("modalCrearProductoLabel").innerText = "Crear Producto";
-        form.querySelector("button[type=submit]").innerHTML = "Agregar";
-        form.action = "/admin/crearProducto";
-        form.reset();
-
-        modal.show();
-      }
-
-      if (type === "categoria") {
-        const modal = new bootstrap.Modal(document.getElementById("modalCrearCategoria"));
-        const form = document.getElementById("formCrearCategoria");
-
-        document.getElementById("modalCrearCategoriaLabel").innerText = "Crear Categoría";
-        form.querySelector("button[type=submit]").innerHTML = "Agregar";
-        form.action = "/admin/crearCategoria";
-        form.reset();
-
-        modal.show();
-      }
-
-      if (type === "marca") {
-        const modal = new bootstrap.Modal(document.getElementById("modalCrearMarca"));
-        const form = document.getElementById("formCrearMarca");
-
-        document.getElementById("modalCrearMarcaLabel").innerText = "Crear Marca";
-        form.querySelector("button[type=submit]").innerHTML = "Agregar";
-        form.action = "/admin/crearMarca";
-        form.reset();
-
-        modal.show();
-      }
+// Eventos para botones de agregar
+document.addEventListener('DOMContentLoaded', () => {
+    // Manejar botones de agregar
+    document.querySelectorAll('.btn-agregar').forEach(btn => {
+        btn.addEventListener('click', () => handleModal(btn.dataset.type, 'create'));
     });
-  });
 
-  document.querySelectorAll(".btn-editar").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const type = btn.dataset.type;
-
-      if (type === "usuario") {
-        const modal = new bootstrap.Modal(document.getElementById("modalCrearUsuario"));
-        const form = document.getElementById("formCrearUsuario");
-
-        // Cambiar a modo EDITAR
-        document.getElementById("modalCrearUsuarioLabel").innerText = "Editar Usuario";
-        form.querySelector("button[type=submit]").innerHTML = "Guardar cambios";
-        form.action = `/admin/editarUsuario/${btn.dataset.id}`;
-
-        // Llenar inputs
-        form.querySelector("#nombre").value = btn.dataset.nombre;
-        form.querySelector("#email").value = btn.dataset.email;
-        form.querySelector("#telefono").value = btn.dataset.telefono;
-
-        modal.show();
-      }
-
-      if (type === "producto") {
-        const modal = new bootstrap.Modal(document.getElementById("modalCrearProducto"));
-        const form = document.getElementById("formCrearProducto");
-
-        document.getElementById("modalCrearProductoLabel").innerText = "Editar Producto";
-        form.querySelector("button[type=submit]").innerHTML = "Guardar cambios";
-        form.action = `/admin/editarProducto/${btn.dataset.id}`;
-
-        form.querySelector("#nombre").value = btn.dataset.nombre;
-        form.querySelector("#descripcion").value = btn.dataset.descripcion;
-        form.querySelector("#color").value = btn.dataset.color;
-        form.querySelector("#talla").value = btn.dataset.talla;
-        form.querySelector("#precio").value = btn.dataset.precio;
-        form.querySelector("#stock").value = btn.dataset.stock;
-        form.querySelector("#estado").value = btn.dataset.estado;
-        form.querySelector("#visible").checked = btn.dataset.visible === "true";
-
-        modal.show();
-      }
-
-      if (type === "categoria") {
-        const modal = new bootstrap.Modal(document.getElementById("modalCrearCategoria"));
-        const form = document.getElementById("formCrearCategoria");
-
-        document.getElementById("modalCrearCategoriaLabel").innerText = "Editar Categoría";
-        form.querySelector("button[type=submit]").innerHTML = "Guardar cambios";
-        form.action = `/admin/editarCategoria/${btn.dataset.id}`;
-
-        form.querySelector("#nombre").value = btn.dataset.nombre;
-        form.querySelector("#descripcion").value = btn.dataset.descripcion;
-
-        modal.show();
-      }
-
-      if (type === "marca") {
-        const modal = new bootstrap.Modal(document.getElementById("modalCrearMarca"));
-        const form = document.getElementById("formCrearMarca");
-
-        document.getElementById("modalCrearMarcaLabel").innerText = "Editar Marca";
-        form.querySelector("button[type=submit]").innerHTML = "Guardar cambios";
-        form.action = `/admin/editarMarca/${btn.dataset.id}`;
-
-        form.querySelector("#nombre").value = btn.dataset.nombre;
-
-        modal.show();
-      }
+    // Manejar botones de editar
+    document.querySelectorAll('.btn-editar').forEach(btn => {
+        btn.addEventListener('click', () => handleModal(btn.dataset.type, 'edit', btn));
     });
-  });
 });
 
 
@@ -263,6 +235,14 @@ document.getElementById("modalCrearUsuario").addEventListener("hidden.bs.modal",
   document.getElementById("modalCrearUsuarioLabel").innerText = "Crear Usuario";
   form.querySelector("button[type=submit]").innerHTML = "Agregar";
   form.action = "/admin/crearUsuario";
+  form.reset();
+});
+
+document.getElementById("modalCrearPedido").addEventListener("hidden.bs.modal", () => {
+  const form = document.getElementById("formCrearPedido");
+  document.getElementById("modalCrearPedidoLabel").innerText = "Crear Pedido";
+  form.querySelector("button[type=submit]").innerHTML = "Agregar";
+  form.action = "/admin/crearPedido";
   form.reset();
 });
 

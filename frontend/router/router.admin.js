@@ -208,6 +208,28 @@ router.post('/admin/crearMarcas',async(req,res)=>{
     }
 })
 
+router.post('/admin/crearPedido',async(req,res)=>{
+    const {idUsuario, fecha, total,estado} = req.body;
+    try{
+        await axios.post(`${URL_BACKEND}/pedidos`,
+            {clienteId: idUsuario,
+            fechaCreacion: fecha,
+            total,
+            estado},{
+            headers: {
+                'api-key-441': process.env.APIKEY_PASS
+            }
+        });
+        res.redirect('/admin#Pedidos')
+    }catch (error) {
+        console.error('Error al crear pedido:', error.message);
+        if (error.response && error.response.data) {
+            return res.status(error.response.status).send(error.response.data);
+        }
+        res.status(500).send('Error interno al crear pedido');
+    }
+})
+
 //EDITAR
 
 //MARCA
@@ -319,6 +341,29 @@ router.post('/admin/editarProducto/:id' ,async(req,res)=>{
     res.status(500).send("Error interno al editar producto");
     }
 })
+
+router.post('/admin/editarPedido/:id', async (req, res) => {
+    const { id } = req.params;
+    const { clienteId, fechaCreacion, total, estado } = req.body;
+    try {
+        await axios.put(`${URL_BACKEND}/pedidos/${id}`, {
+            clienteId,
+            fechaCreacion,
+            total,
+            estado},{
+            headers: {
+                'api-key-441': process.env.APIKEY_PASS
+            }
+        });
+        res.redirect('/admin#Pedidos');
+    } catch (error) {
+        console.error('Error al editar pedido:', error.message);
+        if (error.response && error.response.data) {
+            return res.status(error.response.status).send(error.response.data);
+        }
+        res.status(500).send('Error interno al editar pedido');
+    }
+});
 
 //USUARIO
 router.post('/admin/editarUsuario/:id',async(req,res)=>{
