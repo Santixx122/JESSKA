@@ -4,12 +4,13 @@ const usuariosController = require('../controller/controller.usuarios')
 const logs = require('../services/log')
 const validatorApiKey = require('../apiKey/apikey')
 const validacionToken = require('../middleware/validacionToken')
+const { verifyRecaptcha } = require('../middleware/recaptcha');
 
 // La API key se valida siempre
 router.use(validatorApiKey)
 
-// Registro público (no requiere token)
-router.post('/', usuariosController.createUsuario);
+// Registro público (no requiere token pero sí reCAPTCHA)
+router.post('/', verifyRecaptcha, usuariosController.createUsuario);
 
 // Rutas protegidas (requieren token)
 //router.use(validacionToken)

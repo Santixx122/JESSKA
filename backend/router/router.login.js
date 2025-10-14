@@ -3,12 +3,14 @@ const router = express.Router();
 const login = require('../controller/login')
 const validatorApiKey = require('../apiKey/apikey')
 const verifyToken = require('../middleware/validacionToken');
+const { verifyRecaptcha } = require('../middleware/recaptcha');
 const Usuario=require('../models/usuarios.model')
 
 
 router.use(validatorApiKey)
 
-router.post('/',login)
+// Aplicar middleware de reCAPTCHA al endpoint de login
+router.post('/', verifyRecaptcha, login)
 router.get('/me', verifyToken, async (req, res) => {
     try {
         const usuario = await Usuario.findOne({ email: req.user.email }).select("-password");

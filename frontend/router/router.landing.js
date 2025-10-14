@@ -21,7 +21,8 @@ router.get('/', async (req, res) => {
         const usuario = respuesta.data.usuario;
 
         res.render('pages/landing', { 
-            usuario
+            usuario,
+            process: process
         });
 
     } catch (error) {
@@ -37,7 +38,8 @@ router.get('/', async (req, res) => {
             usuario: null,
             productosDestacados: [],
             error: errorMessage,
-            errorField: errorMessage ? 'general' : null
+            errorField: errorMessage ? 'general' : null,
+            process: process
         });
     }
 });
@@ -73,19 +75,33 @@ router.get('/catalogo', async (req, res) => {
         } catch (productosError) {
             console.error('Error cargando productos:', productosError.message);
         }
-        res.render('pages/catalogo', { usuario, productos });
+        res.render('pages/catalogo', { 
+            usuario, 
+            productos,
+            process: process 
+        });
 
     } catch (error) {
         console.error('Error en catálogo:', error.message);
-        res.render('pages/catalogo', { usuario: null, productos: [] });
+        res.render('pages/catalogo', { 
+            usuario: null, 
+            productos: [],
+            process: process 
+        });
     }
 });
 
 router.post('/register', async (req, res) => {
-    const { nombre, email, telefono, password } = req.body;
+    const { nombre, email, telefono, password, 'g-recaptcha-response': recaptchaToken } = req.body;
     try {
         await axios.post(`${URL_BACKEND}/usuarios`, 
-            { nombre, email, password, telefono }, 
+            { 
+                nombre, 
+                email, 
+                password, 
+                telefono,
+                'g-recaptcha-response': recaptchaToken 
+            }, 
             { 
                 headers: { 'api-key-441': process.env.APIKEY_PASS },
                 withCredentials: true
@@ -93,7 +109,11 @@ router.post('/register', async (req, res) => {
         );
 
         // Registro exitoso: mostrar mensaje en landing
-        res.render('pages/landing', { usuario: null, successRegister: 'Registro exitoso. Ahora puedes iniciar sesión.' });
+        res.render('pages/landing', { 
+            usuario: null, 
+            successRegister: 'Registro exitoso. Ahora puedes iniciar sesión.',
+            process: process
+        });
     } catch (error) {
         console.error('Error en registro:', error.message);
         let errorMessage = 'Error al registrar usuario';
@@ -106,15 +126,20 @@ router.post('/register', async (req, res) => {
             usuario: null,
             errorRegister: errorMessage,
             errorRegisterField: errorField,
-            regFormData: { nombre, email, telefono }
+            regFormData: { nombre, email, telefono },
+            process: process
         });
     }
 });
 router.post('/login', async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, 'g-recaptcha-response': recaptchaToken } = req.body;
   try {
     const loginResponse = await axios.post(`${URL_BACKEND}/login`,
-      { email, password },
+      { 
+        email, 
+        password, 
+        'g-recaptcha-response': recaptchaToken // Incluir el token de reCAPTCHA
+      },
       { headers: { 'api-key-441': process.env.APIKEY_PASS }, withCredentials: true }
     );
 
@@ -133,7 +158,11 @@ router.post('/login', async (req, res) => {
     }
 
     // Si es usuario normal, mostrar landing con mensaje de éxito
-    res.render('pages/landing', { usuario, success: 'Inicio de sesión exitoso' });
+    res.render('pages/landing', { 
+        usuario, 
+        success: 'Inicio de sesión exitoso',
+        process: process
+    });
 
   } catch (error) {
     console.error('Error en login:', error.message);
@@ -144,13 +173,19 @@ router.post('/login', async (req, res) => {
     if (error.response && error.response.data) {
       errorMessage = error.response.data.message || errorMessage;
       errorField = error.response.data.field || errorField;
+      
+      // Manejar específicamente errores de reCAPTCHA
+      if (errorMessage.includes('reCAPTCHA') || errorMessage.includes('verificación')) {
+        errorField = 'recaptcha';
+      }
     }
     
     res.render('pages/landing', { 
       usuario: null,
       error: errorMessage,
       errorField: errorField,
-      formData: { email, password: '' } // Mantener email pero limpiar password
+      formData: { email, password: '' }, // Mantener email pero limpiar password
+      process: process
     });
   }
 });
@@ -205,7 +240,11 @@ router.get('/producto/:id', async (req, res) => {
     const producto = prodResp.data.data;
 
     
-    res.render('pages/detalle-producto', { producto, usuario });
+    res.render('pages/detalle-producto', { 
+        producto, 
+        usuario,
+        process: process 
+    });
   } catch (error) {
     console.error('Error cargando producto:', error.message || error);
     return res.status(500).send('Error al cargar los Productos', error.message);
@@ -226,11 +265,19 @@ router.get('/carrito', async (req, res) => {
 
         const usuario = respuesta.data.usuario;
         const productosCarrito = req.session.carrito || [];
-        res.render('pages/carrito', { usuario, productosCarrito });
+        res.render('pages/carrito', { 
+            usuario, 
+            productosCarrito,
+            process: process
+        });
 
     } catch (error) {
         const productosCarrito = req.session.carrito || []; 
-        res.render('pages/carrito', { usuario: null, productosCarrito });
+        res.render('pages/carrito', { 
+            usuario: null, 
+            productosCarrito,
+            process: process 
+        });
     }
 });
 
