@@ -20,24 +20,36 @@ router.get('/', async (req, res) => {
         });
         const usuario = respuesta.data.usuario;
 
+        // Manejar mensajes de éxito también cuando el usuario está logueado
+        let successMessage = null;
+        if (req.query.success === 'password_reset') {
+            successMessage = 'Contraseña restablecida exitosamente. Ya puedes iniciar sesión con tu nueva contraseña.';
+        }
+
         res.render('pages/landing', { 
             usuario,
+            success: successMessage,
             process: process
         });
 
     } catch (error) {
-        // Manejar mensajes de error desde query parameters
+        // Manejar mensajes desde query parameters
         let errorMessage = null;
+        let successMessage = null;
+        
         if (req.query.error === 'acceso_denegado') {
             errorMessage = 'Acceso denegado. No tienes permisos para acceder al panel de administrador.';
         } else if (req.query.error === 'sesion_expirada') {
             errorMessage = 'Tu sesión ha expirado. Por favor, inicia sesión nuevamente.';
+        } else if (req.query.success === 'password_reset') {
+            successMessage = 'Contraseña restablecida exitosamente. Ya puedes iniciar sesión con tu nueva contraseña.';
         }
 
         res.render('pages/landing', { 
             usuario: null,
             productosDestacados: [],
             error: errorMessage,
+            success: successMessage,
             errorField: errorMessage ? 'general' : null,
             process: process
         });
@@ -187,6 +199,34 @@ router.post('/login', async (req, res) => {
       formData: { email, password: '' }, // Mantener email pero limpiar password
       process: process
     });
+  }
+});
+
+// Ruta POST para solicitar recuperación de contraseña
+router.post('/forgot-password', async (req, res) => {
+  try {
+    const response = await axios.post(`${URL_BACKEND}/login/forgot-password`, req.body, {
+      headers: {
+        'api-key-441': process.env.APIKEY_PASS,
+        'Content-Type': 'application/json'
+      }
+    });
+    
+    // Devolver la respuesta JSON del backend
+    res.json(response.data);
+    
+  } catch (error) {
+    console.error('Error en recuperación:', error.response?.data || error.message);
+    
+    // Manejar errores del backend
+    if (error.response && error.response.data) {
+      res.status(error.response.status).json(error.response.data);
+    } else {
+      res.status(500).json({
+        success: false,
+        message: 'Error interno del servidor'
+      });
+    }
   }
 });
 
@@ -372,6 +412,74 @@ router.get('/failure', (req, res) => {
 
 router.get('/pending', (req, res) => {
   res.render('pending', { datos: req.query });
+});
+
+// Ruta para reset password
+router.get('/reset-password/:token', (req, res) => {
+    const token = req.params.token;
+    res.render('pages/reset-password', { 
+        token: token,
+        process: process
+    });
+});
+
+// Ruta POST para manejar el reset password
+router.post('/reset-password/:token', async (req, res) => {
+    try {
+        const token = req.params.token;
+        const { password, confirmPassword } = req.body;
+
+        // Validación básica
+        if (!password || !confirmPassword) {
+            return res.render('pages/reset-password', { 
+                token: token,
+                error: 'Todos los campos son obligatorios.',
+                process: process
+            });
+        }
+
+        if (password !== confirmPassword) {
+            return res.render('pages/reset-password', { 
+                token: token,
+                error: 'Las contraseñas no coinciden.',
+                process: process
+            });
+        }
+
+        if (password.length < 6) {
+            return res.render('pages/reset-password', { 
+                token: token,
+                error: 'La contraseña debe tener al menos 6 caracteres.',
+                process: process
+            });
+        }
+
+        // Enviar al backend
+        const response = await axios.post(`${URL_BACKEND}/login/reset-password/${token}`, {
+            password: password
+        }, {
+            headers: { 
+                'api-key-441': process.env.APIKEY_PASS 
+            }
+        });
+
+        // Redirigir a la página principal con mensaje de éxito
+        res.redirect('/?success=password_reset');
+
+    } catch (error) {
+        console.error('Error en reset password:', error.response?.data || error.message);
+        
+        let errorMessage = 'Error interno del servidor.';
+        if (error.response?.status === 400) {
+            errorMessage = error.response.data.message || 'Token inválido o expirado.';
+        }
+
+        res.render('pages/reset-password', { 
+            token: req.params.token,
+            error: errorMessage,
+            process: process
+        });
+    }
 });
 
 module.exports = router;

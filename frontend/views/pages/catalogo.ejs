@@ -120,6 +120,11 @@
                       <span class="button-text">Iniciar Sesión</span>
                     </button>
                   </form>
+                  <div class="text-center mt-3">
+                    <a href="#" class="text-muted small" data-bs-toggle="modal" data-bs-target="#forgotPasswordModal" data-bs-dismiss="modal">
+                      ¿Olvidaste tu contraseña?
+                    </a>
+                  </div>
                   <p class="sign-up-label">
                     No tienes cuenta? <a href="" data-bs-toggle="modal" data-bs-target="#staticBackdrop"><span
                         class="sign-up-link"> Registrate</span></a>
@@ -314,6 +319,10 @@
     </section>
 
   </main>
+  
+  <!-- Incluir modal de recuperación de contraseña -->
+  <%- include('../partials/forgot-password-modal') %>
+  
   <!--Footer-->
   <footer class="footer fixed-bottom ">
     <div class="container">

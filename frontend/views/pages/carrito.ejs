@@ -120,6 +120,11 @@
                       <span class="button-text">Iniciar Sesión</span>
                     </button>
                   </form>
+                  <div class="text-center mt-3">
+                    <a href="#" class="text-muted small" data-bs-toggle="modal" data-bs-target="#forgotPasswordModal" data-bs-dismiss="modal">
+                      ¿Olvidaste tu contraseña?
+                    </a>
+                  </div>
                   <p class="sign-up-label">
                     No tienes cuenta? <a href="" data-bs-toggle="modal" data-bs-target="#staticBackdrop"><span
                         class="sign-up-link"> Registrate</span></a>
@@ -359,6 +364,9 @@
       </div>
     </div>
     <% } %>
+
+    <!-- Incluir modal de recuperación de contraseña -->
+    <%- include('../partials/forgot-password-modal') %>
 
       <!--bootstrap js-->
       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"

@@ -28,6 +28,14 @@ const schemaUsuarios = new mongoose.Schema({
         type: String,
         enum: ['activo', 'inactivo'],
         default: 'activo'
+    },
+    resetPasswordToken: {
+        type: String,
+        default: null
+    },
+    resetPasswordExpires: {
+        type: Date,
+        default: null
     }
 }, {
     title: 'esquema de usuario'
