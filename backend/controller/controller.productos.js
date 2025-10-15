@@ -180,27 +180,121 @@ if (req.file) {
 }
 
 
-const updateProduct = async (req,res)=>{
+const updateProduct = async (req, res) => {
     try {
-        const id = req.params.id
-        const nuevosDatos = req.body
-        const productUpdate = await Producto.findByIdAndUpdate(id,nuevosDatos,{new:true})
-
-        if(!productUpdate)
+        const id = req.params.id;
+        const { nombre, descripcion, categoriaId, marcaId, color, talla, precio, stock, estado, visible } = req.body;
+        
+        console.log('=== ACTUALIZAR PRODUCTO ===');
+        console.log('ID:', id);
+        console.log('Datos recibidos:', req.body);
+        console.log('Archivo recibido:', req.file ? 'Sí' : 'No');
+        console.log('Headers:', req.headers['api-key-441'] ? 'API Key presente' : 'Sin API Key');
+        
+        // Validar que el ID sea válido
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({
+                success: false,
+                message: "ID de producto no válido"
+            });
+        }
+        
+        // Buscar el producto actual
+        const productoActual = await Producto.findById(id);
+        if (!productoActual) {
+            console.log('Producto no encontrado con ID:', id);
             return res.status(404).json({
                 success: false,
                 message: "Producto no encontrado"
-              });
-        else
-            res.status(200).json({
-                success:true,
-                message:'Producto actualizado con exito',
-                data:productUpdate
-            })
+            });
+        }
+        
+        console.log('Producto actual encontrado:', productoActual.nombre);
+        
+        // Preparar los datos actualizados
+        const datosActualizados = {};
+        
+        if (nombre) datosActualizados.nombre = nombre.trim();
+        if (descripcion) datosActualizados.descripcion = descripcion.trim();
+        if (categoriaId) datosActualizados.categoriaId = categoriaId;
+        if (marcaId) datosActualizados.marcaId = marcaId;
+        if (estado) datosActualizados.estado = estado;
+        
+        // Manejar visible
+        datosActualizados.visible = visible === 'on' ? true : false;
+        
+        // Actualizar variante si se proporcionan datos
+        if (color || talla || precio || stock) {
+            const varianteActual = productoActual.variante[0] || {};
+            const varianteActualizada = {
+                color: color?.trim() || varianteActual.color || '',
+                talla: talla || varianteActual.talla || '',
+                precio: precio ? parseFloat(precio) : (varianteActual.precio || 0),
+                stock: stock ? parseInt(stock) : (varianteActual.stock || 0)
+            };
+            datosActualizados.variante = [varianteActualizada];
+            console.log('Variante actualizada:', varianteActualizada);
+        }
+        
+        // Manejar imagen si se proporciona una nueva
+        if (req.file) {
+            console.log('Procesando nueva imagen...');
+            try {
+                const fileName = `producto-${Date.now()}`;
+                const fileBuffer = req.file.buffer;
+                const fileMimetype = req.file.mimetype;
+
+                // Subir la nueva imagen al bucket
+                const { error: uploadError } = await supabase.storage
+                    .from('imagenes-productos')
+                    .upload(fileName, fileBuffer, {
+                        contentType: fileMimetype,
+                        upsert: false
+                    });
+
+                if (uploadError) {
+                    console.error('Error al subir imagen:', uploadError);
+                    return res.status(500).json({
+                        success: false,
+                        message: 'Error al subir la imagen: ' + uploadError.message
+                    });
+                }
+
+                // Obtener URL pública de la nueva imagen
+                const { data: { publicUrl } } = supabase.storage
+                    .from('imagenes-productos')
+                    .getPublicUrl(fileName);
+
+                datosActualizados.imagenUrl = publicUrl;
+                console.log('Nueva URL de imagen:', publicUrl);
+            } catch (imageError) {
+                console.error('Error procesando imagen:', imageError);
+                return res.status(500).json({
+                    success: false,
+                    message: 'Error al procesar la imagen'
+                });
+            }
+        }
+        
+        console.log('Datos finales para actualizar:', datosActualizados);
+        
+        // Actualizar el producto
+        const productUpdate = await Producto.findByIdAndUpdate(id, datosActualizados, { new: true });
+        
+        console.log('Producto actualizado exitosamente');
+        
+        res.status(200).json({
+            success: true,
+            message: 'Producto actualizado con éxito',
+            data: productUpdate
+        });
+        
     } catch (error) {
-        controlError(res,'El producto no se pudo actualizar',error)
+        console.error('Error al actualizar producto:', error);
+        console.error('Stack trace:', error.stack);
+        controlError(res, 'El producto no se pudo actualizar', error);
     }
-}
+};
 
 const deleteProduct = async (req,res)=>{
     try {

@@ -1,6 +1,7 @@
 // Script para actualizar productos 'unisex' a géneros válidos
 const mongoose = require('mongoose');
-require('dotenv').config();
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '../../.env') });
 
 // Conectar a la base de datos
 const connectDB = async () => {

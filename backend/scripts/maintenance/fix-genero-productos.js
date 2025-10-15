@@ -1,6 +1,7 @@
 // Script mejorado para actualizar productos con género basado en categorías
 const mongoose = require('mongoose');
-require('dotenv').config();
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '../../.env') });
 
 // Conectar a la base de datos
 const connectDB = async () => {

@@ -7,6 +7,8 @@ services:
     buildCommand: "npm install"
     startCommand: "npm start"
     envVars:
+      - key: NODE_ENV
+        value: production
       - key: PORT
         value: 10000
       - key: USER_DB
@@ -35,6 +37,8 @@ services:
         value: APP_USR-3341090952215310-100713-6297afa252fc983cd73114f6ec3e404e-2911062470
       - key: MERCADOPAGO_PUBLIC_KEY
         value: APP_USR-d7a8e5ac-dbdf-4d27-8117-15139210b49e
+      - key: ALLOWED_ORIGINS
+        value: "https://jesska-app.onrender.com,https://www.jesska.com"
 
   - type: web
     name: jesska-app
@@ -44,12 +48,15 @@ services:
     buildCommand: "npm install"
     startCommand: "npm start"
     envVars:
+      - key: NODE_ENV
+        value: production
       - key: PORT
         value: 10001
       - key: URL_BACKEND
-        # 👇 importante: aquí debes poner el link que Render te da cuando deployas el backend
         value: https://jesska-backend.onrender.com
       - key: APIKEY_NAME
         value: api-key-441
       - key: APIKEY_PASS
         value: contrasena-super-secreta
+      - key: FRONTEND_URL
+        value: https://jesska-app.onrender.com
