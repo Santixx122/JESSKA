@@ -5,7 +5,7 @@ require('dotenv').config();
 const multer = require('multer');
 const FormData = require('form-data');
 
-const URL_BACKEND = process.env.URL_BACKEND || 'http://localhost:4040';
+const URL_BACKEND = process.env.URL_BACKEND || 'http://localhost:4000';
 const upload = multer({ storage: multer.memoryStorage() });
 
 

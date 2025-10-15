@@ -11,23 +11,23 @@ function controlError(res,message,error){
 
 const getProducts = async (req, res) => {
     try {
-        // Obtener el query param 'visible' (opcional)
-        const showAll = req.query.showAll === 'true';
+        // Obtener query params
+        const genero = req.query.genero; // Filtro por género
         
-        // Construir el filtro base
+        // Construir el filtro base - solo productos activos
         const filter = {
-            estado: { $in: ['activo', 'agotado'] }
+            estado: 'activo'
         };
 
-        // Si no se solicitan todos, solo mostrar los visibles
-        if (!showAll) {
-            filter.visible = true;
+        // Aplicar filtro por género si se especifica
+        if (genero && ['hombre', 'mujer'].includes(genero)) {
+            filter.genero = genero;
         }
 
         const productos = await Producto.find(filter)
             .populate('categoriaId', 'nombre')
             .populate('marcaId', 'nombre')
-            .select('nombre descripcion estado visible variante precio imagenUrl')
+            .select('nombre descripcion estado visible variante precio imagenUrl genero')
             .sort({ fechaRegistro: -1 });
             
         res.status(200).json({
@@ -87,6 +87,37 @@ const createProducts = async (req,res)=>{
             });
         }
         
+        // Obtener información de la categoría para determinar el género
+        const Categoria = require('../models/categorias.model');
+        const categoria = await Categoria.findById(categoriaId);
+        
+        // Determinar género basándose en la categoría
+        let genero = 'mujer'; // valor por defecto
+        if (categoria && categoria.nombre) {
+            const nombreCategoria = categoria.nombre.toLowerCase();
+            if (nombreCategoria.includes('hombre') || nombreCategoria.includes('hombres')) {
+                genero = 'hombre';
+            } else if (nombreCategoria.includes('mujer') || nombreCategoria.includes('mujeres')) {
+                genero = 'mujer';
+            }
+        }
+        
+        // También verificar el nombre del producto para mayor precisión
+        const nombreProducto = nombre.toLowerCase();
+        if (nombreProducto.includes('tacones') || 
+            nombreProducto.includes('tacón') ||
+            nombreProducto.includes('vestido') ||
+            nombreProducto.includes('falda') ||
+            nombreProducto.includes('blusa')) {
+            genero = 'mujer';
+        }
+        
+        if (nombreProducto.includes('corbata') ||
+            nombreProducto.includes('traje') ||
+            nombreProducto.includes('smoking')) {
+            genero = 'hombre';
+        }
+        
         const variante = {
             color: color.trim(),
             talla: talla,
@@ -101,7 +132,8 @@ const createProducts = async (req,res)=>{
             categoriaId: categoriaId,
             marcaId: marcaId,
             estado: estado || 'activo',
-            visible: visible !== undefined ? visible : true
+            visible: visible !== undefined ? visible : true,
+            genero: genero // Agregar el género determinado automáticamente
         };
         
         // --- Lógica de subida de imagen a Supabase ---
@@ -239,6 +271,25 @@ const getAllProductsAdmin = async (req, res) => {
     }
 };
 
+// Función para actualizar productos existentes con el campo género
+const updateProductsGenero = async (req, res) => {
+    try {
+        // Actualizar todos los productos que no tienen el campo genero
+        const result = await Producto.updateMany(
+            { genero: { $exists: false } },
+            { $set: { genero: 'unisex' } }
+        );
+
+        res.status(200).json({
+            success: true,
+            message: `Se actualizaron ${result.modifiedCount} productos con género por defecto.`,
+            data: result
+        });
+    } catch (error) {
+        controlError(res, 'Error al actualizar productos con género', error);
+    }
+};
+
 module.exports={
     getProducts,
     getOneProduct,
@@ -246,5 +297,6 @@ module.exports={
     updateProduct,
     deleteProduct,
     toggleProductVisibility,
-    getAllProductsAdmin  
+    getAllProductsAdmin,
+    updateProductsGenero
 }

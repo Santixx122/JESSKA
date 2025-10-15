@@ -20,6 +20,11 @@ router.get('/', async (req, res) => {
         });
         const usuario = respuesta.data.usuario;
 
+        // Si el usuario es admin y viene de una redirección al admin, redirigir automáticamente
+        if (usuario && (usuario.rol === 'administrador' || usuario.rol === 'admin') && req.query.redirectToAdmin === 'true') {
+            return res.redirect('/admin');
+        }
+
         // Manejar mensajes de éxito también cuando el usuario está logueado
         let successMessage = null;
         if (req.query.success === 'password_reset') {
@@ -77,19 +82,30 @@ router.get('/catalogo', async (req, res) => {
             // Usuario no autenticado, continuar sin usuario
         }
 
-        // Obtener productos 
+        // Obtener productos con filtros
         let productos = [];
         try {
-            const productosResponse = await axios.get(`${URL_BACKEND}/productos?showAll=true`, {
+            // Obtener filtro de género desde query params
+            const genero = req.query.genero;
+            let url = `${URL_BACKEND}/productos?showAll=true`;
+            
+            // Agregar filtro de género si existe
+            if (genero && ['hombre', 'mujer', 'unisex'].includes(genero)) {
+                url += `&genero=${genero}`;
+            }
+            
+            const productosResponse = await axios.get(url, {
                 headers: { 'api-key-441': process.env.APIKEY_PASS }
             });
             productos = productosResponse.data.data || [];
         } catch (productosError) {
             console.error('Error cargando productos:', productosError.message);
         }
+        
         res.render('pages/catalogo', { 
             usuario, 
             productos,
+            filtroActual: req.query.genero || 'todos',
             process: process 
         });
 
@@ -478,6 +494,32 @@ router.post('/reset-password/:token', async (req, res) => {
             token: req.params.token,
             error: errorMessage,
             process: process
+        });
+    }
+});
+
+// Endpoint para verificar sesión del usuario (usado por JavaScript)
+router.get('/api/session', async (req, res) => {
+    try {
+        const respuesta = await axios.get(`${URL_BACKEND}/login/me`, {
+            headers: { 
+                'api-key-441': process.env.APIKEY_PASS,
+                ...(req.headers.cookie ? { Cookie: req.headers.cookie } : {})
+            },
+            withCredentials: true
+        });
+        
+        // Devolver datos del usuario con éxito
+        res.json({
+            success: true,
+            usuario: respuesta.data.usuario
+        });
+        
+    } catch (error) {
+        // Usuario no autenticado o error
+        res.json({
+            success: false,
+            usuario: null
         });
     }
 });

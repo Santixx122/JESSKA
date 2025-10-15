@@ -202,6 +202,87 @@ async function agregarAlCarrito(productoId) {
     }
 }
 
+// Funcionalidad de filtros de género
+document.addEventListener('DOMContentLoaded', function() {
+    // Event listeners para los botones de filtro
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    
+    filterButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Remover clase active de todos los botones
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            
+            // Agregar clase active al botón clickeado
+            this.classList.add('active');
+            
+            // Obtener el género seleccionado
+            const genero = this.getAttribute('data-filter');
+            
+            // Aplicar filtro
+            aplicarFiltroGenero(genero);
+        });
+    });
+});
+
+// Función para aplicar filtro por género
+function aplicarFiltroGenero(genero) {
+    try {
+        // Construir URL con parámetros de filtro
+        let url = '/catalogo';
+        if (genero && genero !== 'todos') {
+            url += `?genero=${genero}`;
+        }
+        
+        // Recargar página con filtros aplicados
+        window.location.href = url;
+        
+    } catch (error) {
+        console.error('Error aplicando filtro:', error);
+    }
+}
+
+// Función para cargar productos con filtros
+async function cargarProductosConFiltros(genero = null) {
+    try {
+        let url = '/api/productos';
+        if (genero && genero !== 'todos') {
+            url += `?genero=${genero}`;
+        }
+        
+        const response = await fetch(url);
+        const data = await response.json();
+        
+        if (data.success && data.data) {
+            mostrarProductos(data.data);
+            actualizarEstadoFiltros(genero);
+        } else {
+            mostrarMensajeVacio();
+        }
+    } catch (error) {
+        console.error('Error cargando productos con filtros:', error);
+        mostrarMensajeError();
+    }
+}
+
+// Función para actualizar estado visual de los filtros
+function actualizarEstadoFiltros(generoActivo) {
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    
+    filterButtons.forEach(button => {
+        const buttonGenero = button.getAttribute('data-filter');
+        
+        if ((generoActivo === null || generoActivo === 'todos') && buttonGenero === 'todos') {
+            button.classList.add('active');
+        } else if (buttonGenero === generoActivo) {
+            button.classList.add('active');
+        } else {
+            button.classList.remove('active');
+        }
+    });
+}
+
 
 
 // POST /carrito/agregar

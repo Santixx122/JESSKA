@@ -20,6 +20,27 @@ router.get('/me', verifyToken, async (req, res) => {
     }
 });
 
+// Endpoint para logout
+router.post('/logout', (req, res) => {
+    try {
+        res
+            .clearCookie('access_token', {
+                httpOnly: true,
+                sameSite: 'lax',
+                secure: process.env.NODE_ENV === 'production'
+            })
+            .status(200).json({
+                success: true,
+                message: 'Sesión cerrada exitosamente'
+            });
+    } catch (error) {
+        res.status(500).json({ 
+            success: false, 
+            message: 'Error al cerrar sesión' 
+        });
+    }
+});
+
 // Endpoint para recuperación de contraseña
 router.post('/forgot-password', verifyRecaptcha, async (req, res) => {
     try {

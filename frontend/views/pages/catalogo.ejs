@@ -33,15 +33,8 @@
             <li class="nav-item">
               <a class="nav-link" href="/">Inicio</a>
             </li>
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#productos" id="productosDropdown" role="button"
-                data-bs-toggle="dropdown" aria-expanded="false">
-                Productos
-              </a>
-              <ul class="dropdown-menu" aria-labelledby="productosDropdown">
-                <li><a class="dropdown-item" href="/catalogo/hombre">Hombre</a></li>
-                <li><a class="dropdown-item" href="/catalogo/mujer">Mujer</a></li>
-              </ul>
+            <li class="nav-item">
+              <a class="nav-link" href="#productos">Productos</a>
             </li>
           </ul>
           <div class="d-flex align-items-center">
@@ -247,6 +240,39 @@
       <div class="container mt-5 pt-5">
         <h1 class="text-center">Catalogo</h1>
         <p class="text-center">Explora nuestra amplia gama de productos y encuentra lo que necesitas.</p>
+        
+        <!-- Filtros por género -->
+        <div class="row justify-content-center mt-4">
+          <div class="col-md-8">
+            <div class="filter-section bg-light p-3 rounded">
+              <h5 class="mb-3 text-center">Filtrar por género</h5>
+              <div class="d-flex justify-content-center gap-3 flex-wrap">
+                <a href="/catalogo" class="btn <%= (typeof filtroActual !== 'undefined' && filtroActual === 'todos') ? 'btn-dark' : 'btn-outline-dark' %>">
+                  <i class="bi bi-grid-3x3-gap me-2"></i>Todos
+                </a>
+                <a href="/catalogo?genero=hombre" class="btn <%= (typeof filtroActual !== 'undefined' && filtroActual === 'hombre') ? 'btn-dark' : 'btn-outline-dark' %>">
+                  <i class="bi bi-person me-2"></i>Hombre
+                </a>
+                <a href="/catalogo?genero=mujer" class="btn <%= (typeof filtroActual !== 'undefined' && filtroActual === 'mujer') ? 'btn-dark' : 'btn-outline-dark' %>">
+                  <i class="bi bi-person-dress me-2"></i>Mujer
+                </a>
+              </div>
+              
+              <!-- Mostrar filtro activo -->
+              <% if (typeof filtroActual !== 'undefined' && filtroActual !== 'todos') { %>
+                <div class="text-center mt-3">
+                  <small class="text-muted">
+                    Mostrando productos para: 
+                    <strong class="text-capitalize"><%= filtroActual %></strong>
+                    <a href="/catalogo" class="ms-2 text-decoration-none">
+                      <i class="bi bi-x-circle"></i> Limpiar filtro
+                    </a>
+                  </small>
+                </div>
+              <% } %>
+            </div>
+          </div>
+        </div>
       </div>
     </header>
     <section class="container mt-5">

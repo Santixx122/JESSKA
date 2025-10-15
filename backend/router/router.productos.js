@@ -8,6 +8,9 @@ router.use(validatorApiKey)
 
 router.get('/admin',controllerProducts.getAllProductsAdmin)
 
+// Ruta temporal para actualizar productos existentes con género
+router.post('/update-genero', controllerProducts.updateProductsGenero)
+
 router.get('/',controllerProducts.getProducts)
 router.get('/:id',controllerProducts.getOneProduct);
 router.post('/', upload.single('imagen'), controllerProducts.createProducts);

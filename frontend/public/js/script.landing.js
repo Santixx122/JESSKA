@@ -421,3 +421,76 @@ window.onRecaptchaReady = function() {
     console.error('Error al inicializar widgets de reCAPTCHA:', error);
   }
 };
+
+// Función para verificar sesión de admin y redirigir
+window.goToAdmin = async function() {
+  try {
+    // Verificar si hay sesión activa
+    const response = await fetch('/admin');
+    
+    if (response.ok) {
+      // Si la respuesta es OK, ya está autenticado como admin
+      window.location.href = '/admin';
+    } else if (response.status === 302) {
+      // Si hay redirección, seguirla
+      window.location.href = '/admin';
+    } else {
+      // Si no está autenticado, mostrar modal de login
+      const loginModal = document.getElementById('exampleModal');
+      if (loginModal) {
+        const modal = new bootstrap.Modal(loginModal);
+        modal.show();
+        
+        // Agregar mensaje indicando que necesita ser admin
+        const title = loginModal.querySelector('.title');
+        if (title) {
+          title.textContent = 'Acceso de Administrador';
+        }
+      }
+    }
+  } catch (error) {
+    console.error('Error verificando sesión de admin:', error);
+    // En caso de error, redirigir a la página de admin que manejará la autenticación
+    window.location.href = '/admin';
+  }
+};
+
+// Función para agregar enlace de admin en el navbar si el usuario es admin
+document.addEventListener('DOMContentLoaded', function() {
+  // Verificar si el usuario actual es admin
+  const userProfileLink = document.querySelector('.user-profile-link');
+  if (userProfileLink) {
+    // Si hay un usuario logueado, verificar su rol específicamente
+    fetch('/api/session')
+      .then(response => response.json())
+      .then(data => {
+        if (data.success && data.usuario && 
+            (data.usuario.rol === 'administrador' || data.usuario.rol === 'admin')) {
+          // Solo si el usuario es específicamente admin, agregar enlace
+          addAdminLinkToNavbar();
+        }
+      })
+      .catch(error => {
+        // No es admin, no está logueado, o error en la verificación
+        console.log('Usuario no es admin o no está logueado');
+      });
+  }
+});
+
+// Función para agregar enlace de admin al navbar
+function addAdminLinkToNavbar() {
+  const userProfileContainer = document.querySelector('.d-flex.align-items-center.gap-2.ms-3');
+  if (userProfileContainer) {
+    const adminLink = document.createElement('a');
+    adminLink.href = '/admin';
+    adminLink.className = 'btn btn-outline-primary btn-sm'; // Estilo original profesional
+    adminLink.innerHTML = 'Panel Admin'; // Sin ícono de tuerca, pero con estilo original
+    adminLink.style.marginRight = '10px';
+    
+    // Insertar antes del botón de cerrar sesión
+    const logoutForm = userProfileContainer.querySelector('form');
+    if (logoutForm) {
+      userProfileContainer.insertBefore(adminLink, logoutForm);
+    }
+  }
+}
