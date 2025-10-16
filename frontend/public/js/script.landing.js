@@ -1,6 +1,44 @@
-// Form validation and interactions for JESSKA Landing Page
 document.addEventListener('DOMContentLoaded', () => {
-  // Form validation for login
+  
+  // Variable global para almacenar los IDs de los widgets
+  window.recaptchaWidgets = {};
+ 
+  function resetButtonState() {
+    const submitButton = document.getElementById('iniciarsesion');
+    const spinner = submitButton?.querySelector('.spinner-border');
+    const buttonText = submitButton?.querySelector('.button-text');
+    
+    if (submitButton && spinner && buttonText) {
+      submitButton.disabled = false;
+      spinner.classList.add('d-none');
+      buttonText.textContent = 'Iniciar Sesión';
+    }
+  }
+
+
+  function resetRecaptcha() {
+    try {
+      if (typeof grecaptcha !== 'undefined') {
+        // Resetear todos los widgets registrados
+        Object.values(window.recaptchaWidgets).forEach(widgetId => {
+          try {
+            grecaptcha.reset(widgetId);
+          } catch (e) {
+            console.warn('No se pudo resetear widget:', widgetId);
+          }
+        });
+      }
+    } catch (error) {
+      console.warn('No se pudo resetear reCAPTCHA:', error);
+    }
+  }
+
+
+  if (document.querySelector('.alert-danger')) {
+    resetButtonState();
+    resetRecaptcha();
+  }
+
   const loginForm = document.getElementById('loginForm');
   if (loginForm) {
     loginForm.addEventListener('submit', function(e) {
@@ -9,21 +47,45 @@ document.addEventListener('DOMContentLoaded', () => {
       const submitButton = document.getElementById('iniciarsesion');
       const spinner = submitButton.querySelector('.spinner-border');
       const buttonText = submitButton.querySelector('.button-text');
+      const recaptchaContainer = document.getElementById('recaptcha-container');
+      const recaptchaError = document.getElementById('recaptcha-error');
       let isValid = true;
 
-      // Reset previous validation states
+
       email.classList.remove('is-invalid');
       password.classList.remove('is-invalid');
+      recaptchaContainer.classList.remove('invalid');
+      recaptchaError.classList.remove('show');
 
-      // Email validation
+
       if (!email.value || !email.value.includes('@')) {
         email.classList.add('is-invalid');
         isValid = false;
       }
 
-      // Password validation
       if (!password.value || password.value.length < 6) {
         password.classList.add('is-invalid');
+        isValid = false;
+      }
+
+
+      let recaptchaResponse = '';
+      try {
+        // Obtener la respuesta del widget específico de login
+        const loginWidget = window.recaptchaWidgets.login;
+        if (loginWidget !== undefined) {
+          recaptchaResponse = grecaptcha.getResponse(loginWidget);
+        } else {
+          // Fallback: usar el método estándar
+          recaptchaResponse = grecaptcha.getResponse();
+        }
+      } catch (error) {
+        console.error('Error al obtener respuesta de reCAPTCHA:', error);
+      }
+      
+      if (!recaptchaResponse) {
+        recaptchaContainer.classList.add('invalid');
+        recaptchaError.classList.add('show');
         isValid = false;
       }
 
@@ -32,26 +94,32 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      // Show loading state
+
       if (submitButton && spinner && buttonText) {
         submitButton.disabled = true;
         spinner.classList.remove('d-none');
         buttonText.textContent = 'Iniciando sesión...';
       }
 
-      // The form will submit normally, but we show loading state
-      // The server will handle the redirect logic
     });
   }
 
-  // Form validation for register
+
   const registerForm = document.getElementById('registerForm');
   if (registerForm) {
     registerForm.addEventListener('submit', function(e) {
       const inputs = this.querySelectorAll('input[required]');
       const password = this.querySelector('input[name="password"]');
       const confirmPassword = this.querySelector('input[name="confirmPassword"]');
+      const recaptchaContainerRegister = document.getElementById('recaptcha-container-register');
+      const recaptchaErrorRegister = document.getElementById('recaptcha-error-register');
       let isValid = true;
+
+
+      if (recaptchaContainerRegister && recaptchaErrorRegister) {
+        recaptchaContainerRegister.classList.remove('invalid');
+        recaptchaErrorRegister.classList.remove('show');
+      }
 
       inputs.forEach(input => {
         input.classList.remove('is-invalid');
@@ -61,25 +129,50 @@ document.addEventListener('DOMContentLoaded', () => {
           isValid = false;
         }
         
-        // Email validation
+
         if (input.type === 'email' && input.value && !input.value.includes('@')) {
           input.classList.add('is-invalid');
           isValid = false;
         }
         
-        // Password validation
+
         if (input.name === 'password' && input.value && input.value.length < 8) {
           input.classList.add('is-invalid');
           isValid = false;
         }
       });
 
-      // Password confirmation validation
+
       if (password && confirmPassword) {
         if (password.value !== confirmPassword.value) {
           confirmPassword.classList.add('is-invalid');
           isValid = false;
         }
+      }
+      let recaptchaResponseRegister = '';
+      try {
+        // Obtener la respuesta del widget específico de registro
+        const registerWidget = window.recaptchaWidgets.register;
+        if (registerWidget !== undefined) {
+          recaptchaResponseRegister = grecaptcha.getResponse(registerWidget);
+        } else {
+          // Fallback: buscar por el elemento del registro
+          const recaptchaElement = document.querySelector('#recaptcha-register');
+          if (recaptchaElement) {
+            // Si no tenemos el widget ID, intentar obtener la respuesta del widget más reciente
+            recaptchaResponseRegister = grecaptcha.getResponse();
+          }
+        }
+      } catch (error) {
+        console.error('Error al obtener respuesta de reCAPTCHA en registro:', error);
+      }
+      
+      if (!recaptchaResponseRegister) {
+        if (recaptchaContainerRegister && recaptchaErrorRegister) {
+          recaptchaContainerRegister.classList.add('invalid');
+          recaptchaErrorRegister.classList.add('show');
+        }
+        isValid = false;
       }
 
       if (!isValid) {
@@ -88,7 +181,150 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Smooth scrolling for anchor links
+
+  // Formulario de recuperación de contraseña
+  const forgotPasswordForm = document.getElementById('forgotPasswordForm');
+  if (forgotPasswordForm) {
+    forgotPasswordForm.addEventListener('submit', function(e) {
+      e.preventDefault(); // Prevenir envío normal del formulario
+      
+      const emailForgot = document.getElementById('emailForgot');
+      const submitButton = document.getElementById('sendResetLink');
+      const spinner = submitButton?.querySelector('.spinner-border');
+      const buttonText = submitButton?.querySelector('.button-text');
+      const recaptchaContainerForgot = document.getElementById('recaptcha-container-forgot');
+      const recaptchaErrorForgot = document.getElementById('recaptcha-error-forgot');
+      let isValid = true;
+
+      // Limpiar errores previos
+      if (emailForgot) emailForgot.classList.remove('is-invalid');
+      if (recaptchaContainerForgot) recaptchaContainerForgot.classList.remove('invalid');
+      if (recaptchaErrorForgot) recaptchaErrorForgot.classList.remove('show');
+
+      // Validar email
+      if (!emailForgot.value || !emailForgot.value.includes('@')) {
+        emailForgot.classList.add('is-invalid');
+        isValid = false;
+      }
+
+      // Validar reCAPTCHA
+      let recaptchaResponseForgot = '';
+      try {
+        const forgotWidget = window.recaptchaWidgets.forgot;
+        if (forgotWidget !== undefined) {
+          recaptchaResponseForgot = grecaptcha.getResponse(forgotWidget);
+        } else {
+          recaptchaResponseForgot = grecaptcha.getResponse();
+        }
+      } catch (error) {
+        console.error('Error al obtener respuesta de reCAPTCHA en recuperación:', error);
+      }
+      
+      if (!recaptchaResponseForgot) {
+        if (recaptchaContainerForgot && recaptchaErrorForgot) {
+          recaptchaContainerForgot.classList.add('invalid');
+          recaptchaErrorForgot.classList.add('show');
+        }
+        isValid = false;
+      }
+
+      if (!isValid) {
+        return;
+      }
+
+      // Mostrar loading
+      if (submitButton && spinner && buttonText) {
+        submitButton.disabled = true;
+        spinner.classList.remove('d-none');
+        buttonText.textContent = 'Enviando...';
+      }
+
+      // Enviar datos al backend usando fetch
+      fetch('/forgot-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: emailForgot.value,
+          'g-recaptcha-response': recaptchaResponseForgot
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          // Cerrar modal
+          const modal = document.getElementById('forgotPasswordModal');
+          const modalInstance = bootstrap.Modal.getInstance(modal);
+          if (modalInstance) {
+            modalInstance.hide();
+          }
+          
+          // Mostrar mensaje de éxito
+          showAlert('success', data.message);
+          
+          // Resetear formulario
+          forgotPasswordForm.reset();
+          if (window.recaptchaWidgets.forgot !== undefined) {
+            grecaptcha.reset(window.recaptchaWidgets.forgot);
+          }
+          
+        } else {
+          // Mostrar error específico
+          if (data.field === 'email') {
+            emailForgot.classList.add('is-invalid');
+          } else if (data.field === 'recaptcha') {
+            if (recaptchaContainerForgot && recaptchaErrorForgot) {
+              recaptchaContainerForgot.classList.add('invalid');
+              recaptchaErrorForgot.classList.add('show');
+            }
+          }
+          showAlert('danger', data.message);
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        showAlert('danger', 'Error de conexión. Por favor, intenta nuevamente.');
+      })
+      .finally(() => {
+        // Restaurar botón
+        if (submitButton && spinner && buttonText) {
+          submitButton.disabled = false;
+          spinner.classList.add('d-none');
+          buttonText.textContent = 'Enviar Enlace';
+        }
+      });
+    });
+  }
+
+  // Función para mostrar alertas
+  function showAlert(type, message) {
+    // Buscar container de alertas o crearlo
+    let alertContainer = document.querySelector('.alert-container');
+    if (!alertContainer) {
+      alertContainer = document.createElement('div');
+      alertContainer.className = 'alert-container position-fixed top-0 start-50 translate-middle-x mt-3';
+      alertContainer.style.zIndex = '9999';
+      document.body.appendChild(alertContainer);
+    }
+    
+    const alert = document.createElement('div');
+    alert.className = `alert alert-${type} alert-dismissible fade show`;
+    alert.innerHTML = `
+      ${message}
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    alertContainer.appendChild(alert);
+    
+    // Auto-remover después de 5 segundos
+    setTimeout(() => {
+      if (alert.parentNode) {
+        alert.remove();
+      }
+    }, 5000);
+  }
+
   document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
       e.preventDefault();
@@ -102,27 +338,25 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Auto-open modals if there are server messages
+
   try {
     const loginModal = document.getElementById('exampleModal');
     const registerModal = document.getElementById('staticBackdrop');
     
-    // Check for login errors or access denied messages
+
     if (loginModal && loginModal.querySelector('.alert.alert-danger') && window.bootstrap) {
       const modal = new window.bootstrap.Modal(loginModal);
       modal.show();
     }
     
-    // Check for register messages
     if (registerModal && registerModal.querySelector('.alert') && window.bootstrap) {
       const modal = new window.bootstrap.Modal(registerModal);
       modal.show();
     }
 
-    // Check for general error messages (access denied, session expired)
+
     const generalAlert = document.querySelector('.alert.alert-danger:not(.modal .alert)');
     if (generalAlert) {
-      // Auto-hide general alerts after 5 seconds
       setTimeout(() => {
         if (generalAlert && generalAlert.parentNode) {
           generalAlert.style.transition = 'opacity 0.5s';
@@ -139,11 +373,124 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('Bootstrap modal initialization error:', err);
   }
 
-  // Handle URL parameters for error messages
+
+  document.addEventListener('hidden.bs.modal', function(event) {
+    resetRecaptcha();
+  });
+
+  document.addEventListener('show.bs.modal', function(event) {
+    setTimeout(() => {
+      resetRecaptcha();
+    }, 100);
+  });
+
   const urlParams = new URLSearchParams(window.location.search);
   if (urlParams.get('error')) {
-    // Clean URL after showing error
     const cleanUrl = window.location.pathname;
     window.history.replaceState({}, document.title, cleanUrl);
   }
 });
+
+// Callback global para cuando reCAPTCHA esté listo
+window.onRecaptchaReady = function() {
+  try {
+    // Renderizar widget de login si existe
+    const loginRecaptcha = document.getElementById('recaptcha-login');
+    if (loginRecaptcha && !window.recaptchaWidgets.login) {
+      window.recaptchaWidgets.login = grecaptcha.render('recaptcha-login', {
+        'sitekey': loginRecaptcha.getAttribute('data-sitekey')
+      });
+    }
+    
+    // Renderizar widget de registro si existe
+    const registerRecaptcha = document.getElementById('recaptcha-register');
+    if (registerRecaptcha && !window.recaptchaWidgets.register) {
+      window.recaptchaWidgets.register = grecaptcha.render('recaptcha-register', {
+        'sitekey': registerRecaptcha.getAttribute('data-sitekey')
+      });
+    }
+    
+    // Renderizar widget de recuperación si existe
+    const forgotRecaptcha = document.getElementById('recaptcha-forgot');
+    if (forgotRecaptcha && !window.recaptchaWidgets.forgot) {
+      window.recaptchaWidgets.forgot = grecaptcha.render('recaptcha-forgot', {
+        'sitekey': forgotRecaptcha.getAttribute('data-sitekey')
+      });
+    }
+  } catch (error) {
+    console.error('Error al inicializar widgets de reCAPTCHA:', error);
+  }
+};
+
+// Función para verificar sesión de admin y redirigir
+window.goToAdmin = async function() {
+  try {
+    // Verificar si hay sesión activa
+    const response = await fetch('/admin');
+    
+    if (response.ok) {
+      // Si la respuesta es OK, ya está autenticado como admin
+      window.location.href = '/admin';
+    } else if (response.status === 302) {
+      // Si hay redirección, seguirla
+      window.location.href = '/admin';
+    } else {
+      // Si no está autenticado, mostrar modal de login
+      const loginModal = document.getElementById('exampleModal');
+      if (loginModal) {
+        const modal = new bootstrap.Modal(loginModal);
+        modal.show();
+        
+        // Agregar mensaje indicando que necesita ser admin
+        const title = loginModal.querySelector('.title');
+        if (title) {
+          title.textContent = 'Acceso de Administrador';
+        }
+      }
+    }
+  } catch (error) {
+    console.error('Error verificando sesión de admin:', error);
+    // En caso de error, redirigir a la página de admin que manejará la autenticación
+    window.location.href = '/admin';
+  }
+};
+
+// Función para agregar enlace de admin en el navbar si el usuario es admin
+document.addEventListener('DOMContentLoaded', function() {
+  // Verificar si el usuario actual es admin
+  const userProfileLink = document.querySelector('.user-profile-link');
+  if (userProfileLink) {
+    // Si hay un usuario logueado, verificar su rol específicamente
+    fetch('/api/session')
+      .then(response => response.json())
+      .then(data => {
+        if (data.success && data.usuario && 
+            (data.usuario.rol === 'administrador' || data.usuario.rol === 'admin')) {
+          // Solo si el usuario es específicamente admin, agregar enlace
+          addAdminLinkToNavbar();
+        }
+      })
+      .catch(error => {
+        // No es admin, no está logueado, o error en la verificación
+        console.log('Usuario no es admin o no está logueado');
+      });
+  }
+});
+
+// Función para agregar enlace de admin al navbar
+function addAdminLinkToNavbar() {
+  const userProfileContainer = document.querySelector('.d-flex.align-items-center.gap-2.ms-3');
+  if (userProfileContainer) {
+    const adminLink = document.createElement('a');
+    adminLink.href = '/admin';
+    adminLink.className = 'btn btn-outline-primary btn-sm'; // Estilo original profesional
+    adminLink.innerHTML = 'Panel Admin'; // Sin ícono de tuerca, pero con estilo original
+    adminLink.style.marginRight = '10px';
+    
+    // Insertar antes del botón de cerrar sesión
+    const logoutForm = userProfileContainer.querySelector('form');
+    if (logoutForm) {
+      userProfileContainer.insertBefore(adminLink, logoutForm);
+    }
+  }
+}

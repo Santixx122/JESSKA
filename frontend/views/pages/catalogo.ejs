@@ -11,6 +11,7 @@
   <!--boostrap styles-->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
+  <%- include('../partials/recaptcha-script') %>
   <!--styles-->
   <link rel="stylesheet" href="css/catalogo.css">
   <link rel="stylesheet" href="css/style.landing.css">
@@ -105,11 +106,18 @@
                               <% } %>
                       </div>
                     </div>
+                    <!-- reCAPTCHA v2 -->
+                    <%- include('../partials/recaptcha-widget') %>
                     <button type='submit' id="iniciarsesion" class="btn btn-primary w-100">
                       <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
                       <span class="button-text">Iniciar Sesión</span>
                     </button>
                   </form>
+                  <div class="text-center mt-3">
+                    <a href="#" class="text-muted small" data-bs-toggle="modal" data-bs-target="#forgotPasswordModal" data-bs-dismiss="modal">
+                      ¿Olvidaste tu contraseña?
+                    </a>
+                  </div>
                   <p class="sign-up-label">
                     No tienes cuenta? <a href="" data-bs-toggle="modal" data-bs-target="#staticBackdrop"><span
                         class="sign-up-link"> Registrate</span></a>
@@ -217,6 +225,8 @@
                     <span>Confirmar Contraseña</span>
                     <div class="invalid-feedback">Las contraseñas no coinciden.</div>
                   </label>
+                  <!-- reCAPTCHA v2 para registro -->
+                  <%- include('../partials/recaptcha-widget-register') %>
                   <button class="submit">Registrarse</button>
                   <p class="signin">Ya tienes una cuenta ? <a href="" data-bs-toggle="modal"
                       data-bs-target="#exampleModal">Iniciar sesion</a> </p>
@@ -230,6 +240,39 @@
       <div class="container mt-5 pt-5">
         <h1 class="text-center">Catalogo</h1>
         <p class="text-center">Explora nuestra amplia gama de productos y encuentra lo que necesitas.</p>
+        
+        <!-- Filtros por género -->
+        <div class="row justify-content-center mt-4">
+          <div class="col-md-8">
+            <div class="filter-section bg-light p-3 rounded">
+              <h5 class="mb-3 text-center">Filtrar por género</h5>
+              <div class="d-flex justify-content-center gap-3 flex-wrap">
+                <a href="/catalogo" class="btn <%= (typeof filtroActual !== 'undefined' && filtroActual === 'todos') ? 'btn-dark' : 'btn-outline-dark' %>">
+                  <i class="bi bi-grid-3x3-gap me-2"></i>Todos
+                </a>
+                <a href="/catalogo?genero=hombre" class="btn <%= (typeof filtroActual !== 'undefined' && filtroActual === 'hombre') ? 'btn-dark' : 'btn-outline-dark' %>">
+                  <i class="bi bi-person me-2"></i>Hombre
+                </a>
+                <a href="/catalogo?genero=mujer" class="btn <%= (typeof filtroActual !== 'undefined' && filtroActual === 'mujer') ? 'btn-dark' : 'btn-outline-dark' %>">
+                  <i class="bi bi-person-dress me-2"></i>Mujer
+                </a>
+              </div>
+              
+              <!-- Mostrar filtro activo -->
+              <% if (typeof filtroActual !== 'undefined' && filtroActual !== 'todos') { %>
+                <div class="text-center mt-3">
+                  <small class="text-muted">
+                    Mostrando productos para: 
+                    <strong class="text-capitalize"><%= filtroActual %></strong>
+                    <a href="/catalogo" class="ms-2 text-decoration-none">
+                      <i class="bi bi-x-circle"></i> Limpiar filtro
+                    </a>
+                  </small>
+                </div>
+              <% } %>
+            </div>
+          </div>
+        </div>
       </div>
     </header>
     <section class="container mt-5">
@@ -302,6 +345,10 @@
     </section>
 
   </main>
+  
+  <!-- Incluir modal de recuperación de contraseña -->
+  <%- include('../partials/forgot-password-modal') %>
+  
   <!--Footer-->
   <footer class="footer fixed-bottom ">
     <div class="container">

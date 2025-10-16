@@ -16,9 +16,27 @@ const app = express();
 
 // Middleware
 app.use(cookieParser());
+
+// CORS configuration for production
+const allowedOrigins = process.env.ALLOWED_ORIGINS 
+  ? process.env.ALLOWED_ORIGINS.split(',')
+  : ['http://localhost:5050', 'https://jesska-app.onrender.com'];
+
 app.use(cors({
-  origin: true, 
-  credentials: true
+  origin: function (origin, callback) {
+    // Permitir requests sin origin (como mobile apps o Postman)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      console.log('Blocked by CORS:', origin);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'api-key-441']
 }));
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));

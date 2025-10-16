@@ -13,6 +13,7 @@
   <!--boostrap styles-->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
+  <%- include('../partials/recaptcha-script') %>
   <!--styles-->
   <link rel="stylesheet" href="css/style.landing.css">
   <title>JESSKA - Descubre la nueva colección</title>
@@ -116,11 +117,18 @@
                 <% } %>
               </div>
             </div>
+            <!-- reCAPTCHA v2 -->
+            <%- include('../partials/recaptcha-widget') %>
             <button type='submit' id="iniciarsesion" class="btn btn-primary w-100">
               <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
               <span class="button-text">Iniciar Sesión</span>
             </button>
           </form>
+          <div class="text-center mt-3">
+            <a href="#" class="text-muted small" data-bs-toggle="modal" data-bs-target="#forgotPasswordModal" data-bs-dismiss="modal">
+              ¿Olvidaste tu contraseña?
+            </a>
+          </div>
           <p class="sign-up-label">
             No tienes cuenta? <a href="" data-bs-toggle="modal" data-bs-target="#staticBackdrop"><span
                 class="sign-up-link"> Registrate</span></a>
@@ -200,6 +208,8 @@
             <span>Confirmar Contraseña</span>
             <div class="invalid-feedback">Las contraseñas no coinciden.</div>
           </label>
+          <!-- reCAPTCHA v2 para registro -->
+          <%- include('../partials/recaptcha-widget-register') %>
           <button class="submit">Registrarse</button>
           <p class="signin">Ya tienes una cuenta ? <a href="" data-bs-toggle="modal"
               data-bs-target="#exampleModal">Iniciar sesion</a> </p>
@@ -268,6 +278,10 @@
       </div>
     </div>
   </section>
+  
+  <!-- Incluir modal de recuperación de contraseña -->
+  <%- include('../partials/forgot-password-modal') %>
+  
   <!-- Footer -->
   <footer class="footer">
     <div class="container">

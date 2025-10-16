@@ -93,6 +93,15 @@ const SchemaProducto = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'marcas', // Referencia al modelo de marcas
         required: [true, 'Es obligatorio referenciar la marca a la que pertenece el producto']
+    },
+    genero: {
+        type: String,
+        enum: {
+            values: ['hombre', 'mujer'],
+            message: 'El género debe ser "hombre" o "mujer"'
+        },
+        default: 'mujer',
+        required: [true, 'El género es obligatorio']
     }
 }, {
     timestamps: true, // Agrega createdAt y updatedAt automáticamente

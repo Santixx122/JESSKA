@@ -20,24 +20,43 @@ router.get('/', async (req, res) => {
         });
         const usuario = respuesta.data.usuario;
 
+        // Si el usuario es admin y viene de una redirección al admin, redirigir automáticamente
+        if (usuario && (usuario.rol === 'administrador' || usuario.rol === 'admin') && req.query.redirectToAdmin === 'true') {
+            return res.redirect('/admin');
+        }
+
+        // Manejar mensajes de éxito también cuando el usuario está logueado
+        let successMessage = null;
+        if (req.query.success === 'password_reset') {
+            successMessage = 'Contraseña restablecida exitosamente. Ya puedes iniciar sesión con tu nueva contraseña.';
+        }
+
         res.render('pages/landing', { 
-            usuario
+            usuario,
+            success: successMessage,
+            process: process
         });
 
     } catch (error) {
-        // Manejar mensajes de error desde query parameters
+        // Manejar mensajes desde query parameters
         let errorMessage = null;
+        let successMessage = null;
+        
         if (req.query.error === 'acceso_denegado') {
             errorMessage = 'Acceso denegado. No tienes permisos para acceder al panel de administrador.';
         } else if (req.query.error === 'sesion_expirada') {
             errorMessage = 'Tu sesión ha expirado. Por favor, inicia sesión nuevamente.';
+        } else if (req.query.success === 'password_reset') {
+            successMessage = 'Contraseña restablecida exitosamente. Ya puedes iniciar sesión con tu nueva contraseña.';
         }
 
         res.render('pages/landing', { 
             usuario: null,
             productosDestacados: [],
             error: errorMessage,
-            errorField: errorMessage ? 'general' : null
+            success: successMessage,
+            errorField: errorMessage ? 'general' : null,
+            process: process
         });
     }
 });
@@ -63,29 +82,54 @@ router.get('/catalogo', async (req, res) => {
             // Usuario no autenticado, continuar sin usuario
         }
 
-        // Obtener productos 
+        // Obtener productos con filtros
         let productos = [];
         try {
-            const productosResponse = await axios.get(`${URL_BACKEND}/productos?showAll=true`, {
+            // Obtener filtro de género desde query params
+            const genero = req.query.genero;
+            let url = `${URL_BACKEND}/productos?showAll=true`;
+            
+            // Agregar filtro de género si existe
+            if (genero && ['hombre', 'mujer', 'unisex'].includes(genero)) {
+                url += `&genero=${genero}`;
+            }
+            
+            const productosResponse = await axios.get(url, {
                 headers: { 'api-key-441': process.env.APIKEY_PASS }
             });
             productos = productosResponse.data.data || [];
         } catch (productosError) {
             console.error('Error cargando productos:', productosError.message);
         }
-        res.render('pages/catalogo', { usuario, productos });
+        
+        res.render('pages/catalogo', { 
+            usuario, 
+            productos,
+            filtroActual: req.query.genero || 'todos',
+            process: process 
+        });
 
     } catch (error) {
         console.error('Error en catálogo:', error.message);
-        res.render('pages/catalogo', { usuario: null, productos: [] });
+        res.render('pages/catalogo', { 
+            usuario: null, 
+            productos: [],
+            process: process 
+        });
     }
 });
 
 router.post('/register', async (req, res) => {
-    const { nombre, email, telefono, password } = req.body;
+    const { nombre, email, telefono, password, 'g-recaptcha-response': recaptchaToken } = req.body;
     try {
         await axios.post(`${URL_BACKEND}/usuarios`, 
-            { nombre, email, password, telefono }, 
+            { 
+                nombre, 
+                email, 
+                password, 
+                telefono,
+                'g-recaptcha-response': recaptchaToken 
+            }, 
             { 
                 headers: { 'api-key-441': process.env.APIKEY_PASS },
                 withCredentials: true
@@ -93,7 +137,11 @@ router.post('/register', async (req, res) => {
         );
 
         // Registro exitoso: mostrar mensaje en landing
-        res.render('pages/landing', { usuario: null, successRegister: 'Registro exitoso. Ahora puedes iniciar sesión.' });
+        res.render('pages/landing', { 
+            usuario: null, 
+            successRegister: 'Registro exitoso. Ahora puedes iniciar sesión.',
+            process: process
+        });
     } catch (error) {
         console.error('Error en registro:', error.message);
         let errorMessage = 'Error al registrar usuario';
@@ -106,15 +154,20 @@ router.post('/register', async (req, res) => {
             usuario: null,
             errorRegister: errorMessage,
             errorRegisterField: errorField,
-            regFormData: { nombre, email, telefono }
+            regFormData: { nombre, email, telefono },
+            process: process
         });
     }
 });
 router.post('/login', async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, 'g-recaptcha-response': recaptchaToken } = req.body;
   try {
     const loginResponse = await axios.post(`${URL_BACKEND}/login`,
-      { email, password },
+      { 
+        email, 
+        password, 
+        'g-recaptcha-response': recaptchaToken // Incluir el token de reCAPTCHA
+      },
       { headers: { 'api-key-441': process.env.APIKEY_PASS }, withCredentials: true }
     );
 
@@ -133,7 +186,11 @@ router.post('/login', async (req, res) => {
     }
 
     // Si es usuario normal, mostrar landing con mensaje de éxito
-    res.render('pages/landing', { usuario, success: 'Inicio de sesión exitoso' });
+    res.render('pages/landing', { 
+        usuario, 
+        success: 'Inicio de sesión exitoso',
+        process: process
+    });
 
   } catch (error) {
     console.error('Error en login:', error.message);
@@ -144,14 +201,48 @@ router.post('/login', async (req, res) => {
     if (error.response && error.response.data) {
       errorMessage = error.response.data.message || errorMessage;
       errorField = error.response.data.field || errorField;
+      
+      // Manejar específicamente errores de reCAPTCHA
+      if (errorMessage.includes('reCAPTCHA') || errorMessage.includes('verificación')) {
+        errorField = 'recaptcha';
+      }
     }
     
     res.render('pages/landing', { 
       usuario: null,
       error: errorMessage,
       errorField: errorField,
-      formData: { email, password: '' } // Mantener email pero limpiar password
+      formData: { email, password: '' }, // Mantener email pero limpiar password
+      process: process
     });
+  }
+});
+
+// Ruta POST para solicitar recuperación de contraseña
+router.post('/forgot-password', async (req, res) => {
+  try {
+    const response = await axios.post(`${URL_BACKEND}/login/forgot-password`, req.body, {
+      headers: {
+        'api-key-441': process.env.APIKEY_PASS,
+        'Content-Type': 'application/json'
+      }
+    });
+    
+    // Devolver la respuesta JSON del backend
+    res.json(response.data);
+    
+  } catch (error) {
+    console.error('Error en recuperación:', error.response?.data || error.message);
+    
+    // Manejar errores del backend
+    if (error.response && error.response.data) {
+      res.status(error.response.status).json(error.response.data);
+    } else {
+      res.status(500).json({
+        success: false,
+        message: 'Error interno del servidor'
+      });
+    }
   }
 });
 
@@ -205,7 +296,11 @@ router.get('/producto/:id', async (req, res) => {
     const producto = prodResp.data.data;
 
     
-    res.render('pages/detalle-producto', { producto, usuario });
+    res.render('pages/detalle-producto', { 
+        producto, 
+        usuario,
+        process: process 
+    });
   } catch (error) {
     console.error('Error cargando producto:', error.message || error);
     return res.status(500).send('Error al cargar los Productos', error.message);
@@ -226,11 +321,19 @@ router.get('/carrito', async (req, res) => {
 
         const usuario = respuesta.data.usuario;
         const productosCarrito = req.session.carrito || [];
-        res.render('pages/carrito', { usuario, productosCarrito });
+        res.render('pages/carrito', { 
+            usuario, 
+            productosCarrito,
+            process: process
+        });
 
     } catch (error) {
         const productosCarrito = req.session.carrito || []; 
-        res.render('pages/carrito', { usuario: null, productosCarrito });
+        res.render('pages/carrito', { 
+            usuario: null, 
+            productosCarrito,
+            process: process 
+        });
     }
 });
 
@@ -325,6 +428,100 @@ router.get('/failure', (req, res) => {
 
 router.get('/pending', (req, res) => {
   res.render('pending', { datos: req.query });
+});
+
+// Ruta para reset password
+router.get('/reset-password/:token', (req, res) => {
+    const token = req.params.token;
+    res.render('pages/reset-password', { 
+        token: token,
+        process: process
+    });
+});
+
+// Ruta POST para manejar el reset password
+router.post('/reset-password/:token', async (req, res) => {
+    try {
+        const token = req.params.token;
+        const { password, confirmPassword } = req.body;
+
+        // Validación básica
+        if (!password || !confirmPassword) {
+            return res.render('pages/reset-password', { 
+                token: token,
+                error: 'Todos los campos son obligatorios.',
+                process: process
+            });
+        }
+
+        if (password !== confirmPassword) {
+            return res.render('pages/reset-password', { 
+                token: token,
+                error: 'Las contraseñas no coinciden.',
+                process: process
+            });
+        }
+
+        if (password.length < 6) {
+            return res.render('pages/reset-password', { 
+                token: token,
+                error: 'La contraseña debe tener al menos 6 caracteres.',
+                process: process
+            });
+        }
+
+        // Enviar al backend
+        const response = await axios.post(`${URL_BACKEND}/login/reset-password/${token}`, {
+            password: password
+        }, {
+            headers: { 
+                'api-key-441': process.env.APIKEY_PASS 
+            }
+        });
+
+        // Redirigir a la página principal con mensaje de éxito
+        res.redirect('/?success=password_reset');
+
+    } catch (error) {
+        console.error('Error en reset password:', error.response?.data || error.message);
+        
+        let errorMessage = 'Error interno del servidor.';
+        if (error.response?.status === 400) {
+            errorMessage = error.response.data.message || 'Token inválido o expirado.';
+        }
+
+        res.render('pages/reset-password', { 
+            token: req.params.token,
+            error: errorMessage,
+            process: process
+        });
+    }
+});
+
+// Endpoint para verificar sesión del usuario (usado por JavaScript)
+router.get('/api/session', async (req, res) => {
+    try {
+        const respuesta = await axios.get(`${URL_BACKEND}/login/me`, {
+            headers: { 
+                'api-key-441': process.env.APIKEY_PASS,
+                ...(req.headers.cookie ? { Cookie: req.headers.cookie } : {})
+            },
+            withCredentials: true
+        });
+        
+        // Devolver datos del usuario con éxito
+        res.json({
+            success: true,
+            usuario: respuesta.data.usuario
+        });
+        
+    } catch (error) {
+        // Usuario no autenticado o error
+        res.json({
+            success: false,
+            usuario: null
+        });
+    }
 });
 
 module.exports = router;

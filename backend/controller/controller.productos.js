@@ -11,23 +11,23 @@ function controlError(res,message,error){
 
 const getProducts = async (req, res) => {
     try {
-        // Obtener el query param 'visible' (opcional)
-        const showAll = req.query.showAll === 'true';
+        // Obtener query params
+        const genero = req.query.genero; // Filtro por género
         
-        // Construir el filtro base
+        // Construir el filtro base - solo productos activos
         const filter = {
-            estado: { $in: ['activo', 'agotado'] }
+            estado: 'activo'
         };
 
-        // Si no se solicitan todos, solo mostrar los visibles
-        if (!showAll) {
-            filter.visible = true;
+        // Aplicar filtro por género si se especifica
+        if (genero && ['hombre', 'mujer'].includes(genero)) {
+            filter.genero = genero;
         }
 
         const productos = await Producto.find(filter)
             .populate('categoriaId', 'nombre')
             .populate('marcaId', 'nombre')
-            .select('nombre descripcion estado visible variante precio imagenUrl')
+            .select('nombre descripcion estado visible variante precio imagenUrl genero')
             .sort({ fechaRegistro: -1 });
             
         res.status(200).json({
@@ -87,6 +87,37 @@ const createProducts = async (req,res)=>{
             });
         }
         
+        // Obtener información de la categoría para determinar el género
+        const Categoria = require('../models/categorias.model');
+        const categoria = await Categoria.findById(categoriaId);
+        
+        // Determinar género basándose en la categoría
+        let genero = 'mujer'; // valor por defecto
+        if (categoria && categoria.nombre) {
+            const nombreCategoria = categoria.nombre.toLowerCase();
+            if (nombreCategoria.includes('hombre') || nombreCategoria.includes('hombres')) {
+                genero = 'hombre';
+            } else if (nombreCategoria.includes('mujer') || nombreCategoria.includes('mujeres')) {
+                genero = 'mujer';
+            }
+        }
+        
+        // También verificar el nombre del producto para mayor precisión
+        const nombreProducto = nombre.toLowerCase();
+        if (nombreProducto.includes('tacones') || 
+            nombreProducto.includes('tacón') ||
+            nombreProducto.includes('vestido') ||
+            nombreProducto.includes('falda') ||
+            nombreProducto.includes('blusa')) {
+            genero = 'mujer';
+        }
+        
+        if (nombreProducto.includes('corbata') ||
+            nombreProducto.includes('traje') ||
+            nombreProducto.includes('smoking')) {
+            genero = 'hombre';
+        }
+        
         const variante = {
             color: color.trim(),
             talla: talla,
@@ -101,7 +132,8 @@ const createProducts = async (req,res)=>{
             categoriaId: categoriaId,
             marcaId: marcaId,
             estado: estado || 'activo',
-            visible: visible !== undefined ? visible : true
+            visible: visible !== undefined ? visible : true,
+            genero: genero // Agregar el género determinado automáticamente
         };
         
         // --- Lógica de subida de imagen a Supabase ---
@@ -148,27 +180,121 @@ if (req.file) {
 }
 
 
-const updateProduct = async (req,res)=>{
+const updateProduct = async (req, res) => {
     try {
-        const id = req.params.id
-        const nuevosDatos = req.body
-        const productUpdate = await Producto.findByIdAndUpdate(id,nuevosDatos,{new:true})
-
-        if(!productUpdate)
+        const id = req.params.id;
+        const { nombre, descripcion, categoriaId, marcaId, color, talla, precio, stock, estado, visible } = req.body;
+        
+        console.log('=== ACTUALIZAR PRODUCTO ===');
+        console.log('ID:', id);
+        console.log('Datos recibidos:', req.body);
+        console.log('Archivo recibido:', req.file ? 'Sí' : 'No');
+        console.log('Headers:', req.headers['api-key-441'] ? 'API Key presente' : 'Sin API Key');
+        
+        // Validar que el ID sea válido
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({
+                success: false,
+                message: "ID de producto no válido"
+            });
+        }
+        
+        // Buscar el producto actual
+        const productoActual = await Producto.findById(id);
+        if (!productoActual) {
+            console.log('Producto no encontrado con ID:', id);
             return res.status(404).json({
                 success: false,
                 message: "Producto no encontrado"
-              });
-        else
-            res.status(200).json({
-                success:true,
-                message:'Producto actualizado con exito',
-                data:productUpdate
-            })
+            });
+        }
+        
+        console.log('Producto actual encontrado:', productoActual.nombre);
+        
+        // Preparar los datos actualizados
+        const datosActualizados = {};
+        
+        if (nombre) datosActualizados.nombre = nombre.trim();
+        if (descripcion) datosActualizados.descripcion = descripcion.trim();
+        if (categoriaId) datosActualizados.categoriaId = categoriaId;
+        if (marcaId) datosActualizados.marcaId = marcaId;
+        if (estado) datosActualizados.estado = estado;
+        
+        // Manejar visible
+        datosActualizados.visible = visible === 'on' ? true : false;
+        
+        // Actualizar variante si se proporcionan datos
+        if (color || talla || precio || stock) {
+            const varianteActual = productoActual.variante[0] || {};
+            const varianteActualizada = {
+                color: color?.trim() || varianteActual.color || '',
+                talla: talla || varianteActual.talla || '',
+                precio: precio ? parseFloat(precio) : (varianteActual.precio || 0),
+                stock: stock ? parseInt(stock) : (varianteActual.stock || 0)
+            };
+            datosActualizados.variante = [varianteActualizada];
+            console.log('Variante actualizada:', varianteActualizada);
+        }
+        
+        // Manejar imagen si se proporciona una nueva
+        if (req.file) {
+            console.log('Procesando nueva imagen...');
+            try {
+                const fileName = `producto-${Date.now()}`;
+                const fileBuffer = req.file.buffer;
+                const fileMimetype = req.file.mimetype;
+
+                // Subir la nueva imagen al bucket
+                const { error: uploadError } = await supabase.storage
+                    .from('imagenes-productos')
+                    .upload(fileName, fileBuffer, {
+                        contentType: fileMimetype,
+                        upsert: false
+                    });
+
+                if (uploadError) {
+                    console.error('Error al subir imagen:', uploadError);
+                    return res.status(500).json({
+                        success: false,
+                        message: 'Error al subir la imagen: ' + uploadError.message
+                    });
+                }
+
+                // Obtener URL pública de la nueva imagen
+                const { data: { publicUrl } } = supabase.storage
+                    .from('imagenes-productos')
+                    .getPublicUrl(fileName);
+
+                datosActualizados.imagenUrl = publicUrl;
+                console.log('Nueva URL de imagen:', publicUrl);
+            } catch (imageError) {
+                console.error('Error procesando imagen:', imageError);
+                return res.status(500).json({
+                    success: false,
+                    message: 'Error al procesar la imagen'
+                });
+            }
+        }
+        
+        console.log('Datos finales para actualizar:', datosActualizados);
+        
+        // Actualizar el producto
+        const productUpdate = await Producto.findByIdAndUpdate(id, datosActualizados, { new: true });
+        
+        console.log('Producto actualizado exitosamente');
+        
+        res.status(200).json({
+            success: true,
+            message: 'Producto actualizado con éxito',
+            data: productUpdate
+        });
+        
     } catch (error) {
-        controlError(res,'El producto no se pudo actualizar',error)
+        console.error('Error al actualizar producto:', error);
+        console.error('Stack trace:', error.stack);
+        controlError(res, 'El producto no se pudo actualizar', error);
     }
-}
+};
 
 const deleteProduct = async (req,res)=>{
     try {
@@ -239,6 +365,25 @@ const getAllProductsAdmin = async (req, res) => {
     }
 };
 
+// Función para actualizar productos existentes con el campo género
+const updateProductsGenero = async (req, res) => {
+    try {
+        // Actualizar todos los productos que no tienen el campo genero
+        const result = await Producto.updateMany(
+            { genero: { $exists: false } },
+            { $set: { genero: 'unisex' } }
+        );
+
+        res.status(200).json({
+            success: true,
+            message: `Se actualizaron ${result.modifiedCount} productos con género por defecto.`,
+            data: result
+        });
+    } catch (error) {
+        controlError(res, 'Error al actualizar productos con género', error);
+    }
+};
+
 module.exports={
     getProducts,
     getOneProduct,
@@ -246,5 +391,6 @@ module.exports={
     updateProduct,
     deleteProduct,
     toggleProductVisibility,
-    getAllProductsAdmin  
+    getAllProductsAdmin,
+    updateProductsGenero
 }

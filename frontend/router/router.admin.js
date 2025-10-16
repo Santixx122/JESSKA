@@ -5,7 +5,7 @@ require('dotenv').config();
 const multer = require('multer');
 const FormData = require('form-data');
 
-const URL_BACKEND = process.env.URL_BACKEND || 'http://localhost:4040';
+const URL_BACKEND = process.env.URL_BACKEND || 'http://localhost:4000';
 const upload = multer({ storage: multer.memoryStorage() });
 
 
@@ -478,6 +478,100 @@ router.delete('/admin/eliminarPedido/:id', async (req, res) => {
             return res.status(error.response.status).json(error.response.data);
         }
         res.status(500).json({ success: false, message: 'Error al eliminar pedido' });
+    }
+});
+
+// Crear nuevo pedido
+router.post('/admin/crearPedido', async (req, res) => {
+    try {
+        const { clienteId, total, estado, fechaCreacion } = req.body;
+        
+        // Validación básica
+        if (!clienteId || !total || !estado || !fechaCreacion) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Todos los campos son obligatorios' 
+            });
+        }
+        
+        const pedidoData = {
+            clienteId: clienteId.trim(), // Eliminar espacios en blanco
+            total: parseFloat(total),
+            estado: estado,
+            fechaCreacion: new Date(fechaCreacion)
+        };
+
+        console.log('Datos del pedido a enviar:', pedidoData);
+
+        const response = await axios.post(`${URL_BACKEND}/pedidos`, pedidoData, {
+            headers: {
+                'api-key-441': process.env.APIKEY_PASS,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (response.data.success) {
+            res.redirect('/admin#Pedidos');
+        } else {
+            console.error('Error del backend:', response.data);
+            res.status(400).json({ success: false, message: response.data.message });
+        }
+    } catch (error) {
+        console.error("Error completo al crear pedido:", error.response?.data || error.message);
+        res.status(500).json({ 
+            success: false, 
+            message: error.response?.data?.message || 'Error interno del servidor' 
+        });
+    }
+});
+
+// Ruta para actualizar producto con imagen
+router.post('/admin/actualizarProducto/:id', upload.single('imagen'), async (req, res) => {
+    try {
+        const { id } = req.params;
+        console.log('=== Frontend: Recibida petición de actualizar producto ===');
+        console.log('ID:', id);
+        console.log('Body:', req.body);
+        console.log('File:', req.file ? 'Imagen recibida: ' + req.file.originalname : 'Sin imagen');
+        console.log('URL completa:', req.originalUrl);
+
+        // Crear FormData para enviar al backend
+        const form = new FormData();
+        
+        // Añadir campos de texto
+        Object.keys(req.body).forEach(key => {
+            if (req.body[key] !== undefined && req.body[key] !== '') {
+                form.append(key, req.body[key]);
+            }
+        });
+        
+        // Añadir imagen si existe
+        if (req.file) {
+            form.append('imagen', req.file.buffer, {
+                filename: req.file.originalname,
+                contentType: req.file.mimetype
+            });
+        }
+
+        const response = await axios.put(`${URL_BACKEND}/productos/${id}`, form, {
+            headers: {
+                ...form.getHeaders(),
+                'api-key-441': process.env.APIKEY_PASS
+            }
+        });
+
+        if (response.data.success) {
+            // Redirigir al admin con mensaje de éxito
+            res.redirect('/admin?success=producto_editado#productos');
+        } else {
+            res.status(400).json(response.data);
+        }
+    } catch (error) {
+        console.error("Error al actualizar producto:", error.response?.data || error.message);
+        res.status(500).json({ 
+            success: false, 
+            message: error.response?.data?.message || 'Error interno del servidor' 
+        });
     }
 });
 

@@ -5,9 +5,9 @@ const mongoose = require('mongoose');
 const schemaPedidos = new mongoose.Schema({
     clienteId:{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'clientes',
-        required: [true, 'La referencia al ID del cliente es obligatoria'],
-        description: 'ID del cliente que pertenece a cada pedido '
+        ref: 'usuarios', // Cambiar a usuarios en lugar de clientes
+        required: [true, 'El ID del cliente es obligatorio'],
+        description: 'ID del usuario que pertenece a cada pedido'
     },
     fechaCreacion:{
         type: Date,

@@ -217,16 +217,8 @@
                                                     <td>
                                                         <div class="btn-group" role="group">
                                                             <button type="button"
-                                                                class="btn btn-sm btn-outline-primary btn-editar"
-                                                                data-type="producto" data-id="<%= producto._id %>"
-                                                                data-nombre="<%= producto.nombre %>"
-                                                                data-color="<%= producto.variante[0].color %>"
-                                                                data-descripcion="<%= producto.descripcion %>"
-                                                                data-talla="<%= producto.variante[0].talla %>"
-                                                                data-precio="<%= producto.variante[0].precio %>"
-                                                                data-stock="<%= producto.variante[0].stock %>"
-                                                                data-estado="<%= producto.estado %>"
-                                                                data-visible="<%= producto.visible %>">
+                                                                class="btn btn-sm btn-outline-primary"
+                                                                onclick="editarProducto('<%= producto._id %>', this)">
                                                                 <i class="fas fa-edit"></i> Editar
                                                             </button>
                                                             <button type="button"
@@ -288,8 +280,8 @@
                             </td>
                             <td>
                                 <div class="btn-group" role="group">
-                                    <button type="button" class="btn btn-sm btn-outline-primary btn-editar"
-                                        data-type="usuario" data-id="<%= usuarios._id %>"
+                                    <button type="button" class="btn btn-sm btn-outline-primary"
+                                        onclick="editarUsuario('<%= usuarios._id %>', this)"
                                         data-nombre="<%= usuarios.nombre %>" data-email="<%= usuarios.email %>"
                                         data-telefono="<%= usuarios.telefono %>">
                                         <i class="fas fa-edit"></i> Editar
@@ -342,6 +334,10 @@
                             </td>
                             <td>
                                 <div class="btn-group" role="group">
+
+                                    <button type="button" class="btn btn-sm btn-outline-primary"
+                                        onclick="editarPedido('<%= p._id %>', this)">
+
                                     <button type="button" class="btn btn-sm btn-outline-primary btn-editar"
                                         data-type="pedidos" 
                                         data-id="<%= pedido._id %>"
@@ -397,9 +393,9 @@
                             </td>
                             <td>
                                 <div class="btn-group" role="group">
-                                    <button type="button" class="btn btn-sm btn-outline-primary btn-editar"
-                                        data-type="categoria" data-id="<%= p._id %>" data-nombre="<%= p.nombre %>"
-                                        data-descripcion="<%= p.descripcion %>">
+                                    <button type="button" class="btn btn-sm btn-outline-primary"
+                                        onclick="editarCategoria('<%= p._id %>', this)"
+                                        data-nombre="<%= p.nombre %>" data-descripcion="<%= p.descripcion %>">
                                         <i class="fas fa-edit"></i> Editar
                                     </button>
                                     <button type="button" class="btn btn-sm btn-outline-danger btn-eliminar"
@@ -445,8 +441,8 @@
                             </td>
                             <td>
                                 <div class="btn-group" role="group">
-                                    <button type="button" class="btn btn-sm btn-outline-primary btn-editar"
-                                        data-type="marca" data-id="<%= p._id %>" data-nombre="<%= p.nombre %>">
+                                    <button type="button" class="btn btn-sm btn-outline-primary"
+                                        onclick="editarMarca('<%= p._id %>', this)" data-nombre="<%= p.nombre %>">
                                         <i class="fas fa-edit"></i> Editar
                                     </button>
                                     <button type="button" class="btn btn-sm btn-outline-danger btn-eliminar"
@@ -599,6 +595,152 @@
                                 </button>
                             </div>
                         </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Editar Producto -->
+        <div class="modal fade" id="modalEditarProducto" tabindex="-1" aria-labelledby="modalEditarProductoLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalEditarProductoLabel">Editar Producto</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="/admin/actualizarProducto/temp" method="POST" enctype="multipart/form-data" id="formEditarProducto">
+                            <input type="hidden" id="editProductoId" name="id">
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="editNombre" class="form-label">Nombre *</label>
+                                        <input type="text" class="form-control" id="editNombre" name="nombre" required>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="editCategoria" class="form-label">Categoría *</label>
+                                        <select class="form-select" id="editCategoria" name="categoriaId" required>
+                                            <option value="">Seleccionar categoría</option>
+                                            <% categorias.forEach(function(p){ %>
+                                                <option value="<%= p._id %>"><%= p.nombre %></option>
+                                            <% }) %>
+                                        </select>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="editMarca" class="form-label">Marca *</label>
+                                        <select class="form-select" id="editMarca" name="marcaId" required>
+                                            <option value="">Seleccionar marca</option>
+                                            <% marcas.forEach(function(p){ %>
+                                                <option value="<%= p._id %>"><%= p.nombre %></option>
+                                            <% }) %>
+                                        </select>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="editColor" class="form-label">Color *</label>
+                                        <input type="text" class="form-control" id="editColor" name="color" required>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="editDescripcion" class="form-label">Descripción *</label>
+                                <textarea class="form-control" id="editDescripcion" name="descripcion" rows="3" required></textarea>
+                                <div class="invalid-feedback"></div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="editImagen" class="form-label">Imagen del Producto</label>
+                                <div class="mb-2">
+                                    <img id="imagenActual" src="" alt="Imagen actual" style="max-width: 200px; max-height: 200px; object-fit: cover;" class="d-none">
+                                    <small class="text-muted d-block">Imagen actual del producto</small>
+                                </div>
+                                <input class="form-control" type="file" id="editImagen" name="imagen" accept="image/png, image/jpeg, image/jpg">
+                                <small class="text-muted">Seleccione una nueva imagen para cambiar la actual</small>
+                                <div class="invalid-feedback"></div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="mb-3">
+                                        <label for="editTalla" class="form-label">Talla *</label>
+                                        <select class="form-select" id="editTalla" name="talla" required>
+                                            <option value="">Talla</option>
+                                            <option value="35">35</option>
+                                            <option value="36">36</option>
+                                            <option value="37">37</option>
+                                            <option value="38">38</option>
+                                            <option value="39">39</option>
+                                            <option value="40">40</option>
+                                            <option value="41">41</option>
+                                            <option value="42">42</option>
+                                            <option value="43">43</option>
+                                            <option value="44">44</option>
+                                            <option value="45">45</option>
+                                        </select>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="mb-3">
+                                        <label for="editPrecio" class="form-label">Precio *</label>
+                                        <input type="number" class="form-control" id="editPrecio" name="precio" min="0" step="0.01" required>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="mb-3">
+                                        <label for="editStock" class="form-label">Stock *</label>
+                                        <input type="number" class="form-control" id="editStock" name="stock" min="0" required>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="mb-3">
+                                        <label for="editEstado" class="form-label">Estado</label>
+                                        <select class="form-select" id="editEstado" name="estado">
+                                            <option value="activo">Activo</option>
+                                            <option value="agotado">Agotado</option>
+                                            <option value="inactivo">Inactivo</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="editVisible" name="visible">
+                                    <label class="form-check-label" for="editVisible">
+                                        Visible en catálogo
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="text-end">
+                                <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancelar</button>
+                                <button type="submit" class="btn btn-success" id="btnGuardarProducto">
+                                    <span class="spinner-border spinner-border-sm d-none" role="status"></span>
+                                    Guardar Cambios
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <!-- Botones movidos dentro del formulario -->
                     </div>
                 </div>
             </div>
@@ -867,15 +1009,16 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label for="idUsuario" class="form-label">ID usuario *</label>
-                                        <input type="text" class="form-control" id="idUsuario" name="idUsuario" required>
+                                        <label for="clienteIdPedido" class="form-label">ID Cliente *</label>
+                                        <input type="text" class="form-control" id="clienteIdPedido" name="clienteId" placeholder="Ingrese ID del cliente" required>
+                                        <small class="text-muted">Copie el ID desde la tabla de usuarios/clientes</small>
                                         <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label for="fecha" class="form-label">Fecha de Creación *</label>
-                                        <input type="date" class="form-control" id="fecha" name="fecha" required>
+                                        <label for="total" class="form-label">Total *</label>
+                                        <input type="number" class="form-control" id="total" name="total" min="0" step="0.01" required>
                                         <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
@@ -883,22 +1026,23 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label for="total" class="form-label">Total *</label>
-                                        <input type="number" class="form-control" id="total" name="total" required>
+                                        <label for="estado" class="form-label">Estado *</label>
+                                        <select class="form-select" id="estado" name="estado" required>
+                                            <option value="">Seleccione un estado</option>
+                                            <option value="en proceso">En proceso</option>
+                                            <option value="pagado">Pagado</option>
+                                            <option value="entregado">Entregado</option>
+                                            <option value="cancelado">Cancelado</option>
+                                            <option value="devuelto">Devuelto</option>
+                                        </select>
                                         <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label for="estado" class="form-label">Estado</label>
-                                        <select class="form-select" id="estado" name="estado">
-                                            <option value="pagado">Pagado</option>
-                                            <option value="entregado">Entregado</option>
-                                            <option value="en proceso">en proceso</option>
-                                            <option value="cancelado">cancelado</option>
-                                            <option value="devuelto">devuelto</option>
-
-                                        </select>
+                                        <label for="fechaCreacion" class="form-label">Fecha de Creación *</label>
+                                        <input type="datetime-local" class="form-control" id="fechaCreacion" name="fechaCreacion" required>
+                                        <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
                             </div>
@@ -956,7 +1100,88 @@
                 </div>
             </div>
         </div>
+        <div class="toast-container position-fixed bottom-0 end-0 p-3">
+            <div id="toastPedido" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive"
+                aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body" id="toastPedidoMsg"></div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            </div>
+            <div id="toastProducto" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive"
+                aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body" id="toastProductoMsg"></div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            </div>
+        </div>
 
+
+                            </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Editar Pedido -->
+        <div class="modal fade" id="modalEditarPedido" tabindex="-1" aria-labelledby="modalEditarPedidoLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalEditarPedidoLabel">Editar Pedido</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="formEditarPedido">
+                            <input type="hidden" id="editPedidoId">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="editClienteIdPedido" class="form-label">Cliente (ID fijo)</label>
+                                        <input type="text" class="form-control" id="editClienteIdPedido" name="clienteId" readonly style="background-color: #f8f9fa;">
+                                        <small class="text-muted">El ID del cliente no se puede modificar</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="editTotalPedido" class="form-label">Total *</label>
+                                        <input type="number" class="form-control" id="editTotalPedido" name="total" min="0" step="0.01" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="editEstadoPedido" class="form-label">Estado *</label>
+                                        <select class="form-select" id="editEstadoPedido" name="estado" required>
+                                            <option value="">Seleccione un estado</option>
+                                            <option value="en proceso">En proceso</option>
+                                            <option value="pagado">Pagado</option>
+                                            <option value="entregado">Entregado</option>
+                                            <option value="cancelado">Cancelado</option>
+                                            <option value="devuelto">Devuelto</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="editFechaCreacionPedido" class="form-label">Fecha de Creación *</label>
+                                        <input type="datetime-local" class="form-control" id="editFechaCreacionPedido" name="fechaCreacion" required>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-success" onclick="guardarPedidoEditado()">
+                            <span class="spinner-border spinner-border-sm d-none" role="status"></span>
+                            Guardar Cambios
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
 
         <!--Char js-->

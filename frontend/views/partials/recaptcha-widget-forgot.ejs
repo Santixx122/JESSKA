@@ -1,0 +1,11 @@
+<!-- reCAPTCHA v2 Widget para Recuperación de Contraseña -->
+<div class="recaptcha-container <% if (typeof errorForgotField !== 'undefined' && errorForgotField === 'recaptcha') { %>invalid<% } %>" id="recaptcha-container-forgot">
+  <div id="recaptcha-forgot" data-sitekey="<%= process.env.RECAPTCHA_SITE_KEY %>"></div>
+</div>
+<div class="recaptcha-error <% if (typeof errorForgotField !== 'undefined' && errorForgotField === 'recaptcha') { %>show<% } %>" id="recaptcha-error-forgot">
+  <% if (typeof errorForgotField !== 'undefined' && errorForgotField === 'recaptcha') { %>
+    <%= errorForgot %>
+  <% } else { %>
+    Por favor, completa la verificación de reCAPTCHA.
+  <% } %>
+</div>
