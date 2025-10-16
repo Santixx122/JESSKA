@@ -10,7 +10,7 @@ const { verifyRecaptcha } = require('../middleware/recaptcha');
 router.use(validatorApiKey)
 
 // Registro público (no requiere token pero sí reCAPTCHA)
-router.post('/', verifyRecaptcha, usuariosController.createUsuario);
+router.post('/', usuariosController.createUsuario);
 
 // Rutas protegidas (requieren token)
 //router.use(validacionToken)
